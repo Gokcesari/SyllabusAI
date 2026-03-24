@@ -1,0 +1,1155 @@
+{
+  "Version": 1,
+  "Hash": "5On2X7+8rSsyRUxJXFfjeC1BRO6DVp4sbG8okTBVUzc=",
+  "Source": "SyllabusAI",
+  "BasePath": "_content/SyllabusAI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "SyllabusAI\\wwwroot",
+      "Source": "SyllabusAI",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\css\\app.css",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "css/app#[.{fingerprint}]?.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "7gxq6vrwdh",
+      "Integrity": "130WDoU5xGdOUp//EzJsLvrTWZ3A+5WQOr9Z6dAuCDA=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\app.css"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\images\\BauLogo.jpg",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "images/BauLogo#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "x64iqowcp9",
+      "Integrity": "uZ+wW1mI81BKMg5pHIcC3NX410kMuP7iATEDxAXyWro=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\BauLogo.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\images\\kampus.jpg",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "images/kampus#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "3xtdpenw41",
+      "Integrity": "SQaGCnGCXC/yhhV5Cam53fQBl86vU0mwYVyAEO1C5Ow=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\kampus.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\images\\robot.png",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "images/robot#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "k6rof44a0e",
+      "Integrity": "ZKGgIijCymChEyy/8jbd2BxB9u75HD/8tLT8MNR+z4A=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\robot.png"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\index.html",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "index#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "jifyec1svn",
+      "Integrity": "9e731NuIUh+K6Z6o1wnNOfgdBknLJN1nU0SRH9XEqa4=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\instructor-courses.html",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "instructor-courses#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "gym7mggp0q",
+      "Integrity": "+MWgXl0TJkcyFHiLoGEUsW2kfSEecMmJ0qGQbzvE3v8=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\instructor-courses.html"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\instructor.html",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "instructor#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "mrlnaa31nu",
+      "Integrity": "8u/15JUSCLdRujF8gTQzNfZ8yUUXA8t2Pm3JBLrRdzI=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\instructor.html"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student-add.html",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "student-add#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "5obm0wl7to",
+      "Integrity": "a4uermEN9+b0JV7xTzg545lNVENk4zqAYAOM/Ffb9H0=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\student-add.html"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student-ai.html",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "student-ai#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "ir9z9tyi54",
+      "Integrity": "0gZGH8+xN0eD3kbta3S1TWhMBEEhzFAM73SMhh8Obk0=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\student-ai.html"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student-course.html",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "student-course#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "kgmzwgrl6f",
+      "Integrity": "jFNkjYyjiT77UdTQANHNRjZueQWtTKjLKLTHQWUl7M8=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\student-course.html"
+    },
+    {
+      "Identity": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student.html",
+      "SourceId": "SyllabusAI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\",
+      "BasePath": "_content/SyllabusAI",
+      "RelativePath": "student#[.{fingerprint}]?.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "vmrz2bsd3y",
+      "Integrity": "WTsERgBxJymPeH52rZ0W2NZyMsdmmeUeI+qakf0iz84=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\student.html"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "css/app.7gxq6vrwdh.css",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\css\\app.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4449"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"130WDoU5xGdOUp//EzJsLvrTWZ3A+5WQOr9Z6dAuCDA=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:30:49 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7gxq6vrwdh"
+        },
+        {
+          "Name": "label",
+          "Value": "css/app.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-130WDoU5xGdOUp//EzJsLvrTWZ3A+5WQOr9Z6dAuCDA="
+        }
+      ]
+    },
+    {
+      "Route": "css/app.css",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\css\\app.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4449"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"130WDoU5xGdOUp//EzJsLvrTWZ3A+5WQOr9Z6dAuCDA=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:30:49 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-130WDoU5xGdOUp//EzJsLvrTWZ3A+5WQOr9Z6dAuCDA="
+        }
+      ]
+    },
+    {
+      "Route": "images/BauLogo.jpg",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\images\\BauLogo.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "12930"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uZ+wW1mI81BKMg5pHIcC3NX410kMuP7iATEDxAXyWro=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Mar 2026 22:12:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-uZ+wW1mI81BKMg5pHIcC3NX410kMuP7iATEDxAXyWro="
+        }
+      ]
+    },
+    {
+      "Route": "images/BauLogo.x64iqowcp9.jpg",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\images\\BauLogo.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "12930"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uZ+wW1mI81BKMg5pHIcC3NX410kMuP7iATEDxAXyWro=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Mar 2026 22:12:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "x64iqowcp9"
+        },
+        {
+          "Name": "label",
+          "Value": "images/BauLogo.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-uZ+wW1mI81BKMg5pHIcC3NX410kMuP7iATEDxAXyWro="
+        }
+      ]
+    },
+    {
+      "Route": "images/kampus.3xtdpenw41.jpg",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\images\\kampus.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "380401"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"SQaGCnGCXC/yhhV5Cam53fQBl86vU0mwYVyAEO1C5Ow=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Mar 2026 21:59:49 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "3xtdpenw41"
+        },
+        {
+          "Name": "label",
+          "Value": "images/kampus.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-SQaGCnGCXC/yhhV5Cam53fQBl86vU0mwYVyAEO1C5Ow="
+        }
+      ]
+    },
+    {
+      "Route": "images/kampus.jpg",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\images\\kampus.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "380401"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"SQaGCnGCXC/yhhV5Cam53fQBl86vU0mwYVyAEO1C5Ow=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Mar 2026 21:59:49 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-SQaGCnGCXC/yhhV5Cam53fQBl86vU0mwYVyAEO1C5Ow="
+        }
+      ]
+    },
+    {
+      "Route": "images/robot.k6rof44a0e.png",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\images\\robot.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4552"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ZKGgIijCymChEyy/8jbd2BxB9u75HD/8tLT8MNR+z4A=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:45:39 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "k6rof44a0e"
+        },
+        {
+          "Name": "label",
+          "Value": "images/robot.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-ZKGgIijCymChEyy/8jbd2BxB9u75HD/8tLT8MNR+z4A="
+        }
+      ]
+    },
+    {
+      "Route": "images/robot.png",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\images\\robot.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4552"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"ZKGgIijCymChEyy/8jbd2BxB9u75HD/8tLT8MNR+z4A=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:45:39 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-ZKGgIijCymChEyy/8jbd2BxB9u75HD/8tLT8MNR+z4A="
+        }
+      ]
+    },
+    {
+      "Route": "index.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "10473"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"9e731NuIUh+K6Z6o1wnNOfgdBknLJN1nU0SRH9XEqa4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:43:11 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-9e731NuIUh+K6Z6o1wnNOfgdBknLJN1nU0SRH9XEqa4="
+        }
+      ]
+    },
+    {
+      "Route": "index.jifyec1svn.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\index.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "10473"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"9e731NuIUh+K6Z6o1wnNOfgdBknLJN1nU0SRH9XEqa4=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:43:11 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "jifyec1svn"
+        },
+        {
+          "Name": "label",
+          "Value": "index.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-9e731NuIUh+K6Z6o1wnNOfgdBknLJN1nU0SRH9XEqa4="
+        }
+      ]
+    },
+    {
+      "Route": "instructor-courses.gym7mggp0q.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\instructor-courses.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4074"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+MWgXl0TJkcyFHiLoGEUsW2kfSEecMmJ0qGQbzvE3v8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 20 Mar 2026 17:14:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "gym7mggp0q"
+        },
+        {
+          "Name": "label",
+          "Value": "instructor-courses.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-+MWgXl0TJkcyFHiLoGEUsW2kfSEecMmJ0qGQbzvE3v8="
+        }
+      ]
+    },
+    {
+      "Route": "instructor-courses.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\instructor-courses.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4074"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+MWgXl0TJkcyFHiLoGEUsW2kfSEecMmJ0qGQbzvE3v8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 20 Mar 2026 17:14:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-+MWgXl0TJkcyFHiLoGEUsW2kfSEecMmJ0qGQbzvE3v8="
+        }
+      ]
+    },
+    {
+      "Route": "instructor.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\instructor.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "7075"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8u/15JUSCLdRujF8gTQzNfZ8yUUXA8t2Pm3JBLrRdzI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 20 Mar 2026 17:14:35 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-8u/15JUSCLdRujF8gTQzNfZ8yUUXA8t2Pm3JBLrRdzI="
+        }
+      ]
+    },
+    {
+      "Route": "instructor.mrlnaa31nu.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\instructor.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "7075"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"8u/15JUSCLdRujF8gTQzNfZ8yUUXA8t2Pm3JBLrRdzI=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 20 Mar 2026 17:14:35 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "mrlnaa31nu"
+        },
+        {
+          "Name": "label",
+          "Value": "instructor.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-8u/15JUSCLdRujF8gTQzNfZ8yUUXA8t2Pm3JBLrRdzI="
+        }
+      ]
+    },
+    {
+      "Route": "student-add.5obm0wl7to.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student-add.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4532"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"a4uermEN9+b0JV7xTzg545lNVENk4zqAYAOM/Ffb9H0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Mar 2026 21:27:51 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "5obm0wl7to"
+        },
+        {
+          "Name": "label",
+          "Value": "student-add.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-a4uermEN9+b0JV7xTzg545lNVENk4zqAYAOM/Ffb9H0="
+        }
+      ]
+    },
+    {
+      "Route": "student-add.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student-add.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4532"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"a4uermEN9+b0JV7xTzg545lNVENk4zqAYAOM/Ffb9H0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Mar 2026 21:27:51 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-a4uermEN9+b0JV7xTzg545lNVENk4zqAYAOM/Ffb9H0="
+        }
+      ]
+    },
+    {
+      "Route": "student-ai.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student-ai.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "7972"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"0gZGH8+xN0eD3kbta3S1TWhMBEEhzFAM73SMhh8Obk0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Mar 2026 21:28:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-0gZGH8+xN0eD3kbta3S1TWhMBEEhzFAM73SMhh8Obk0="
+        }
+      ]
+    },
+    {
+      "Route": "student-ai.ir9z9tyi54.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student-ai.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "7972"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"0gZGH8+xN0eD3kbta3S1TWhMBEEhzFAM73SMhh8Obk0=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Sat, 14 Mar 2026 21:28:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "ir9z9tyi54"
+        },
+        {
+          "Name": "label",
+          "Value": "student-ai.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-0gZGH8+xN0eD3kbta3S1TWhMBEEhzFAM73SMhh8Obk0="
+        }
+      ]
+    },
+    {
+      "Route": "student-course.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student-course.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "7083"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"jFNkjYyjiT77UdTQANHNRjZueQWtTKjLKLTHQWUl7M8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:30:49 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-jFNkjYyjiT77UdTQANHNRjZueQWtTKjLKLTHQWUl7M8="
+        }
+      ]
+    },
+    {
+      "Route": "student-course.kgmzwgrl6f.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student-course.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "7083"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"jFNkjYyjiT77UdTQANHNRjZueQWtTKjLKLTHQWUl7M8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:30:49 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "kgmzwgrl6f"
+        },
+        {
+          "Name": "label",
+          "Value": "student-course.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-jFNkjYyjiT77UdTQANHNRjZueQWtTKjLKLTHQWUl7M8="
+        }
+      ]
+    },
+    {
+      "Route": "student.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "6226"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"WTsERgBxJymPeH52rZ0W2NZyMsdmmeUeI+qakf0iz84=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:30:49 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "no-cache"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-WTsERgBxJymPeH52rZ0W2NZyMsdmmeUeI+qakf0iz84="
+        }
+      ]
+    },
+    {
+      "Route": "student.vmrz2bsd3y.html",
+      "AssetFile": "C:\\Users\\Gökçe\\source\\repos\\SyllabusAI\\SyllabusAI\\wwwroot\\student.html",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "6226"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/html"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"WTsERgBxJymPeH52rZ0W2NZyMsdmmeUeI+qakf0iz84=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 18 Mar 2026 10:30:49 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "vmrz2bsd3y"
+        },
+        {
+          "Name": "label",
+          "Value": "student.html"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-WTsERgBxJymPeH52rZ0W2NZyMsdmmeUeI+qakf0iz84="
+        }
+      ]
+    }
+  ]
+}

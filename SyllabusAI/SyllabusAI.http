@@ -1,0 +1,6 @@
+@SyllabusAI_HostAddress = http://localhost:5241
+
+GET {{SyllabusAI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

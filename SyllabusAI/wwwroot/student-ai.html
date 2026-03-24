@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SyllabusAI - AI Asistan</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    .ai-layout { display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap; }
+    .robot-area { flex-shrink: 0; }
+    .robot-illus { width: 200px; height: 200px; background: linear-gradient(180deg, #e0e7ff 0%, #c7d2fe 100%); border-radius: 24px; display: flex; align-items: center; justify-content: center; }
+    .robot-illus svg { width: 120px; height: 120px; color: #4f46e5; }
+    .chat-panel {
+      flex: 1;
+      min-width: 320px;
+      max-width: 480px;
+      background: linear-gradient(160deg, #1e3a5f 0%, #312e81 100%);
+      border-radius: 16px;
+      padding: 1.5rem;
+      color: #fff;
+    }
+    .chat-panel h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+    .chat-panel .desc { font-size: 0.9rem; opacity: 0.95; margin-bottom: 1.5rem; line-height: 1.5; }
+    .course-select { margin-bottom: 1rem; }
+    .course-select label { font-size: 0.8rem; color: rgba(255,255,255,0.8); display: block; margin-bottom: 0.35rem; }
+    .course-select select { width: 100%; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; font-size: 0.9rem; }
+    .chat-input-wrap { display: flex; gap: 0.5rem; }
+    .chat-input-wrap input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      background: #fff;
+      color: #1e293b;
+    }
+    .chat-input-wrap button { padding: 0.75rem 1.25rem; border: none; border-radius: 10px; background: #4f46e5; color: #fff; font-weight: 600; cursor: pointer; }
+    .chat-messages { max-height: 240px; overflow-y: auto; margin-bottom: 1rem; font-size: 0.875rem; }
+    .chat-messages .bubble { margin-bottom: 0.75rem; padding: 0.6rem 0.9rem; border-radius: 10px; max-width: 90%; }
+    .chat-messages .user { background: rgba(255,255,255,0.2); margin-left: 0; margin-right: auto; }
+    .chat-messages .bot { background: rgba(255,255,255,0.15); margin-left: auto; margin-right: 0; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> SYLLABUSAI</div>
+    <div class="menu-label">ÖĞRENCİ MENÜSÜ</div>
+    <nav>
+      <a href="/student.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> Derslerim</a>
+      <a href="/student-add.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Syllabus Ekle</a>
+      <a href="/student-ai.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> AI Asistan</a>
+      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Ayarlar</a>
+    </nav>
+    <div class="lang"><button type="button">TR / EN</button></div>
+    <div class="user-box">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta"></div></div>
+    </div>
+  </aside>
+  <main class="main-area">
+    <h1 class="page-title">AI ASİSTAN</h1>
+    <div class="ai-layout">
+      <div class="robot-area">
+        <div class="robot-illus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/><path d="M8 4l2 2M16 4l-2 2M8 20l2-2M16 20l-2-2"/></svg>
+        </div>
+      </div>
+      <div class="chat-panel">
+        <h2>MERHABA BAU'LU!</h2>
+        <p class="desc">Bana müfredatla ilgili sorularını sorabilir, proje ve sınav tarihlerini kolayca takip edebilir, syllabus detaylarını görebilirsin. İhtiyacın olduğunda yanındayım!</p>
+        <div class="course-select">
+          <label>Ders seçin (müfredata göre cevap)</label>
+          <select id="courseSelect"></select>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-wrap">
+          <input type="text" id="questionInput" placeholder="Sorunu buraya yazabilirsin">
+          <button type="button" id="btnAsk">Gönder</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script>
+    var token = localStorage.getItem('syllabus_token');
+    var userStr = localStorage.getItem('syllabus_user');
+    if (!token || !userStr) { window.location.href = '/'; }
+    var user = JSON.parse(userStr);
+    if (user.role !== 'Student') { window.location.href = '/student.html'; }
+    function initials(n){ var p=(n||'').split(/\s+/); return p.length>=2 ? (p[0][0]+p[1][0]).toUpperCase() : ((n||'?')[0]).toUpperCase(); }
+    document.getElementById('userAvatar').textContent = initials(user.fullName || user.email);
+    document.getElementById('userName').textContent = user.fullName || user.email;
+    document.getElementById('userMeta').textContent = user.email || 'Öğrenci';
+
+    function authHeader(){ return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }; }
+    var courseList = [];
+    fetch('/api/courses/my', { headers: authHeader() })
+      .then(function(r){ return r.json(); })
+      .then(function(list){
+        courseList = list || [];
+        var sel = document.getElementById('courseSelect');
+        if (courseList.length === 0) { sel.innerHTML = '<option value="">Önce ders ekleyin</option>'; return; }
+        sel.innerHTML = '<option value="">— Ders seçin —</option>' + courseList.map(function(c){ return '<option value="'+c.id+'">'+ (c.courseCode||'') + ' ' + (c.title||''); }).join('');
+      });
+
+    function addBubble(who, text) {
+      var div = document.createElement('div');
+      div.className = 'bubble ' + who;
+      div.textContent = text;
+      document.getElementById('chatMessages').appendChild(div);
+      div.scrollIntoView();
+    }
+    document.getElementById('btnAsk').onclick = function() {
+      var q = document.getElementById('questionInput').value.trim();
+      var courseId = parseInt(document.getElementById('courseSelect').value, 10);
+      if (!q) return;
+      if (!courseId) { addBubble('bot', 'Lütfen önce bir ders seçin.'); return; }
+      addBubble('user', q);
+      document.getElementById('questionInput').value = '';
+      fetch('/api/chat/ask', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseId: courseId, question: q }) })
+        .then(function(r){ return r.json(); })
+        .then(function(d){ addBubble('bot', d.answer || 'Cevap alınamadı.'); })
+        .catch(function(){ addBubble('bot', 'Bağlantı hatası.'); });
+    };
+  </script>
+</body>
+</html>

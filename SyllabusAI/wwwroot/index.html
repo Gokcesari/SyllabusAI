@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyllabusAI - Giriş</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Kaushan+Script&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { min-height: 100vh; display: flex; overflow: hidden; }
+
+        /* SOL TARAF - MOR VE FOTOĞRAFLI PANEL */
+        .left {
+            flex: 1.2;
+            /* Arka plan: Koyu mor gradient ve üzerine kampüs fotoğrafı bindirilmiş */
+            background: linear-gradient(135deg, rgba(46, 11, 90, 0.9) 0%, rgba(109, 56, 173, 0.8) 100%), 
+                        url('/images/kampus.jpg'); 
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: #fff;
+            position: relative;
+        }
+
+        /* O YAMUK VE ESTETİK YAZI STİLİ */
+        .left h1 {
+            font-family: 'Kaushan Script', cursive; /* El yazısı fontu */
+            font-size: 5.5rem;
+            font-weight: 400;
+            line-height: 1.1;
+            text-align: center;
+            /* Yazıya derinlik katmak için gölge (Shadow) */
+            text-shadow: 2px 4px 10px rgba(0,0,0,0.4);
+            margin-bottom: 50px;
+        }
+
+        /* LOGO ALT KISIMDA */
+        .bau-logo-box {
+            width: 130px;
+            height: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bau-logo-box img {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+        }
+
+        /* SAĞ TARAF - FORM ALANI */
+        .right {
+            flex: 1;
+            background: #ffffff;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+        }
+
+        .lang-switch button {
+            background: #4a148c; /* Temaya uygun mor */
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2.5rem;
+        }
+
+        .robot-box {
+            width: 55px;
+            height: 55px;
+            background: #f3f4f6;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .robot-box img { width: 85%; height: auto; }
+
+        .brand-text h2 {
+            color: #4a148c; /* Temaya uygun mor */
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-text p {
+            color: #6b7280;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        /* FORM */
+        .form-group { margin-bottom: 1.5rem; }
+        
+        .form-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #4b5563;
+            text-transform: uppercase;
+        }
+
+        .forgot-pass {
+            font-size: 0.8rem;
+            color: #4a148c;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 14px 14px 45px; /* İkon için sol pedding */
+            border: 1.5px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f9fafb;
+            font-size: 0.9rem;
+        }
+
+        .input-wrapper { position: relative; }
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            color: #9ca3af;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #7e57c2;
+            background: #fff;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: #4a148c; /* Orijinal mor buton */
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(74, 20, 140, 0.3);
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #38006b;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="left">
+        <h1>Hoşgeldin<br>Bau'lu</h1>
+        
+        <div class="bau-logo-box">
+            <img src="/images/BauLogo.jpg" alt="BAU Logo">
+        </div>
+    </div>
+
+    <div class="right">
+      <div class="lang-switch">
+        <button type="button" id="langBtn">TR / EN</button>
+    </div>
+
+        <div class="brand-header">
+            <div class="robot-box">
+                <img src="/images/robot.png" alt="AI">
+            </div>
+            <div class="brand-text">
+                <h2>SYLLABUSAI</h2>
+                <p>Akademik serüvenine kaldığın yerden devam et.</p>
+            </div>
+        </div>
+
+        <div id="errorBox" style="display:none; background:#fef2f2; color:#dc2626; padding:12px 14px; border-radius:12px; font-size:0.9rem; font-weight:600; margin-bottom:18px;"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <div class="form-label-row">
+                    <label class="form-label">ÖĞRENCİ NO / E-POSTA</label>
+                </div>
+                <div class="input-wrapper">
+                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    <input id="email" type="text" class="input-field" placeholder="ogrenci@bahcesehir.edu.tr" required autocomplete="email">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-label-row">
+                    <label class="form-label">ŞİFRE</label>
+                    <a href="#" class="forgot-pass">Şifremi Unuttum</a>
+                </div>
+                <div class="input-wrapper">
+                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <input id="password" type="password" class="input-field" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+            </div>
+
+            <label class="remember-me">
+                <input type="checkbox" id="remember"> Beni Hatırla
+            </label>
+
+            <button type="submit" class="btn-submit">Giriş Yap</button>
+        </form>
+    </div>
+    <script>
+      document.getElementById('langBtn').addEventListener('click', function () {
+          // Şu anki dili kontrol et (Cookie'den oku veya varsayılanı al)
+          let currentLang = document.cookie.split('; ').find(row => row.startsWith('.AspNetCore.Culture='));
+          let newLang = "en-US"; // Varsayılan yeni dil
+  
+          if (currentLang && currentLang.includes('en-US')) {
+              newLang = "tr-TR";
+          }
+  
+          // .NET Core'un beklediği formatta Cookie oluştur
+          // Format: c=tr-TR|uic=tr-TR
+          let cookieValue = `c=${newLang}|uic=${newLang}`;
+          document.cookie = `.AspNetCore.Culture=${cookieValue}; path=/; max-age=31536000`; // 1 yıl geçerli
+  
+          // Sayfayı yenile ki dil değişimi etkili olsun
+          window.location.reload()
+      });
+
+      // LOGIN: sadece 3 email + DB kontrolü (backend)
+      const loginForm = document.getElementById('loginForm');
+      const errorBox = document.getElementById('errorBox');
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorBox.style.display = 'none';
+
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            errorBox.textContent = data.message || 'Giriş başarısız.';
+            errorBox.style.display = 'block';
+            return;
+          }
+
+          localStorage.setItem('syllabus_token', data.accessToken);
+          localStorage.setItem('syllabus_user', JSON.stringify(data.user));
+          if (data.user.role === 'Student') window.location.href = '/student.html';
+          else window.location.href = '/instructor.html';
+        } catch (err) {
+          errorBox.textContent = 'Bağlantı hatası. Sunucu çalışıyor mu?';
+          errorBox.style.display = 'block';
+        }
+      });
+  </script>
+</body>
+</html>
