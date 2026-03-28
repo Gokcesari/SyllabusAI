@@ -16,6 +16,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<Course> Courses { get; set; }
     public DbSet<Enrollment> Enrollments { get; set; }
+    public DbSet<SyllabusPdfUpload> SyllabusPdfUploads { get; set; }
+    public DbSet<SyllabusChunk> SyllabusChunks { get; set; }
+    public DbSet<CourseFeedback> CourseFeedbacks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +39,25 @@ public class ApplicationDbContext : DbContext
             e.HasIndex(x => new { x.UserId, x.CourseId }).IsUnique();
             e.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
             e.HasOne(x => x.Course).WithMany(c => c.Enrollments).HasForeignKey(x => x.CourseId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<SyllabusPdfUpload>(e =>
+        {
+            e.HasIndex(x => x.CourseId);
+            e.HasOne(x => x.Course).WithMany(c => c.SyllabusPdfUploads).HasForeignKey(x => x.CourseId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<SyllabusChunk>(e =>
+        {
+            e.HasIndex(x => new { x.CourseId, x.ChunkIndex });
+            e.HasOne(x => x.Course).WithMany(c => c.SyllabusChunks).HasForeignKey(x => x.CourseId).OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CourseFeedback>(e =>
+        {
+            e.HasIndex(x => new { x.CourseId, x.StudentUserId }).IsUnique();
+            e.HasOne(x => x.Course).WithMany(c => c.Feedbacks).HasForeignKey(x => x.CourseId).OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(x => x.Student).WithMany().HasForeignKey(x => x.StudentUserId).OnDelete(DeleteBehavior.Restrict);
         });
 
         // Varsayılan roller (seed) - ilk çalıştırmada eklenebilir

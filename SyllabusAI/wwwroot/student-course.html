@@ -3,53 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SyllabusAI - Müfredat</title>
-  <link rel="stylesheet" href="/css/app.css">
+  <title>SyllabusAI - Ders dosyası</title>
+  <link rel="stylesheet" href="/css/app.css?v=20260341">
   <style>
-    .back { display: inline-block; margin-bottom: 1rem; color: #4f46e5; text-decoration: none; font-size: 0.875rem; }
-    .syllabus-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; white-space: pre-wrap; line-height: 1.6; font-size: 0.9rem; color: #334155; }
-    .syllabus-box .highlight { background: rgba(251, 191, 36, 0.4); padding: 0.1em 0.25em; border-radius: 3px; }
-    .chat-box { background: linear-gradient(160deg, #1e3a5f 0%, #312e81 100%); border-radius: 12px; padding: 1.25rem; color: #fff; }
-    .chat-box h3 { font-size: 0.95rem; margin-bottom: 0.75rem; }
-    .chat-messages { max-height: 260px; overflow-y: auto; margin-bottom: 0.75rem; font-size: 0.875rem; }
-    .chat-messages .bubble { margin-bottom: 0.5rem; padding: 0.5rem 0.75rem; border-radius: 8px; }
-    .chat-messages .user { background: rgba(255,255,255,0.2); margin-right: auto; max-width: 85%; }
-    .chat-messages .bot { background: rgba(255,255,255,0.15); margin-left: auto; max-width: 85%; }
-    .chat-row { display: flex; gap: 0.5rem; }
-    .chat-row input { flex: 1; padding: 0.6rem 0.75rem; border: none; border-radius: 8px; font-size: 0.9rem; }
-    .chat-row button { padding: 0.6rem 1rem; border: none; border-radius: 8px; background: #4f46e5; color: #fff; font-weight: 500; cursor: pointer; }
+    .back { display: inline-block; margin-bottom: 0.75rem; color: #a5b4fc; text-decoration: none; font-size: 0.875rem; }
+    .back:hover { color: #c4b5fd; }
+    /* Ham müfredat metni gösterilmez; yalnız PDF önizleme veya Word indirme */
+    .file-shell {
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.25);
+      min-height: 52vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.25rem;
+    }
+    .file-msg { padding: 1.1rem; color: rgba(220, 214, 235, 0.88); font-size: 0.9rem; line-height: 1.5; }
+    .file-shell iframe { flex: 1; width: 100%; min-height: 52vh; border: 0; background: #0a0612; }
+    .docx-actions { padding: 0 1.1rem 1.1rem; display: none; }
+    .docx-actions a {
+      display: inline-block; padding: 0.55rem 1rem; border-radius: 10px;
+      background: #4f46e5; color: #fff; font-weight: 600; font-size: 0.85rem; text-decoration: none;
+    }
+    .docx-actions a:hover { background: #4338ca; }
+    .chat-box {
+      background: linear-gradient(160deg, #1e3a5f 0%, #312e81 100%);
+      border-radius: 14px; padding: 1.15rem 1.25rem; color: #fff;
+    }
+    .chat-box h3 { font-size: 0.9rem; margin-bottom: 0.65rem; opacity: 0.95; }
+    .chat-messages { max-height: 200px; overflow-y: auto; margin-bottom: 0.65rem; font-size: 0.82rem; }
+    .chat-messages .bubble { margin-bottom: 0.45rem; padding: 0.45rem 0.65rem; border-radius: 8px; white-space: pre-wrap; }
+    .chat-messages .user { background: rgba(255,255,255,0.2); margin-right: auto; max-width: 92%; }
+    .chat-messages .bot { background: rgba(255,255,255,0.14); margin-left: auto; max-width: 92%; }
+    .chat-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+    .chat-row input { flex: 1; min-width: 160px; padding: 0.55rem 0.75rem; border: none; border-radius: 8px; font-size: 0.88rem; }
+    .chat-row button { padding: 0.55rem 0.95rem; border: none; border-radius: 8px; background: #4f46e5; color: #fff; font-weight: 600; cursor: pointer; }
+    .feedback-box {
+      margin-top: 1.25rem;
+      padding: 1.1rem 1.2rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(30, 58, 95, 0.35);
+      color: rgba(240, 236, 252, 0.95);
+    }
+    .feedback-box h3 { font-size: 0.95rem; margin-bottom: 0.5rem; }
+    .feedback-hint { font-size: 0.86rem; line-height: 1.5; color: rgba(215, 208, 232, 0.88); margin-bottom: 0.75rem; }
+    .feedback-box label { display: block; font-size: 0.82rem; margin: 0.5rem 0 0.25rem; }
+    .feedback-box select, .feedback-box textarea {
+      width: 100%; max-width: 100%; padding: 0.5rem 0.65rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(15, 12, 28, 0.6); color: #f5f3ff; font-size: 0.9rem;
+    }
+    .feedback-box textarea { min-height: 5rem; resize: vertical; }
+    .feedback-box button {
+      margin-top: 0.65rem; padding: 0.55rem 1.1rem; border: none; border-radius: 8px; background: #6366f1; color: #fff; font-weight: 600; cursor: pointer;
+    }
   </style>
 </head>
-<body>
+<body class="tp">
   <aside class="sidebar">
     <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> SYLLABUSAI</div>
     <div class="menu-label">ÖĞRENCİ MENÜSÜ</div>
     <nav>
       <a href="/student.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> Derslerim</a>
-      <a href="/student-add.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Syllabus Ekle</a>
       <a href="/student-ai.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> AI Asistan</a>
-      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Ayarlar</a>
     </nav>
     <div class="lang"><button type="button">TR / EN</button></div>
-    <div class="user-box">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta"></div></div>
+    <div class="user-box has-drop">
+      <div class="user-drop">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Hesap menüsü">
+          <div class="user-row">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta"></div></div>
+          </div>
+        </button>
+        <div class="user-fly" id="userFly" hidden role="menu">
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Çıkış</button>
+        </div>
+      </div>
     </div>
   </aside>
-  <main class="main-area">
+  <main class="main-area reader-col">
     <a href="/student.html" class="back">← Derslerime dön</a>
-    <h1 class="page-title" id="courseTitle">Müfredat</h1>
-    <div class="syllabus-box" id="syllabusContent"></div>
+    <h1 class="page-title" id="courseTitle">Ders</h1>
+    <p class="page-meta" style="margin-bottom:1rem;font-size:0.85rem;">Hocanın yüklediği dosya (PDF veya Word). Metin çıktısı burada gösterilmez; yalnızca dosya.</p>
+
+    <div class="file-shell" id="fileShell">
+      <p class="file-msg" id="fileMsg">Yükleniyor…</p>
+      <iframe id="pdfFrame" title="Syllabus PDF" style="display:none"></iframe>
+      <div class="docx-actions" id="docxWrap">
+        <a href="#" id="docxLink" download="syllabus.docx">Word dosyasını indir</a>
+      </div>
+    </div>
+
     <div class="chat-box" id="chat">
-      <h3>SORU – CEVAP AI · Müfredat ile ilgili soru sorun</h3>
+      <h3>Soru–cevap (AI)</h3>
       <div class="chat-messages" id="chatMessages"></div>
       <div class="chat-row">
-        <input type="text" id="questionInput" placeholder="Syllabus'u incele ya da soru sor...">
+        <input type="text" id="questionInput" placeholder="Bu ders hakkında soru yaz…" autocomplete="off">
         <button type="button" id="btnAsk">Gönder</button>
       </div>
     </div>
+
+    <div class="feedback-box" id="feedbackPanel">
+      <h3>Ders geri bildirimi</h3>
+      <p class="feedback-hint" id="feedbackStatusText">Yükleniyor…</p>
+      <div id="feedbackForm" style="display:none;">
+        <label for="fbRating">Genel değerlendirme (1–5)</label>
+        <select id="fbRating">
+          <option value="5">5 — Çok iyi</option>
+          <option value="4">4</option>
+          <option value="3">3 — Orta</option>
+          <option value="2">2</option>
+          <option value="1">1 — Zayıf</option>
+        </select>
+        <label for="fbComment">Yorum (isteğe bağlı, en fazla 2000 karakter)</label>
+        <textarea id="fbComment" maxlength="2000" placeholder="Ders hakkında kısa görüşünüz…"></textarea>
+        <button type="button" id="btnFeedbackSend">Gönder</button>
+      </div>
+    </div>
+
+    <a href="/student-ai.html" class="ai-assistant-fab" aria-label="AI Asistan" title="AI Asistan">
+      <img src="/images/robot.png" alt="" width="40" height="40" decoding="async">
+    </a>
   </main>
+  <script src="/js/out.js"></script>
+  <script src="/js/user-fly.js"></script>
   <script>
+    // Başlık için /syllabus (yalnız isim); dosya için /syllabus-file. SyllabusContent ekranda yok.
     var token = localStorage.getItem('syllabus_token');
     var userStr = localStorage.getItem('syllabus_user');
     if (!token || !userStr) { window.location.href = '/'; }
@@ -63,42 +144,132 @@
     var params = new URLSearchParams(window.location.search);
     var courseId = parseInt(params.get('id'), 10);
     if (!courseId) { window.location.href = '/student.html'; }
+
     function authHeader() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }; }
+    function authBearer() { return { 'Authorization': 'Bearer ' + token }; }
+
+    var blobUrl = null;
+    function clearFile() {
+      if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
+      document.getElementById('pdfFrame').src = '';
+      document.getElementById('pdfFrame').style.display = 'none';
+      document.getElementById('docxWrap').style.display = 'none';
+      var old = document.getElementById('docxLink');
+      old.removeAttribute('href');
+    }
 
     fetch('/api/courses/' + courseId + '/syllabus', { headers: authHeader() })
-      .then(function(r) { if (!r.ok) { window.location.href = '/student.html'; return; } return r.json(); })
-      .then(function(d) {
+      .then(function (r) { if (!r.ok) { window.location.href = '/student.html'; return; } return r.json(); })
+      .then(function (d) {
         if (!d) return;
-        document.getElementById('courseTitle').textContent = d.title || d.courseCode || 'Müfredat';
-        var text = d.syllabusContent || 'Müfredat henüz eklenmemiş.';
-        var keywords = d.highlightKeywords || [];
-        keywords.forEach(function(k) {
-          if (!k.trim()) return;
-          var re = new RegExp('(' + k.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-          text = text.replace(re, '<span class="highlight">$1</span>');
-        });
-        document.getElementById('syllabusContent').innerHTML = text.replace(/\n/g, '<br>');
+        document.getElementById('courseTitle').textContent = d.title || d.courseCode || 'Ders';
       })
-      .catch(function() { window.location.href = '/student.html'; });
+      .catch(function () { window.location.href = '/student.html'; });
+
+    var msg = document.getElementById('fileMsg');
+    fetch('/api/courses/' + courseId + '/syllabus-file', { headers: authBearer() })
+      .then(function (r) {
+        if (r.status === 404) {
+          msg.textContent = 'Bu ders için henüz PDF veya Word dosyası yüklenmemiş. Eğitmen yüklediğinde burada görünür.';
+          return null;
+        }
+        if (!r.ok) { msg.textContent = 'Dosya alınamadı.'; return null; }
+        var hdr = (r.headers.get('content-type') || '').toLowerCase();
+        return r.blob().then(function (b) { return { blob: b, hdr: hdr }; });
+      })
+      .then(function (pack) {
+        if (!pack) return;
+        var blob = pack.blob;
+        var hdr = pack.hdr;
+        var ct = ((blob.type || '') + ' ' + hdr).toLowerCase();
+        if (ct.indexOf('pdf') >= 0) {
+          blobUrl = URL.createObjectURL(blob);
+          var frame = document.getElementById('pdfFrame');
+          frame.src = blobUrl;
+          frame.style.display = 'block';
+          msg.style.display = 'none';
+        } else if (ct.indexOf('word') >= 0 || ct.indexOf('document') >= 0 || ct.indexOf('docx') >= 0) {
+          blobUrl = URL.createObjectURL(blob);
+          msg.textContent = 'Bu ders Word (.docx) ile yüklenmiş. Tarayıcıda önizleme yok; dosyayı indirip açın.';
+          var link = document.getElementById('docxLink');
+          link.href = blobUrl;
+          link.download = 'syllabus.docx';
+          document.getElementById('docxWrap').style.display = 'block';
+        } else {
+          msg.textContent = 'Dosya türü önizlenemiyor.';
+        }
+      })
+      .catch(function () { msg.textContent = 'Bağlantı hatası.'; });
 
     function addMsg(who, text) {
       var div = document.createElement('div');
       div.className = 'bubble ' + who;
       div.textContent = text;
       document.getElementById('chatMessages').appendChild(div);
-      div.scrollIntoView();
+      div.scrollIntoView({ block: 'nearest' });
     }
-    document.getElementById('btnAsk').onclick = function() {
+    document.getElementById('btnAsk').onclick = function () {
       var q = document.getElementById('questionInput').value.trim();
       if (!q) return;
       addMsg('user', q);
       document.getElementById('questionInput').value = '';
       fetch('/api/chat/ask', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseId: courseId, question: q }) })
-        .then(function(r) { return r.json(); })
-        .then(function(d) { addMsg('bot', d.answer || 'Cevap alınamadı.'); })
-        .catch(function() { addMsg('bot', 'Bağlantı hatası.'); });
+        .then(function (r) { return r.json(); })
+        .then(function (d) { addMsg('bot', d.answer || 'Cevap alınamadı.'); })
+        .catch(function () { addMsg('bot', 'Bağlantı hatası.'); });
     };
     if (window.location.hash === '#chat') document.getElementById('chat').scrollIntoView();
+
+    function refreshFeedbackUi() {
+      fetch('/api/courses/' + courseId + '/feedback-status', { headers: authHeader() })
+        .then(function (r) { return r.json(); })
+        .then(function (s) {
+          var hint = document.getElementById('feedbackStatusText');
+          var form = document.getElementById('feedbackForm');
+          if (s.hasSubmitted) {
+            hint.textContent = 'Geri bildiriminiz kayıtlı (puan: ' + s.myRating + '). Teşekkürler.';
+            form.style.display = 'none';
+            return;
+          }
+          if (!s.windowConfigured) {
+            hint.textContent = s.message || 'Bu ders için geri bildirim henüz açılmadı.';
+            form.style.display = 'none';
+            return;
+          }
+          if (!s.windowOpen) {
+            hint.textContent = s.message || 'Geri bildirim şu an kabul edilmiyor.';
+            form.style.display = 'none';
+            return;
+          }
+          hint.textContent = 'Dönem sonu geri bildiriminizi buradan gönderebilirsiniz (tek sefer).';
+          form.style.display = 'block';
+        })
+        .catch(function () {
+          document.getElementById('feedbackStatusText').textContent = 'Geri bildirim bilgisi alınamadı.';
+          document.getElementById('feedbackForm').style.display = 'none';
+        });
+    }
+    refreshFeedbackUi();
+
+    document.getElementById('btnFeedbackSend').onclick = function () {
+      var rating = parseInt(document.getElementById('fbRating').value, 10);
+      var comment = document.getElementById('fbComment').value.trim();
+      fetch('/api/courses/' + courseId + '/feedback', {
+        method: 'POST',
+        headers: authHeader(),
+        body: JSON.stringify({ rating: rating, comment: comment || null })
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (x) {
+          if (x.ok) {
+            document.getElementById('fbComment').value = '';
+            refreshFeedbackUi();
+          } else alert(x.d.message || 'Gönderilemedi.');
+        })
+        .catch(function () { alert('Bağlantı hatası.'); });
+    };
+
+    window.addEventListener('beforeunload', clearFile);
   </script>
 </body>
 </html>

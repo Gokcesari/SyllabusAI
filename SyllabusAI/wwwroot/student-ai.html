@@ -4,82 +4,107 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SyllabusAI - AI Asistan</title>
-  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/app.css?v=20260341">
   <style>
-    .ai-layout { display: flex; gap: 2rem; align-items: flex-start; flex-wrap: wrap; }
-    .robot-area { flex-shrink: 0; }
-    .robot-illus { width: 200px; height: 200px; background: linear-gradient(180deg, #e0e7ff 0%, #c7d2fe 100%); border-radius: 24px; display: flex; align-items: center; justify-content: center; }
-    .robot-illus svg { width: 120px; height: 120px; color: #4f46e5; }
-    .chat-panel {
-      flex: 1;
-      min-width: 320px;
-      max-width: 480px;
-      background: linear-gradient(160deg, #1e3a5f 0%, #312e81 100%);
+    /* Genişlik: app.css .tp .main-area.ai-wrap */
+    .ai-top { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .robot-illus {
+      width: 72px; height: 72px; flex-shrink: 0;
+      background: linear-gradient(180deg, rgba(99,102,241,0.35) 0%, rgba(79,70,229,0.2) 100%);
       border-radius: 16px;
-      padding: 1.5rem;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .robot-illus svg { width: 40px; height: 40px; color: #a5b4fc; }
+    .course-strip { flex: 1; min-width: 200px; }
+    .course-strip label { display: block; font-size: 0.78rem; color: rgba(220, 214, 235, 0.78); margin-bottom: 0.35rem; }
+    .course-strip select {
+      width: 100%;
+      padding: 0.5rem 0.65rem; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(20, 16, 36, 0.85);
+      color: #f1f5f9;
+      font-size: 0.88rem;
+      color-scheme: dark;
+    }
+    .hint { font-size: 0.82rem; color: rgba(200, 192, 220, 0.75); line-height: 1.45; margin-bottom: 1rem; }
+    .chat-panel {
+      width: 100%;
+      background: linear-gradient(160deg, #1e3a5f 0%, #312e81 100%);
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem;
       color: #fff;
     }
-    .chat-panel h2 { font-size: 1.25rem; margin-bottom: 0.75rem; }
-    .chat-panel .desc { font-size: 0.9rem; opacity: 0.95; margin-bottom: 1.5rem; line-height: 1.5; }
-    .course-select { margin-bottom: 1rem; }
-    .course-select label { font-size: 0.8rem; color: rgba(255,255,255,0.8); display: block; margin-bottom: 0.35rem; }
-    .course-select select { width: 100%; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; font-size: 0.9rem; }
-    .chat-input-wrap { display: flex; gap: 0.5rem; }
+    .chat-panel h2 { font-size: 1rem; margin-bottom: 0.35rem; }
+    .chat-panel .desc { font-size: 0.82rem; opacity: 0.92; margin-bottom: 0.85rem; line-height: 1.45; }
+    .chat-input-wrap { display: flex; gap: 0.45rem; flex-wrap: wrap; }
     .chat-input-wrap input {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      border: none;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      background: #fff;
-      color: #1e293b;
+      flex: 1; min-width: 160px;
+      padding: 0.6rem 0.85rem; border: none; border-radius: 8px;
+      font-size: 0.88rem; background: #fff; color: #1e293b;
     }
-    .chat-input-wrap button { padding: 0.75rem 1.25rem; border: none; border-radius: 10px; background: #4f46e5; color: #fff; font-weight: 600; cursor: pointer; }
-    .chat-messages { max-height: 240px; overflow-y: auto; margin-bottom: 1rem; font-size: 0.875rem; }
-    .chat-messages .bubble { margin-bottom: 0.75rem; padding: 0.6rem 0.9rem; border-radius: 10px; max-width: 90%; }
-    .chat-messages .user { background: rgba(255,255,255,0.2); margin-left: 0; margin-right: auto; }
-    .chat-messages .bot { background: rgba(255,255,255,0.15); margin-left: auto; margin-right: 0; }
+    .chat-input-wrap button {
+      padding: 0.6rem 1rem; border: none; border-radius: 8px;
+      background: #4f46e5; color: #fff; font-weight: 600; cursor: pointer;
+    }
+    .chat-messages { max-height: 200px; overflow-y: auto; margin-bottom: 0.65rem; font-size: 0.82rem; }
+    .chat-messages .bubble { margin-bottom: 0.45rem; padding: 0.45rem 0.65rem; border-radius: 8px; max-width: 95%; white-space: pre-wrap; }
+    .chat-messages .user { background: rgba(255,255,255,0.2); margin-right: auto; }
+    .chat-messages .bot { background: rgba(255,255,255,0.14); margin-left: auto; }
   </style>
 </head>
-<body>
+<body class="tp">
   <aside class="sidebar">
     <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> SYLLABUSAI</div>
     <div class="menu-label">ÖĞRENCİ MENÜSÜ</div>
     <nav>
       <a href="/student.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> Derslerim</a>
-      <a href="/student-add.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Syllabus Ekle</a>
       <a href="/student-ai.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> AI Asistan</a>
-      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Ayarlar</a>
     </nav>
     <div class="lang"><button type="button">TR / EN</button></div>
-    <div class="user-box">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta"></div></div>
-    </div>
-  </aside>
-  <main class="main-area">
-    <h1 class="page-title">AI ASİSTAN</h1>
-    <div class="ai-layout">
-      <div class="robot-area">
-        <div class="robot-illus">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/><path d="M8 4l2 2M16 4l-2 2M8 20l2-2M16 20l-2-2"/></svg>
+    <div class="user-box has-drop">
+      <div class="user-drop">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Hesap menüsü">
+          <div class="user-row">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta"></div></div>
+          </div>
+        </button>
+        <div class="user-fly" id="userFly" hidden role="menu">
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Çıkış</button>
         </div>
       </div>
-      <div class="chat-panel">
-        <h2>MERHABA BAU'LU!</h2>
-        <p class="desc">Bana müfredatla ilgili sorularını sorabilir, proje ve sınav tarihlerini kolayca takip edebilir, syllabus detaylarını görebilirsin. İhtiyacın olduğunda yanındayım!</p>
-        <div class="course-select">
-          <label>Ders seçin (müfredata göre cevap)</label>
-          <select id="courseSelect"></select>
-        </div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input-wrap">
-          <input type="text" id="questionInput" placeholder="Sorunu buraya yazabilirsin">
-          <button type="button" id="btnAsk">Gönder</button>
-        </div>
+    </div>
+  </aside>
+  <main class="main-area ai-wrap">
+    <h1 class="page-title">AI Asistan</h1>
+    <div class="ai-top">
+      <div class="robot-illus" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+      </div>
+      <div class="course-strip">
+        <label for="courseSelect">Soru soracağın ders</label>
+        <select id="courseSelect"></select>
+      </div>
+    </div>
+    <p class="hint">Hocanın yüklediği PDF veya Word dosyasını görmek için <strong>Derslerim</strong>’den derse tıklayın. Bu sayfada yalnızca seçtiğin derse göre soru sorarsınız.</p>
+
+    <div class="chat-panel">
+      <h2>Sohbet</h2>
+      <p class="desc">Müfredatla ilgili sorunuzu yazın; cevap arka plandaki içerikten üretilir.</p>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-wrap">
+        <input type="text" id="questionInput" placeholder="Sorunu yaz…" autocomplete="off">
+        <button type="button" id="btnAsk">Gönder</button>
       </div>
     </div>
   </main>
+
+  <a href="/student-ai.html" class="ai-assistant-fab" aria-label="AI Asistan" title="AI Asistan">
+    <img src="/images/robot.png" alt="" width="38" height="38" decoding="async">
+  </a>
+  <script src="/js/out.js"></script>
+  <script src="/js/user-fly.js"></script>
   <script>
     var token = localStorage.getItem('syllabus_token');
     var userStr = localStorage.getItem('syllabus_user');
@@ -92,14 +117,17 @@
     document.getElementById('userMeta').textContent = user.email || 'Öğrenci';
 
     function authHeader(){ return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }; }
-    var courseList = [];
+
     fetch('/api/courses/my', { headers: authHeader() })
       .then(function(r){ return r.json(); })
       .then(function(list){
-        courseList = list || [];
         var sel = document.getElementById('courseSelect');
-        if (courseList.length === 0) { sel.innerHTML = '<option value="">Önce ders ekleyin</option>'; return; }
-        sel.innerHTML = '<option value="">— Ders seçin —</option>' + courseList.map(function(c){ return '<option value="'+c.id+'">'+ (c.courseCode||'') + ' ' + (c.title||''); }).join('');
+        if (!list || list.length === 0) {
+          sel.innerHTML = '<option value="">Önce Derslerim’den ders ekleyin</option>';
+          return;
+        }
+        sel.innerHTML = '<option value="">— Ders seçin —</option>' +
+          list.map(function(c){ return '<option value="'+c.id+'">'+ (c.courseCode||'') + ' · ' + (c.title||''); }).join('');
       });
 
     function addBubble(who, text) {
@@ -107,7 +135,7 @@
       div.className = 'bubble ' + who;
       div.textContent = text;
       document.getElementById('chatMessages').appendChild(div);
-      div.scrollIntoView();
+      div.scrollIntoView({ block: 'nearest' });
     }
     document.getElementById('btnAsk').onclick = function() {
       var q = document.getElementById('questionInput').value.trim();

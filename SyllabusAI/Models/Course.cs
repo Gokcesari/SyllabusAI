@@ -17,5 +17,13 @@ public class Course
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }
 
+    /// <summary>Öğrenci geri bildirimi için başlangıç (UTC). İkisi de dolu olmalı.</summary>
+    public DateTime? FeedbackOpensAtUtc { get; set; }
+    /// <summary>Öğrenci geri bildirimi için bitiş (UTC).</summary>
+    public DateTime? FeedbackClosesAtUtc { get; set; }
+
     public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+    public ICollection<SyllabusPdfUpload> SyllabusPdfUploads { get; set; } = new List<SyllabusPdfUpload>();
+    public ICollection<SyllabusChunk> SyllabusChunks { get; set; } = new List<SyllabusChunk>();
+    public ICollection<CourseFeedback> Feedbacks { get; set; } = new List<CourseFeedback>();
 }

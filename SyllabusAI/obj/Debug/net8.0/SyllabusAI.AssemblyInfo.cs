@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SyllabusAI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2902609609a9185c702c0b46d436c2e08343c387")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aeb5aed1d8fa09933cc66d967f0593c9ee6724c5")]
 [assembly: System.Reflection.AssemblyProductAttribute("SyllabusAI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SyllabusAI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

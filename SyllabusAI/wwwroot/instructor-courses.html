@@ -4,20 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SyllabusAI - Eğitmen Derslerim</title>
-  <link rel="stylesheet" href="/css/app.css">
-  <style>
-    .instructor-list { list-style: none; }
-    .instructor-list li {
-      padding: 0.75rem 1rem;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
-    }
-    .instructor-list .code { font-weight: 600; color: #1e3a5f; }
-  </style>
+  <link rel="stylesheet" href="/css/app.css?v=20260341">
 </head>
-<body>
+<body class="tp ins-soft">
   <aside class="sidebar">
     <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> SYLLABUSAI</div>
     <div class="menu-label">EĞİTMEN MENÜSÜ</div>
@@ -30,45 +19,125 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
         Derslerim
       </a>
-      <a href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg> Ayarlar</a>
+      <a href="/instructor-ai.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+        AI Asistan
+      </a>
     </nav>
     <div class="lang"><button type="button">TR / EN</button></div>
-    <div class="user-box">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta">Eğitmen</div></div>
+    <!-- Profil → üst menü → Çıkış (öğrenci / eğitmen ortak) -->
+    <div class="user-box has-drop">
+      <div class="user-drop">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Hesap menüsü">
+          <div class="user-row">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta">Eğitmen</div></div>
+          </div>
+        </button>
+        <div class="user-fly" id="userFly" hidden role="menu">
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Çıkış</button>
+        </div>
+      </div>
     </div>
   </aside>
 
-  <main class="main-area">
-    <h1 class="page-title">DERSLERİM</h1>
-    <p class="page-meta">Eklediğiniz dersler burada listelenir.</p>
-    <ul class="instructor-list" id="courseList"></ul>
+  <main class="main-area main-area--lms">
+    <div class="lms-page-head-row">
+      <h1 class="page-title">Derslerim</h1>
+      <div class="lms-search-wrap">
+        <input type="text" id="searchCourses" placeholder="Ders bul…" autocomplete="off">
+        <a href="/instructor.html" style="padding:0.5rem 1rem;border-radius:999px;background:#6366f1;color:#fff;font-weight:600;font-size:0.8rem;text-decoration:none;white-space:nowrap;">+ Yeni ders</a>
+      </div>
+    </div>
+    <p class="page-meta">Öğrenciler yalnızca bu ders kodlarıyla kayıt olabilir. Syllabus yüklemek için karttaki düğmeyi veya <a href="/instructor.html" style="color:#a5b4fc;">Ders Ekle</a> sayfasını kullanın.</p>
+
+    <h2 class="lms-subhead">Açtığım dersler</h2>
+
+    <div class="bubble-grid" id="courseList"></div>
   </main>
 
+  <a href="/instructor-ai.html" class="ai-assistant-fab" aria-label="AI Asistan" title="AI Asistan">
+    <img src="/images/robot.png" alt="" width="38" height="38" decoding="async">
+  </a>
+  <script src="/js/out.js"></script>
+  <script src="/js/user-fly.js"></script>
   <script>
+    // Eğitmen ders listesi (kartlar + arama)
     var token = localStorage.getItem('syllabus_token');
     var userStr = localStorage.getItem('syllabus_user');
     if (!token || !userStr) { window.location.href = '/'; }
     var user = JSON.parse(userStr);
     if (user.role !== 'Instructor') { window.location.href = user.role === 'Student' ? '/student.html' : '/'; }
 
-    function initials(n){
-      var p=(n||'').split(/\s+/);
-      return p.length>=2 ? (p[0][0]+p[1][0]).toUpperCase() : ((n||'?')[0]).toUpperCase();
+    var BUBBLE_PALETTE = ['#e8dcc8', '#ffd6e0', '#fff4cc', '#ffdcc4', '#c8e7f5', '#e0d4f7', '#b8e0f0', '#d4edda', '#f0d9ff', '#ffeaa7'];
+    var allCourses = [];
+
+    function initials(n) {
+      var p = (n || '').split(/\s+/);
+      return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : ((n || '?')[0]).toUpperCase();
     }
     document.getElementById('userAvatar').textContent = initials(user.fullName || user.email);
     document.getElementById('userName').textContent = user.fullName || user.email;
 
-    function authHeader(){ return { 'Authorization': 'Bearer ' + token }; }
+    function authHeader() { return { 'Authorization': 'Bearer ' + token }; }
+
+    function bubbleColor(id) { return BUBBLE_PALETTE[(id * 5 + 1) % BUBBLE_PALETTE.length]; }
+
+    function escapeHtml(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function filterCourses(list, q) {
+      if (!q) return list;
+      q = q.toLowerCase();
+      return list.filter(function(c) {
+        return ((c.courseCode || '') + ' ' + (c.title || '')).toLowerCase().indexOf(q) >= 0;
+      });
+    }
+
+    function renderCourses(list) {
+      var el = document.getElementById('courseList');
+      if (!list || list.length === 0) {
+        el.innerHTML = '<p class="empty">Henüz ders yok. <a href="/instructor.html" style="color:#a5b4fc;">Ders Ekle</a> ile yeni ders ve syllabus oluşturun.</p>';
+        return;
+      }
+      var me = user.fullName || user.email || 'Siz';
+      var meIni = initials(me);
+      el.innerHTML = list.map(function(c) {
+        var bg = bubbleColor(c.id);
+        var hasS = !!c.hasSyllabus;
+        return '<div class="bubble-card-wrap">' +
+          '<div class="bubble-card-inner bc-s" style="--bubble-bg:' + bg + '">' +
+          '<span class="bubble-code">' + escapeHtml(c.courseCode || '') + '</span>' +
+          '<h3 class="bubble-title">' + escapeHtml(c.title || c.courseCode || 'Ders') + '</h3>' +
+          '<div class="bubble-instructor"><span class="bubble-avatar">' + escapeHtml(meIni) + '</span> ' + escapeHtml(me) + ' · eğitmen</div>' +
+          '<div class="bubble-footer bubble-footer--instructor">' +
+          '<span class="bubble-stat">' + (hasS ? '✓ Syllabus yüklü' : '○ Syllabus eksik') + '</span>' +
+          '<span class="bubble-stat">Öğrenci kodu: <strong>' + escapeHtml(c.courseCode || '') + '</strong></span>' +
+          '<div class="bubble-actions">' +
+          '<a class="btn-primary" href="/instructor.html?courseId=' + c.id + '">Syllabus yükle / güncelle</a>' +
+          '<a class="btn-ghost" href="/instructor.html">Tüm dersler · oluştur</a>' +
+          '</div></div></div></div>';
+      }).join('');
+    }
+
+    function applyFilter() {
+      var q = document.getElementById('searchCourses').value.trim();
+      renderCourses(filterCourses(allCourses, q));
+    }
+
+    document.getElementById('searchCourses').addEventListener('input', applyFilter);
+
     function loadCourses() {
       fetch('/api/courses/instructor', { headers: authHeader() })
-        .then(function(r){ return r.json(); })
+        .then(function(r) { return r.json(); })
         .then(function(list) {
-          var el = document.getElementById('courseList');
-          if (!list || list.length === 0) { el.innerHTML = '<li class="empty">Henüz ders eklemediniz.</li>'; return; }
-          el.innerHTML = list.map(function(c){
-            return '<li><span class="code">'+c.courseCode+'</span> ' + (c.title || '') + (c.hasSyllabus ? ' · Müfredat var' : '') + '</li>';
-          }).join('');
+          allCourses = list || [];
+          applyFilter();
+        })
+        .catch(function() {
+          document.getElementById('courseList').innerHTML = '<p class="empty">Liste yüklenemedi.</p>';
         });
     }
     loadCourses();
