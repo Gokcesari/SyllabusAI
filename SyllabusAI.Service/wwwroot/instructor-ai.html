@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SyllabusAI - Eğitmen AI</title>
+  <link rel="stylesheet" href="/css/app.css?v=20260341">
+  <style>
+    /* Geçici placeholder — sonra öğrenci AI’sına benzer uç noktalar bağlanır */
+    .ai-placeholder {
+      max-width: 36rem;
+      padding: 1.5rem 1.35rem;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      line-height: 1.55;
+      color: rgba(235, 230, 245, 0.9);
+    }
+  </style>
+</head>
+<body class="tp ins-soft">
+  <aside class="sidebar">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> SYLLABUSAI</div>
+    <div class="menu-label">EĞİTMEN MENÜSÜ</div>
+    <nav>
+      <a href="/instructor.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Ders Ekle
+      </a>
+      <a href="/instructor-courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        Derslerim
+      </a>
+      <a href="/instructor-ai.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+        AI Asistan
+      </a>
+    </nav>
+    <div class="lang"><button type="button">TR / EN</button></div>
+    <div class="user-box has-drop">
+      <div class="user-drop">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Hesap menüsü">
+          <div class="user-row">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta">Eğitmen</div></div>
+          </div>
+        </button>
+        <div class="user-fly" id="userFly" hidden role="menu">
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Çıkış</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-area">
+    <h1 class="page-title">AI Asistan (eğitmen)</h1>
+    <div class="ai-placeholder">
+      <p><strong>Şimdilik sadece bilgi ekranı.</strong> Buraya daha sonra müfredat özeti, sınıfa özel soru-cevap veya içerik önerileri gibi akışlar eklenebilir; öğrenci tarafındaki AI ile aynı API’yi veya ayrı bir eğitmen uç noktasını kullanabilirsiniz.</p>
+      <p style="margin-top:1rem;">Öğrenci deneyimi: <a href="/student-ai.html">student-ai.html</a> — geliştirme sırasında orayı referans alın.</p>
+    </div>
+  </main>
+
+  <a href="/instructor-ai.html" class="ai-assistant-fab" aria-label="AI Asistan" title="AI Asistan">
+    <img src="/images/robot.png" alt="" width="38" height="38" decoding="async">
+  </a>
+  <script src="/js/out.js"></script>
+  <script src="/js/user-fly.js"></script>
+  <script>
+    // Oturum: yalnız eğitmen; öğrenciyi kendi sayfasına yönlendir
+    var token = localStorage.getItem('syllabus_token');
+    var userStr = localStorage.getItem('syllabus_user');
+    if (!token || !userStr) { window.location.href = '/'; }
+    var user = JSON.parse(userStr);
+    if (user.role !== 'Instructor') { window.location.href = user.role === 'Student' ? '/student.html' : '/'; }
+
+    function initials(n) {
+      var p = (n || '').split(/\s+/);
+      return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : ((n || '?')[0]).toUpperCase();
+    }
+    document.getElementById('userAvatar').textContent = initials(user.fullName || user.email);
+    document.getElementById('userName').textContent = user.fullName || user.email;
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\bin\Debug\net8.0\SyllabusAI.Core.deps.json
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\bin\Debug\net8.0\SyllabusAI.Core.dll
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\bin\Debug\net8.0\SyllabusAI.Core.pdb
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\obj\Debug\net8.0\SyllabusAI.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\obj\Debug\net8.0\SyllabusAI.Core.AssemblyInfoInputs.cache
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\obj\Debug\net8.0\SyllabusAI.Core.AssemblyInfo.cs
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\obj\Debug\net8.0\SyllabusAI.Core.csproj.CoreCompileInputs.cache
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\obj\Debug\net8.0\SyllabusAI.Core.sourcelink.json
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\obj\Debug\net8.0\SyllabusAI.Core.dll
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\obj\Debug\net8.0\refint\SyllabusAI.Core.dll
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\obj\Debug\net8.0\SyllabusAI.Core.pdb
+C:\Users\Gökçe\source\repos\SyllabusAI\SyllabusAI.Core\obj\Debug\net8.0\ref\SyllabusAI.Core.dll
