@@ -70,6 +70,14 @@ public class CoursesController : ControllerBase
         return Ok(list);
     }
 
+    [HttpGet("feedback-questions")]
+    [Authorize(Roles = "Student,Instructor")]
+    public async Task<IActionResult> GetFeedbackQuestions(CancellationToken ct)
+    {
+        var list = await _courseService.GetFeedbackQuestionsAsync(ct);
+        return Ok(list);
+    }
+
     /// <summary>Öğrenci: Dersi kendi listesinden kaldırır (okul senkronu değil; yalnızca bu uygulamadaki kayıt silinir).</summary>
     [HttpDelete("my/{courseId:int}")]
     [Authorize(Roles = "Student")]
@@ -122,6 +130,28 @@ public class CoursesController : ControllerBase
         if (UserId == null) return Unauthorized();
         var list = await _courseService.GetCourseFeedbacksForInstructorAsync(UserId.Value, courseId, ct);
         return Ok(list);
+    }
+
+    /// <summary>Egitmen: tek bir geri bildirimin detayini getirir (soru bazli puanlar dahil).</summary>
+    [HttpGet("{courseId:int}/feedbacks/{feedbackId:int}")]
+    [Authorize(Roles = "Instructor")]
+    public async Task<IActionResult> GetFeedbackDetail(int courseId, int feedbackId, CancellationToken ct)
+    {
+        if (UserId == null) return Unauthorized();
+        var item = await _courseService.GetCourseFeedbackDetailForInstructorAsync(UserId.Value, courseId, feedbackId, ct);
+        if (item == null) return NotFound();
+        return Ok(item);
+    }
+
+    /// <summary>Egitmen: soru bazli 1-5 dagilim raporu.</summary>
+    [HttpGet("{courseId:int}/feedback-summary")]
+    [Authorize(Roles = "Instructor")]
+    public async Task<IActionResult> GetFeedbackSummary(int courseId, CancellationToken ct)
+    {
+        if (UserId == null) return Unauthorized();
+        var summary = await _courseService.GetCourseFeedbackSummaryForInstructorAsync(UserId.Value, courseId, ct);
+        if (summary == null) return NotFound();
+        return Ok(summary);
     }
 
     /// <summary>Öğrenci: Bir dersin müfredatını getir (inceleme + highlight).</summary>

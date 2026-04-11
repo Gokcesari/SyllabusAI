@@ -14,4 +14,5 @@ public class CourseFeedback
     public byte Rating { get; set; }
     public string? Comment { get; set; }
     public DateTime SubmittedAtUtc { get; set; } = DateTime.UtcNow;
+    public ICollection<CourseFeedbackAnswer> Answers { get; set; } = new List<CourseFeedbackAnswer>();
 }

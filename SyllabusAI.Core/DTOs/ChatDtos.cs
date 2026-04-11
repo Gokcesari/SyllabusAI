@@ -10,6 +10,7 @@ public class ChatResponse
 {
     public string Answer { get; set; } = string.Empty;
     public bool FromSyllabus { get; set; }
+    public bool IsOutOfScope { get; set; }
 
     /// <summary>lexical | embedding | none</summary>
     public string RetrievalMethod { get; set; } = "none";

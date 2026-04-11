@@ -17,6 +17,8 @@ public class UnitOfWork : IUnitOfWork
         SyllabusPdfUploads = new Repository<SyllabusPdfUpload>(_context);
         SyllabusChunks = new Repository<SyllabusChunk>(_context);
         CourseFeedbacks = new Repository<CourseFeedback>(_context);
+        FeedbackQuestions = new Repository<FeedbackQuestion>(_context);
+        CourseFeedbackAnswers = new Repository<CourseFeedbackAnswer>(_context);
     }
 
     public IRepository<User> Users { get; }
@@ -26,6 +28,8 @@ public class UnitOfWork : IUnitOfWork
     public IRepository<SyllabusPdfUpload> SyllabusPdfUploads { get; }
     public IRepository<SyllabusChunk> SyllabusChunks { get; }
     public IRepository<CourseFeedback> CourseFeedbacks { get; }
+    public IRepository<FeedbackQuestion> FeedbackQuestions { get; }
+    public IRepository<CourseFeedbackAnswer> CourseFeedbackAnswers { get; }
 
     public int SaveChanges() => _context.SaveChanges();
 }

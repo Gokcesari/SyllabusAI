@@ -9,18 +9,109 @@
     .back { display: inline-block; margin-bottom: 0.75rem; color: #a5b4fc; text-decoration: none; font-size: 0.875rem; }
     .back:hover { color: #c4b5fd; }
     /* Ham müfredat metni gösterilmez; yalnız PDF önizleme veya Word indirme */
+    .main-area.reader-col {
+      max-width: min(1180px, 96vw);
+    }
     .file-shell {
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,0.1);
       background: rgba(0,0,0,0.25);
-      min-height: 52vh;
+      min-height: 68vh;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       margin-bottom: 1.25rem;
     }
     .file-msg { padding: 1.1rem; color: rgba(220, 214, 235, 0.88); font-size: 0.9rem; line-height: 1.5; }
-    .file-shell iframe { flex: 1; width: 100%; min-height: 52vh; border: 0; background: #0a0612; }
+    .preview-wrap { position: relative; min-height: 68vh; flex: 1; }
+    .file-shell iframe { flex: 1; width: 100%; min-height: 68vh; border: 0; background: #0a0612; }
+    .pdfjs-host {
+      display: none;
+      height: 68vh;
+      overflow: auto;
+      padding: 0.75rem 0;
+      background: #0a0612;
+    }
+    .pdfjs-page {
+      display: block;
+      margin: 0 auto 0.75rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+      background: #fff;
+      max-width: calc(100% - 1.5rem);
+      height: auto;
+    }
+    .blur-layer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 25%;
+      bottom: 0;
+      backdrop-filter: blur(10px) saturate(80%);
+      background: linear-gradient(to bottom, rgba(8, 10, 35, 0.14), rgba(8, 10, 35, 0.52));
+      border-top: 1px solid rgba(255,255,255,0.25);
+      pointer-events: none;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 1.2rem;
+      color: #f8fafc;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+    .reader-stage {
+      margin: 0 0 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(22, 16, 40, 0.52);
+    }
+    .stage-head { display: flex; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.55rem; }
+    .stage-title { font-size: 0.9rem; font-weight: 700; color: #ede9fe; }
+    .stage-note { font-size: 0.8rem; color: rgba(226, 220, 241, 0.82); }
+    .stage-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      overflow: hidden;
+      margin-bottom: 0.65rem;
+    }
+    .stage-fill {
+      width: 25%;
+      height: 100%;
+      background: linear-gradient(90deg, #60a5fa, #4f46e5);
+      transition: width 200ms ease;
+    }
+    .stage-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .stage-actions button {
+      padding: 0.48rem 0.85rem;
+      border-radius: 8px;
+      border: none;
+      background: #4f46e5;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .stage-actions button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .read-ack {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: rgba(243, 241, 252, 0.9);
+      font-size: 0.84rem;
+    }
+    .chat-box.locked { opacity: 0.7; }
+    .chat-lock-msg {
+      display: none;
+      margin-top: 0.6rem;
+      font-size: 0.82rem;
+      color: #fde68a;
+    }
+    .chat-lock-msg.show { display: block; }
     .docx-actions { padding: 0 1.1rem 1.1rem; display: none; }
     .docx-actions a {
       display: inline-block; padding: 0.55rem 1rem; border-radius: 10px;
@@ -36,6 +127,14 @@
     .chat-messages .bubble { margin-bottom: 0.45rem; padding: 0.45rem 0.65rem; border-radius: 8px; white-space: pre-wrap; }
     .chat-messages .user { background: rgba(255,255,255,0.2); margin-right: auto; max-width: 92%; }
     .chat-messages .bot { background: rgba(255,255,255,0.14); margin-left: auto; max-width: 92%; }
+    .chat-messages .bot.scope-deny {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.55);
+    }
+    .chat-messages .bot.ai-offline {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.55);
+    }
     .chat-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
     .chat-row input { flex: 1; min-width: 160px; padding: 0.55rem 0.75rem; border: none; border-radius: 8px; font-size: 0.88rem; }
     .chat-row button { padding: 0.55rem 0.95rem; border: none; border-radius: 8px; background: #4f46e5; color: #fff; font-weight: 600; cursor: pointer; }
@@ -58,6 +157,35 @@
     .feedback-box button {
       margin-top: 0.65rem; padding: 0.55rem 1.1rem; border: none; border-radius: 8px; background: #6366f1; color: #fff; font-weight: 600; cursor: pointer;
     }
+    .feedback-gate {
+      position: fixed; inset: 0; z-index: 1200;
+      background: rgba(3, 5, 20, 0.78);
+      display: none; align-items: center; justify-content: center;
+      padding: 1.25rem;
+    }
+    .feedback-gate.show { display: flex; }
+    .feedback-gate .panel {
+      width: min(980px, 96vw);
+      max-height: 90vh;
+      overflow: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 1rem 1.1rem;
+    }
+    .feedback-gate .title { font-size: 1.05rem; font-weight: 700; }
+    .feedback-gate .meta { font-size: 0.84rem; color: #334155; margin: 0.25rem 0 0.75rem; }
+    .feedback-gate .q-card { background: #dbeafe; border-radius: 10px; padding: 0.7rem 0.8rem; margin-bottom: 0.65rem; }
+    .feedback-gate .q-text { font-size: 0.9rem; font-weight: 600; color: #1e293b; margin-bottom: 0.45rem; }
+    .feedback-gate .q-rates { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .feedback-gate .q-rates label { font-size: 0.82rem; color: #0f172a; display: inline-flex; gap: 0.25rem; align-items: center; }
+    .feedback-gate .gate-actions { display: flex; gap: 0.6rem; align-items: center; margin-top: 0.65rem; }
+    .feedback-gate .gate-actions button {
+      border: none; border-radius: 8px; background: #4f46e5; color: #fff;
+      padding: 0.58rem 1rem; font-weight: 600; cursor: pointer;
+    }
+    .feedback-gate .gate-msg { font-size: 0.82rem; color: #334155; }
   </style>
 </head>
 <body class="tp">
@@ -88,11 +216,26 @@
     <h1 class="page-title" id="courseTitle">Ders</h1>
     <p class="page-meta" style="margin-bottom:1rem;font-size:0.85rem;">Hocanın yüklediği dosya (PDF veya Word). Metin çıktısı burada gösterilmez; yalnızca dosya.</p>
 
+    <div class="reader-stage" id="readerStage">
+      <div class="stage-head">
+        <div class="stage-title">Okuma aşaması</div>
+        <div class="stage-note">Tüm sayfalar okunduğunda blur açılır.</div>
+      </div>
+      <div class="stage-bar"><div class="stage-fill" id="stageFill"></div></div>
+      <div class="stage-actions">
+        <button type="button" id="btnUnlockAi" disabled>AI Asistanı Aç</button>
+      </div>
+    </div>
+
     <div class="file-shell" id="fileShell">
-      <p class="file-msg" id="fileMsg">Yükleniyor…</p>
-      <iframe id="pdfFrame" title="Syllabus PDF" style="display:none"></iframe>
-      <div class="docx-actions" id="docxWrap">
-        <a href="#" id="docxLink" download="syllabus.docx">Word dosyasını indir</a>
+      <div class="preview-wrap" id="previewWrap">
+        <p class="file-msg" id="fileMsg">Yükleniyor…</p>
+        <iframe id="pdfFrame" title="Syllabus PDF" style="display:none"></iframe>
+        <div id="pdfJsHost" class="pdfjs-host"></div>
+        <div class="docx-actions" id="docxWrap">
+          <a href="#" id="docxLink" download="syllabus.docx">Word dosyasını indir</a>
+        </div>
+        <div class="blur-layer" id="blurLayer">Alt kısım kilitli: okumaya devam ettikçe açılır</div>
       </div>
     </div>
 
@@ -127,6 +270,17 @@
       <img src="/images/robot.png" alt="" width="40" height="40" decoding="async">
     </a>
   </main>
+  <div class="feedback-gate" id="feedbackGate" aria-hidden="true">
+    <div class="panel">
+      <div class="title">Ders Geri Bildirim Anketi (zorunlu)</div>
+      <div class="meta" id="gateMeta">Anketi tamamlamadan bu ders ekraninda devam edemezsiniz.</div>
+      <div id="gateQuestions"></div>
+      <div class="gate-actions">
+        <button type="button" id="btnGateSubmit">Anketi Gonder</button>
+        <span class="gate-msg" id="gateMsg"></span>
+      </div>
+    </div>
+  </div>
   <script src="/js/out.js"></script>
   <script src="/js/user-fly.js"></script>
   <script>
@@ -149,13 +303,286 @@
     function authBearer() { return { 'Authorization': 'Bearer ' + token }; }
 
     var blobUrl = null;
+    var hasSyllabusFile = false;
+    var isPdfPreview = false;
+    var pdfProgressPoll = null;
+    var pdfWheelScore = 0;
+    var lastKnownPdfTotalPages = null;
+    var isViewerAtBottom = false;
+    var isPageAtBottom = false;
+    var lastProgressSource = 'none';
+    var pdfRenderInProgress = false;
+    var pdfjsLibRef = null;
+    var pdfjsReady = false;
+    var pdfjsLoadError = '';
+    var totalStages = 4;
+    var readState = { stage: 1, unlocked: false, progress: 0 };
+    var stageStorageKey = '';
+    var unlockStorageKey = '';
+    var progressStorageKey = '';
+    var scrollTicking = false;
+    var feedbackQuestions = [];
+    var feedbackStatus = null;
+
+    function setGateVisible(v) {
+      var gate = document.getElementById('feedbackGate');
+      if (v) gate.classList.add('show');
+      else gate.classList.remove('show');
+      gate.setAttribute('aria-hidden', v ? 'false' : 'true');
+    }
+    function renderGateQuestions() {
+      var host = document.getElementById('gateQuestions');
+      host.innerHTML = (feedbackQuestions || []).map(function(q) {
+        var no = q.questionNo;
+        var radios = [1,2,3,4,5].map(function(r) {
+          return '<label><input type="radio" name="q' + no + '" value="' + r + '"> ' + r + '</label>';
+        }).join('');
+        return '<div class="q-card"><div class="q-text">' + no + '. ' + (q.questionText || '') + '</div><div class="q-rates">' + radios + '</div></div>';
+      }).join('');
+    }
+    function collectGateAnswers() {
+      var answers = [];
+      for (var i = 0; i < feedbackQuestions.length; i++) {
+        var no = feedbackQuestions[i].questionNo;
+        var sel = document.querySelector('input[name="q' + no + '"]:checked');
+        if (!sel) return null;
+        answers.push({ questionNo: no, rating: parseInt(sel.value, 10) });
+      }
+      return answers;
+    }
+    function maybeShowFeedbackGate() {
+      if (!feedbackStatus) return;
+      if (feedbackStatus.windowOpen && !feedbackStatus.hasSubmitted) {
+        document.getElementById('gateMeta').textContent = 'Bu dersin anketini tamamlamadan devam edemezsiniz.';
+        renderGateQuestions();
+        document.getElementById('gateMsg').textContent = '';
+        setGateVisible(true);
+      } else {
+        setGateVisible(false);
+      }
+    }
+
+    function setChatLocked(locked) {
+      var box = document.getElementById('chat');
+      var input = document.getElementById('questionInput');
+      var btn = document.getElementById('btnAsk');
+      var msgEl = document.getElementById('chatLockMsg');
+      if (locked) {
+        box.classList.add('locked');
+        input.disabled = true;
+        btn.disabled = true;
+        if (msgEl) msgEl.classList.add('show');
+      } else {
+        box.classList.remove('locked');
+        input.disabled = false;
+        btn.disabled = false;
+        if (msgEl) msgEl.classList.remove('show');
+      }
+    }
+
+    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function loadReadState() {
+      stageStorageKey = 'syllabus_read_stage_' + courseId;
+      unlockStorageKey = 'syllabus_read_unlock_' + courseId;
+      progressStorageKey = 'syllabus_read_progress_' + courseId;
+      var rawStage = parseInt(localStorage.getItem(stageStorageKey) || '1', 10);
+      readState.stage = clamp(isNaN(rawStage) ? 1 : rawStage, 1, totalStages);
+      readState.unlocked = localStorage.getItem(unlockStorageKey) === '1';
+      var rawProgress = parseFloat(localStorage.getItem(progressStorageKey) || '0');
+      readState.progress = clamp(isNaN(rawProgress) ? 0 : rawProgress, 0, 1);
+    }
+    function saveReadState() {
+      localStorage.setItem(stageStorageKey, String(readState.stage));
+      localStorage.setItem(unlockStorageKey, readState.unlocked ? '1' : '0');
+      localStorage.setItem(progressStorageKey, String(readState.progress));
+    }
+    function updateReadUi() {
+      var stage = readState.stage;
+      var unlockedPercent = clamp(readState.progress * 100, 0, 100);
+      var stageFill = document.getElementById('stageFill');
+      var blurLayer = document.getElementById('blurLayer');
+      var btnUnlock = document.getElementById('btnUnlockAi');
+      stageFill.style.width = unlockedPercent + '%';
+      // Baslangicta blur araligi: %35'ten baslar, scroll ile azalir.
+      var blurTop = 35 + (readState.progress * 65);
+      blurLayer.style.top = blurTop + '%';
+      blurLayer.style.display = unlockedPercent >= 100 ? 'none' : 'flex';
+      var blurPx = Math.max(0, (1 - readState.progress) * 12);
+      var alphaTop = (0.14 * (1 - readState.progress)).toFixed(3);
+      var alphaBottom = (0.52 * (1 - readState.progress)).toFixed(3);
+      blurLayer.style.backdropFilter = 'blur(' + blurPx.toFixed(2) + 'px) saturate(80%)';
+      blurLayer.style.background = 'linear-gradient(to bottom, rgba(8, 10, 35, ' + alphaTop + '), rgba(8, 10, 35, ' + alphaBottom + '))';
+      btnUnlock.disabled = !(stage >= totalStages && hasSyllabusFile);
+      setChatLocked(!(readState.unlocked && hasSyllabusFile));
+    }
+    function updateBottomFlagsForDebugOnly() {
+      var page = document.scrollingElement || document.documentElement;
+      isPageAtBottom = !!page && ((page.scrollTop + page.clientHeight) >= (page.scrollHeight - 2));
+    }
+    function updateProgressFromScroll() {
+      var wrap = document.getElementById('previewWrap');
+      var shell = document.getElementById('fileShell');
+      var pdfHost = document.getElementById('pdfJsHost');
+      var usePdfHost = isPdfPreview && pdfHost && pdfHost.style.display !== 'none' && (pdfHost.scrollHeight - pdfHost.clientHeight) > 1;
+      var useWrap = wrap && (wrap.scrollHeight - wrap.clientHeight) > 1;
+      var useShell = !useWrap && shell && (shell.scrollHeight - shell.clientHeight) > 1;
+      var progress = null;
+      isViewerAtBottom = false;
+      updateBottomFlagsForDebugOnly();
+      if (usePdfHost) {
+        lastProgressSource = 'pdfjs-scroll';
+        progress = clamp(pdfHost.scrollTop / Math.max(1, (pdfHost.scrollHeight - pdfHost.clientHeight)), 0, 1);
+        if ((pdfHost.scrollTop + pdfHost.clientHeight) >= (pdfHost.scrollHeight - 4)) {
+          progress = 1;
+          isViewerAtBottom = true;
+        }
+      }
+
+      if (progress == null) {
+        if (!useWrap && !useShell) return;
+        var scrollTop = useWrap ? wrap.scrollTop : shell.scrollTop;
+        var scrollHeight = useWrap ? wrap.scrollHeight : shell.scrollHeight;
+        var clientHeight = useWrap ? wrap.clientHeight : shell.clientHeight;
+        // progress = scrollTop / (scrollHeight - clientHeight)
+        lastProgressSource = useWrap ? 'preview-wrap-scroll' : 'file-shell-scroll';
+        progress = clamp(scrollTop / Math.max(1, (scrollHeight - clientHeight)), 0, 1);
+        if ((scrollTop + clientHeight) >= (scrollHeight - 4)) {
+          progress = 1;
+          isViewerAtBottom = true;
+        }
+      }
+
+      readState.progress = progress;
+      readState.stage = clamp(Math.floor(progress * totalStages) + 1, 1, totalStages);
+      // Blur/ilerleme sadece viewer altina inildiginda tamamlanir.
+      if (isViewerAtBottom || progress >= 0.999) {
+        readState.progress = 1;
+        readState.stage = totalStages;
+        if (lastProgressSource === 'none') lastProgressSource = 'bottom-force';
+      }
+      saveReadState();
+      updateReadUi();
+    }
+    function setProgressFromPageNumbers(current, total) {
+      if (!total || total <= 0) return false;
+      lastProgressSource = 'viewer-message-pages';
+      var p = clamp(current / total, 0, 1);
+      if (current >= total) p = 1;
+      if (p <= readState.progress) return false;
+      readState.progress = p;
+      readState.stage = clamp(Math.floor(p * totalStages) + 1, 1, totalStages);
+      if (p >= 0.999) {
+        readState.progress = 1;
+        readState.stage = totalStages;
+        isViewerAtBottom = true;
+      }
+      saveReadState();
+      updateReadUi();
+      return true;
+    }
+    function extractPageNumbers(payload) {
+      if (!payload) return null;
+      try {
+        var text = typeof payload === 'string' ? payload : JSON.stringify(payload);
+        // "8 / 8" veya benzeri
+        var m = text.match(/(\d+)\s*\/\s*(\d+)/);
+        if (m) return { current: parseInt(m[1], 10), total: parseInt(m[2], 10) };
+
+        // currentPage/pageNumber ve totalPages/numPages gibi alanlar
+        var cur = null, tot = null;
+        var curM = text.match(/"(?:currentPage|pageNumber|page)"\s*:\s*(\d+)/i);
+        var totM = text.match(/"(?:totalPages|numPages|pageCount|pages)"\s*:\s*(\d+)/i);
+        if (curM) cur = parseInt(curM[1], 10);
+        if (totM) tot = parseInt(totM[1], 10);
+        if (cur && tot) return { current: cur, total: tot };
+      } catch (_) {}
+      return null;
+    }
+    function onViewerMessage(ev) {
+      // Bazı viewer implementasyonlarında mesaj source'u nested frame olabilir.
+      // Bu yüzden source filtresini gevşek tutuyoruz.
+      var pages = extractPageNumbers(ev.data);
+      if (!pages) return;
+      if (pages.total && pages.total > 0) lastKnownPdfTotalPages = pages.total;
+      setProgressFromPageNumbers(pages.current, pages.total);
+    }
+    function onReaderScroll() {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(function () {
+        scrollTicking = false;
+        updateProgressFromScroll();
+      });
+    }
     function clearFile() {
+      if (pdfProgressPoll) { clearInterval(pdfProgressPoll); pdfProgressPoll = null; }
+      pdfWheelScore = 0;
+      lastKnownPdfTotalPages = null;
+      isViewerAtBottom = false;
       if (blobUrl) { URL.revokeObjectURL(blobUrl); blobUrl = null; }
       document.getElementById('pdfFrame').src = '';
       document.getElementById('pdfFrame').style.display = 'none';
+      var host = document.getElementById('pdfJsHost');
+      host.innerHTML = '';
+      host.style.display = 'none';
       document.getElementById('docxWrap').style.display = 'none';
       var old = document.getElementById('docxLink');
       old.removeAttribute('href');
+    }
+
+    loadReadState();
+    updateReadUi();
+
+    async function renderPdfWithPdfJs(blob) {
+      if (pdfRenderInProgress) return false;
+      pdfRenderInProgress = true;
+      try {
+        if (!(await ensurePdfJsLoaded())) return false;
+        var host = document.getElementById('pdfJsHost');
+        host.innerHTML = '';
+        host.style.display = 'block';
+        var bytes = await blob.arrayBuffer();
+        var loadingTask = pdfjsLibRef.getDocument({ data: bytes });
+        var pdf = await loadingTask.promise;
+        lastKnownPdfTotalPages = pdf.numPages || null;
+        for (var i = 1; i <= pdf.numPages; i++) {
+          var page = await pdf.getPage(i);
+          var viewport = page.getViewport({ scale: 1.35 });
+          var canvas = document.createElement('canvas');
+          canvas.className = 'pdfjs-page';
+          canvas.width = Math.floor(viewport.width);
+          canvas.height = Math.floor(viewport.height);
+          var ctx = canvas.getContext('2d', { alpha: false });
+          await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+          host.appendChild(canvas);
+        }
+        return true;
+      } catch (_) {
+        return false;
+      } finally {
+        pdfRenderInProgress = false;
+      }
+    }
+    async function ensurePdfJsLoaded() {
+      if (pdfjsLibRef && typeof pdfjsLibRef.getDocument === 'function') {
+        pdfjsReady = true;
+        return true;
+      }
+      try {
+        var mod = await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.min.mjs');
+        pdfjsLibRef = (mod && mod.getDocument) ? mod : (mod && mod.default && mod.default.getDocument ? mod.default : null);
+        if (pdfjsLibRef && pdfjsLibRef.GlobalWorkerOptions) {
+          pdfjsLibRef.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.4.168/build/pdf.worker.min.mjs';
+        }
+        pdfjsReady = !!(pdfjsLibRef && typeof pdfjsLibRef.getDocument === 'function');
+        pdfjsLoadError = pdfjsReady ? '' : 'module-missing-getDocument';
+        return pdfjsReady;
+      } catch (err) {
+        pdfjsLibRef = null;
+        pdfjsReady = false;
+        pdfjsLoadError = 'import-failed';
+        return false;
+      }
     }
 
     fetch('/api/courses/' + courseId + '/syllabus', { headers: authHeader() })
@@ -171,82 +598,136 @@
       .then(function (r) {
         if (r.status === 404) {
           msg.textContent = 'Bu ders için henüz PDF veya Word dosyası yüklenmemiş. Eğitmen yüklediğinde burada görünür.';
+          hasSyllabusFile = false;
+          setChatLocked(true);
           return null;
         }
         if (!r.ok) { msg.textContent = 'Dosya alınamadı.'; return null; }
         var hdr = (r.headers.get('content-type') || '').toLowerCase();
         return r.blob().then(function (b) { return { blob: b, hdr: hdr }; });
       })
-      .then(function (pack) {
+      .then(async function (pack) {
         if (!pack) return;
         var blob = pack.blob;
         var hdr = pack.hdr;
         var ct = ((blob.type || '') + ' ' + hdr).toLowerCase();
         if (ct.indexOf('pdf') >= 0) {
+          hasSyllabusFile = true;
+          isPdfPreview = true;
+          pdfWheelScore = 0;
+          lastKnownPdfTotalPages = null;
           blobUrl = URL.createObjectURL(blob);
-          var frame = document.getElementById('pdfFrame');
-          frame.src = blobUrl;
-          frame.style.display = 'block';
           msg.style.display = 'none';
+          var rendered = false;
+          try { rendered = await renderPdfWithPdfJs(blob); } catch (_) { rendered = false; }
+          if (!rendered) {
+            var frame = document.getElementById('pdfFrame');
+            frame.src = blobUrl;
+            frame.style.display = 'block';
+            lastProgressSource = 'iframe-fallback-only';
+          } else {
+            document.getElementById('pdfFrame').style.display = 'none';
+            lastProgressSource = 'pdfjs-rendered';
+          }
         } else if (ct.indexOf('word') >= 0 || ct.indexOf('document') >= 0 || ct.indexOf('docx') >= 0) {
+          hasSyllabusFile = true;
+          isPdfPreview = false;
           blobUrl = URL.createObjectURL(blob);
-          msg.textContent = 'Bu ders Word (.docx) ile yüklenmiş. Tarayıcıda önizleme yok; dosyayı indirip açın.';
+          msg.textContent = 'Bu ders Word (.docx) ile yüklenmiş. Aşamaları tamamladıktan sonra dosyayı indirip açabilirsiniz.';
           var link = document.getElementById('docxLink');
           link.href = blobUrl;
           link.download = 'syllabus.docx';
           document.getElementById('docxWrap').style.display = 'block';
         } else {
+          isPdfPreview = false;
+          hasSyllabusFile = false;
           msg.textContent = 'Dosya türü önizlenemiyor.';
         }
+        updateReadUi();
+        updateProgressFromScroll();
       })
-      .catch(function () { msg.textContent = 'Bağlantı hatası.'; });
+      .catch(function () { msg.textContent = 'Bağlantı hatası.'; hasSyllabusFile = false; setChatLocked(true); });
 
-    function addMsg(who, text) {
+    document.getElementById('btnUnlockAi').onclick = function () {
+      if (!hasSyllabusFile) return;
+      if (readState.stage < totalStages) return;
+      readState.unlocked = true;
+      saveReadState();
+      updateReadUi();
+      addMsg('bot', 'Tebrikler. Müfredat okuma adımlarını tamamladınız, AI Asistan açıldı.');
+    };
+    document.getElementById('previewWrap').addEventListener('scroll', onReaderScroll, { passive: true });
+    document.getElementById('fileShell').addEventListener('scroll', onReaderScroll, { passive: true });
+    document.getElementById('pdfJsHost').addEventListener('scroll', onReaderScroll, { passive: true });
+    window.addEventListener('resize', onReaderScroll, { passive: true });
+
+    function addMsg(who, text, state) {
       var div = document.createElement('div');
       div.className = 'bubble ' + who;
+      if (who === 'bot' && state) div.classList.add(state);
       div.textContent = text;
       document.getElementById('chatMessages').appendChild(div);
       div.scrollIntoView({ block: 'nearest' });
     }
     document.getElementById('btnAsk').onclick = function () {
       var q = document.getElementById('questionInput').value.trim();
+      if (!(readState.unlocked && hasSyllabusFile)) {
+        addMsg('bot', 'AI Asistan kilitli. Önce müfredatı tamamen okuyun.');
+        return;
+      }
       if (!q) return;
       addMsg('user', q);
       document.getElementById('questionInput').value = '';
       fetch('/api/chat/ask', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseId: courseId, question: q }) })
         .then(function (r) { return r.json(); })
-        .then(function (d) { addMsg('bot', d.answer || 'Cevap alınamadı.'); })
+        .then(function (d) {
+          var answer = d.answer || 'Cevap alınamadı.';
+          var state = '';
+          if (d && d.isOutOfScope) state = 'scope-deny';
+          if (d && d.fromSyllabus === false && answer.toLowerCase().indexOf('ai servisi') >= 0) state = 'ai-offline';
+          addMsg('bot', answer, state);
+        })
         .catch(function () { addMsg('bot', 'Bağlantı hatası.'); });
     };
     if (window.location.hash === '#chat') document.getElementById('chat').scrollIntoView();
 
     function refreshFeedbackUi() {
-      fetch('/api/courses/' + courseId + '/feedback-status', { headers: authHeader() })
-        .then(function (r) { return r.json(); })
-        .then(function (s) {
+      Promise.all([
+        fetch('/api/courses/feedback-questions', { headers: authHeader() }).then(function(r){ return r.ok ? r.json() : []; }),
+        fetch('/api/courses/' + courseId + '/feedback-status', { headers: authHeader() }).then(function(r){ return r.json(); })
+      ])
+        .then(function (res) {
+          feedbackQuestions = Array.isArray(res[0]) ? res[0] : [];
+          var s = res[1];
+          feedbackStatus = s;
           var hint = document.getElementById('feedbackStatusText');
           var form = document.getElementById('feedbackForm');
           if (s.hasSubmitted) {
             hint.textContent = 'Geri bildiriminiz kayıtlı (puan: ' + s.myRating + '). Teşekkürler.';
             form.style.display = 'none';
+            maybeShowFeedbackGate();
             return;
           }
           if (!s.windowConfigured) {
             hint.textContent = s.message || 'Bu ders için geri bildirim henüz açılmadı.';
             form.style.display = 'none';
+            maybeShowFeedbackGate();
             return;
           }
           if (!s.windowOpen) {
             hint.textContent = s.message || 'Geri bildirim şu an kabul edilmiyor.';
             form.style.display = 'none';
+            maybeShowFeedbackGate();
             return;
           }
           hint.textContent = 'Dönem sonu geri bildiriminizi buradan gönderebilirsiniz (tek sefer).';
-          form.style.display = 'block';
+          form.style.display = 'none';
+          maybeShowFeedbackGate();
         })
         .catch(function () {
           document.getElementById('feedbackStatusText').textContent = 'Geri bildirim bilgisi alınamadı.';
           document.getElementById('feedbackForm').style.display = 'none';
+          setGateVisible(false);
         });
     }
     refreshFeedbackUi();
@@ -257,7 +738,7 @@
       fetch('/api/courses/' + courseId + '/feedback', {
         method: 'POST',
         headers: authHeader(),
-        body: JSON.stringify({ rating: rating, comment: comment || null })
+        body: JSON.stringify({ rating: rating, comment: comment || null, answers: [] })
       })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
         .then(function (x) {
@@ -268,6 +749,34 @@
         })
         .catch(function () { alert('Bağlantı hatası.'); });
     };
+
+    document.getElementById('btnGateSubmit').addEventListener('click', function () {
+      if (!feedbackQuestions || feedbackQuestions.length === 0) {
+        document.getElementById('gateMsg').textContent = 'Anket sorulari yuklenemedi.';
+        return;
+      }
+      var answers = collectGateAnswers();
+      if (!answers) {
+        document.getElementById('gateMsg').textContent = 'Lutfen tum sorulari 1-5 arasi yanitlayin.';
+        return;
+      }
+      var avg = Math.round(answers.reduce(function(sum, a){ return sum + a.rating; }, 0) / answers.length);
+      fetch('/api/courses/' + courseId + '/feedback', {
+        method: 'POST',
+        headers: authHeader(),
+        body: JSON.stringify({ rating: avg, comment: null, answers: answers })
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (x) {
+          if (!x.ok) {
+            document.getElementById('gateMsg').textContent = x.d.message || 'Gonderilemedi.';
+            return;
+          }
+          setGateVisible(false);
+          refreshFeedbackUi();
+        })
+        .catch(function () { document.getElementById('gateMsg').textContent = 'Baglanti hatasi.'; });
+    });
 
     window.addEventListener('beforeunload', clearFile);
   </script>

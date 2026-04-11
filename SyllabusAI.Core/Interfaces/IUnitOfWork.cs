@@ -11,5 +11,7 @@ public interface IUnitOfWork
     IRepository<SyllabusPdfUpload> SyllabusPdfUploads { get; }
     IRepository<SyllabusChunk> SyllabusChunks { get; }
     IRepository<CourseFeedback> CourseFeedbacks { get; }
+    IRepository<FeedbackQuestion> FeedbackQuestions { get; }
+    IRepository<CourseFeedbackAnswer> CourseFeedbackAnswers { get; }
     int SaveChanges();
 }

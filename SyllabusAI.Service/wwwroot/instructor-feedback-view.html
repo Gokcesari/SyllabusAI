@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback Sorulari (Read Only)</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f3f5f8; color: #1f2937; }
+    .wrap { max-width: 880px; margin: 14px auto; background: #fff; border: 1px solid #d9dce2; border-radius: 10px; padding: 12px; }
+    .head { font-size: 20px; font-weight: 700; margin: 0 0 10px; }
+    .meta { font-size: 13px; color: #374151; margin-bottom: 10px; background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 8px 10px; }
+    .q { border: 1px solid #d9dce2; border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; background: #f8fafc; }
+    .qt { font-size: 14px; margin-bottom: 7px; line-height: 1.4; }
+    .rates { display: flex; gap: 12px; flex-wrap: wrap; }
+    .rates label { font-size: 13px; display: inline-flex; align-items: center; gap: 4px; }
+    .rates input { accent-color: #0ea5e9; }
+    .comment { margin-top: 8px; font-size: 13px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px; }
+    .top-actions { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+    .btn { border: none; border-radius: 8px; background: #4f46e5; color: #fff; padding: 7px 12px; cursor: pointer; font-weight: 600; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top-actions"><button type="button" class="btn" onclick="window.close()">Kapat</button></div>
+    <h1 class="head">Ogrenci Feedback Sorulari (Read Only)</h1>
+    <div class="meta" id="meta">Yukleniyor...</div>
+    <div id="answers"></div>
+    <div id="comment" class="comment" style="display:none;"></div>
+  </div>
+  <script>
+    var token = localStorage.getItem('syllabus_token');
+    var userStr = localStorage.getItem('syllabus_user');
+    if (!token || !userStr) window.close();
+    var user = JSON.parse(userStr);
+    if (user.role !== 'Instructor') window.close();
+
+    var qs = new URLSearchParams(window.location.search);
+    var courseId = parseInt(qs.get('courseId'), 10);
+    var feedbackId = parseInt(qs.get('feedbackId'), 10);
+
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    fetch('/api/courses/' + courseId + '/feedbacks/' + feedbackId, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(x){
+        if (!x) { document.getElementById('meta').textContent = 'Geri bildirim bulunamadi.'; return; }
+        var when = x.submittedAtUtc ? new Date(x.submittedAtUtc).toLocaleString() : '-';
+        document.getElementById('meta').innerHTML = '<strong>Ogrenci:</strong> ' + esc(x.studentName || '?') + ' &nbsp;|&nbsp; <strong>Genel puan:</strong> ' + esc(x.rating) + '/5 &nbsp;|&nbsp; <strong>Tarih:</strong> ' + esc(when);
+        var answers = Array.isArray(x.answers) ? x.answers : [];
+        document.getElementById('answers').innerHTML = answers.map(function(a){
+          var no = parseInt(a.questionNo, 10);
+          var t = a.questionText || ('Soru ' + no);
+          var r = parseInt(a.rating, 10);
+          return '<div class="q"><div class="qt">' + no + '. ' + esc(t) + '</div><div class="rates">' +
+            [1,2,3,4,5].map(function(v){
+              var checked = v === r ? ' checked' : '';
+              return '<label><input type="radio" disabled' + checked + '> ' + v + '</label>';
+            }).join('') +
+            '</div></div>';
+        }).join('');
+        var c = document.getElementById('comment');
+        if (x.comment) {
+          c.style.display = 'block';
+          c.innerHTML = '<strong>Yorum:</strong> ' + esc(x.comment);
+        } else c.style.display = 'none';
+      })
+      .catch(function(){ document.getElementById('meta').textContent = 'Baglanti hatasi.'; });
+  </script>
+</body>
+</html>

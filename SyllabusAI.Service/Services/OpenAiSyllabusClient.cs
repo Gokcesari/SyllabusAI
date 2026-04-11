@@ -6,6 +6,8 @@ namespace SyllabusAI.Services;
 
 /// <summary>
 /// OpenAI uyumlu API (varsayılan https://api.openai.com/v1). Anahtar boşsa tüm çağrılar no-op.
+/// Anahtar sırası: <c>OpenAI:ApiKey</c> (appsettings / user-secrets / ortamda <c>OpenAI__ApiKey</c>),
+/// ardından ortam değişkeni <c>OPENAI_API_KEY</c> (SDK ve OpenAI arayüzünde yaygın).
 /// </summary>
 public class OpenAiSyllabusClient : IOpenAiSyllabusClient
 {
@@ -20,7 +22,7 @@ public class OpenAiSyllabusClient : IOpenAiSyllabusClient
         _logger = logger;
     }
 
-    public bool IsConfigured => !string.IsNullOrWhiteSpace(_config["OpenAI:ApiKey"]);
+    public bool IsConfigured => !string.IsNullOrWhiteSpace(ResolveApiKey());
 
     public async Task<float[]?> EmbedOneAsync(string text, CancellationToken ct = default)
     {
@@ -109,8 +111,23 @@ public class OpenAiSyllabusClient : IOpenAiSyllabusClient
     private HttpClient CreateClient()
     {
         var client = _httpFactory.CreateClient(nameof(OpenAiSyllabusClient));
-        var key = _config["OpenAI:ApiKey"]!;
+        var key = ResolveApiKey()!;
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", key);
         return client;
+    }
+
+    /// <summary>
+    /// Yapılandırma yalnızca <c>OpenAI:ApiKey</c> okuduğunda, anahtar yalnızca <c>OPENAI_API_KEY</c>
+    /// ile tanımlı kaldığı için uygulamanın "yapılandırılmadı" demesi yaygın bir hata; bu yüzden ortam değişkeni yedeklenir.
+    /// </summary>
+    private string? ResolveApiKey()
+    {
+        var k = _config["OpenAI:ApiKey"];
+        if (!string.IsNullOrWhiteSpace(k))
+            return k.Trim();
+        k = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        if (!string.IsNullOrWhiteSpace(k))
+            return k.Trim();
+        return null;
     }
 }

@@ -56,6 +56,20 @@ public class SubmitCourseFeedbackRequest
 {
     public byte Rating { get; set; }
     public string? Comment { get; set; }
+    public List<SurveyQuestionResponseDto> Answers { get; set; } = new();
+}
+
+public class SurveyQuestionResponseDto
+{
+    public int QuestionNo { get; set; }
+    public byte Rating { get; set; }
+    public string? QuestionText { get; set; }
+}
+
+public class FeedbackQuestionDto
+{
+    public int QuestionNo { get; set; }
+    public string QuestionText { get; set; } = string.Empty;
 }
 
 /// <summary>Eğitmen: geri bildirim penceresini ayarla (UTC ISO). İkisini de null göndermek pencereyi kapatır.</summary>
@@ -73,6 +87,24 @@ public class CourseFeedbackItemDto
     public byte Rating { get; set; }
     public string? Comment { get; set; }
     public DateTime SubmittedAtUtc { get; set; }
+    public List<SurveyQuestionResponseDto> Answers { get; set; } = new();
+}
+
+public class CourseFeedbackSummaryDto
+{
+    public int TotalResponses { get; set; }
+    public List<CourseFeedbackQuestionSummaryDto> Questions { get; set; } = new();
+}
+
+public class CourseFeedbackQuestionSummaryDto
+{
+    public int QuestionNo { get; set; }
+    public string QuestionText { get; set; } = string.Empty;
+    public int Rate1Count { get; set; }
+    public int Rate2Count { get; set; }
+    public int Rate3Count { get; set; }
+    public int Rate4Count { get; set; }
+    public int Rate5Count { get; set; }
 }
 
 public class SyllabusPdfUploadResponseDto

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SyllabusAI.Service")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+07a399c52c2a1aae3fec2058a14305f98fe4f43a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd9187446870ba42b295310cc022bdc50ea96bb0")]
 [assembly: System.Reflection.AssemblyProductAttribute("SyllabusAI.Service")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SyllabusAI.Service")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

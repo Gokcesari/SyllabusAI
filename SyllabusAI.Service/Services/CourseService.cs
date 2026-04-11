@@ -104,6 +104,19 @@ public class CourseService : ICourseService
         return dto;
     }
 
+    public async Task<List<FeedbackQuestionDto>> GetFeedbackQuestionsAsync(CancellationToken ct = default)
+    {
+        return await _db.FeedbackQuestions.AsNoTracking()
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.QuestionNo)
+            .Select(x => new FeedbackQuestionDto
+            {
+                QuestionNo = x.QuestionNo,
+                QuestionText = x.Text
+            })
+            .ToListAsync(ct);
+    }
+
     public async Task<SyllabusFileStreamDto?> GetSyllabusFileForStudentAsync(int studentUserId, int courseId, CancellationToken ct = default)
     {
         var allowed = await _db.Enrollments.AnyAsync(e => e.UserId == studentUserId && e.CourseId == courseId, ct);
@@ -250,14 +263,43 @@ public class CourseService : ICourseService
         if (dup)
             return (false, "Bu ders için zaten geri bildirim gönderdiniz.");
 
-        _db.CourseFeedbacks.Add(new CourseFeedback
+        var questions = await _db.FeedbackQuestions.AsNoTracking()
+            .Where(q => q.IsActive)
+            .OrderBy(q => q.QuestionNo)
+            .ToListAsync(ct);
+        if (questions.Count == 0)
+            return (false, "Anket sorulari tanimli degil.");
+        if (request.Answers == null || request.Answers.Count != questions.Count)
+            return (false, "Tum anket sorularini 1-5 arasinda cevaplamalisiniz.");
+
+        var map = request.Answers
+            .GroupBy(a => a.QuestionNo)
+            .ToDictionary(g => g.Key, g => g.Last().Rating);
+        foreach (var q in questions)
+        {
+            if (!map.TryGetValue(q.QuestionNo, out var rating) || rating < 1 || rating > 5)
+                return (false, "Anket cevaplari gecersiz. Tum sorular 1-5 arasinda doldurulmali.");
+        }
+
+        var avg = (byte)Math.Clamp((int)Math.Round(map.Values.Average(x => x), MidpointRounding.AwayFromZero), 1, 5);
+        var feedback = new CourseFeedback
         {
             CourseId = courseId,
             StudentUserId = studentUserId,
-            Rating = request.Rating,
+            Rating = avg,
             Comment = string.IsNullOrEmpty(comment) ? null : comment,
             SubmittedAtUtc = DateTime.UtcNow
-        });
+        };
+        _db.CourseFeedbacks.Add(feedback);
+        await _db.SaveChangesAsync(ct);
+
+        var answers = questions.Select(q => new CourseFeedbackAnswer
+        {
+            CourseFeedbackId = feedback.Id,
+            FeedbackQuestionId = q.Id,
+            Rating = map[q.QuestionNo]
+        }).ToList();
+        _db.CourseFeedbackAnswers.AddRange(answers);
         await _db.SaveChangesAsync(ct);
         return (true, null);
     }
@@ -295,10 +337,116 @@ public class CourseService : ICourseService
 
         var feedbacks = await _db.CourseFeedbacks.AsNoTracking()
             .Include(f => f.Student)
+            .Include(f => f.Answers)
+            .ThenInclude(a => a.FeedbackQuestion)
             .Where(f => f.CourseId == courseId)
             .OrderByDescending(f => f.SubmittedAtUtc)
             .ToListAsync(ct);
-        return _mapper.Map<List<CourseFeedbackItemDto>>(feedbacks);
+        var dto = _mapper.Map<List<CourseFeedbackItemDto>>(feedbacks);
+        for (var i = 0; i < feedbacks.Count; i++)
+        {
+            dto[i].StudentName = BuildAnonymizedDisplayName(feedbacks[i].Student?.FullName, feedbacks[i].Student?.Email);
+            dto[i].Answers = feedbacks[i].Answers
+                .OrderBy(x => x.FeedbackQuestion.QuestionNo)
+                .Select(x => new SurveyQuestionResponseDto
+                {
+                    QuestionNo = x.FeedbackQuestion.QuestionNo,
+                    QuestionText = x.FeedbackQuestion.Text,
+                    Rating = x.Rating
+                })
+                .ToList();
+        }
+        return dto;
+    }
+
+    public async Task<CourseFeedbackItemDto?> GetCourseFeedbackDetailForInstructorAsync(int instructorUserId, int courseId, int feedbackId, CancellationToken ct = default)
+    {
+        var owns = await _db.Courses.AnyAsync(c => c.Id == courseId && c.InstructorId == instructorUserId, ct);
+        if (!owns) return null;
+
+        var row = await _db.CourseFeedbacks.AsNoTracking()
+            .Include(f => f.Student)
+            .Include(f => f.Answers)
+            .ThenInclude(a => a.FeedbackQuestion)
+            .FirstOrDefaultAsync(f => f.Id == feedbackId && f.CourseId == courseId, ct);
+        if (row == null) return null;
+
+        var dto = _mapper.Map<CourseFeedbackItemDto>(row);
+        dto.StudentName = BuildAnonymizedDisplayName(row.Student?.FullName, row.Student?.Email);
+        dto.Answers = row.Answers
+            .OrderBy(x => x.FeedbackQuestion.QuestionNo)
+            .Select(x => new SurveyQuestionResponseDto
+            {
+                QuestionNo = x.FeedbackQuestion.QuestionNo,
+                QuestionText = x.FeedbackQuestion.Text,
+                Rating = x.Rating
+            })
+            .ToList();
+        return dto;
+    }
+
+    public async Task<CourseFeedbackSummaryDto?> GetCourseFeedbackSummaryForInstructorAsync(int instructorUserId, int courseId, CancellationToken ct = default)
+    {
+        var owns = await _db.Courses.AnyAsync(c => c.Id == courseId && c.InstructorId == instructorUserId, ct);
+        if (!owns) return null;
+
+        var rows = await _db.CourseFeedbacks.AsNoTracking()
+            .Include(f => f.Answers)
+            .ThenInclude(a => a.FeedbackQuestion)
+            .Where(f => f.CourseId == courseId)
+            .ToListAsync(ct);
+
+        var questions = await _db.FeedbackQuestions.AsNoTracking()
+            .Where(q => q.IsActive)
+            .OrderBy(q => q.QuestionNo)
+            .ToListAsync(ct);
+
+        var summary = new CourseFeedbackSummaryDto
+        {
+            TotalResponses = rows.Count,
+            Questions = questions
+                .Select(q => new CourseFeedbackQuestionSummaryDto { QuestionNo = q.QuestionNo, QuestionText = q.Text })
+                .ToList()
+        };
+
+        foreach (var row in rows)
+        {
+            foreach (var a in row.Answers)
+            {
+                var q = summary.Questions.FirstOrDefault(x => x.QuestionNo == a.FeedbackQuestion.QuestionNo);
+                if (q == null) continue;
+                if (a.Rating == 1) q.Rate1Count++;
+                else if (a.Rating == 2) q.Rate2Count++;
+                else if (a.Rating == 3) q.Rate3Count++;
+                else if (a.Rating == 4) q.Rate4Count++;
+                else if (a.Rating == 5) q.Rate5Count++;
+            }
+        }
+
+        return summary;
+    }
+
+    private static string BuildAnonymizedDisplayName(string? fullName, string? email)
+    {
+        var source = string.IsNullOrWhiteSpace(fullName) ? email ?? "Ogrenci" : fullName;
+        var parts = source.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (parts.Length >= 2)
+        {
+            var first = MaskName(parts[0]);
+            var last = MaskName(parts[1]);
+            return $"{first} {last}";
+        }
+        if (parts.Length == 1)
+            return MaskName(parts[0]);
+        return "Ogrenci";
+    }
+
+    private static string MaskName(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return "*";
+        var t = s.Trim();
+        if (t.Length == 1) return t.ToUpperInvariant() + "*";
+        return t[0].ToString().ToUpperInvariant() + new string('*', t.Length - 1);
     }
 
 }

@@ -5,6 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SyllabusAI - Derslerim</title>
   <link rel="stylesheet" href="/css/app.css?v=20260341">
+  <style>
+    .feedback-gate {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(3, 5, 20, 0.78);
+      display: none; align-items: center; justify-content: center;
+      padding: 1.25rem;
+    }
+    .feedback-gate.show { display: flex; }
+    .feedback-gate .panel {
+      width: min(980px, 96vw);
+      max-height: 90vh;
+      overflow: auto;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 1rem 1.1rem;
+    }
+    .feedback-gate .top { margin-bottom: 0.75rem; }
+    .feedback-gate .title { font-size: 1.05rem; font-weight: 700; }
+    .feedback-gate .meta { font-size: 0.84rem; color: #334155; margin-top: 0.25rem; }
+    .q-card { background: #dbeafe; border-radius: 10px; padding: 0.7rem 0.8rem; margin-bottom: 0.65rem; }
+    .q-text { font-size: 0.9rem; font-weight: 600; color: #1e293b; margin-bottom: 0.45rem; }
+    .q-rates { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .q-rates label { font-size: 0.82rem; color: #0f172a; display: inline-flex; gap: 0.25rem; align-items: center; }
+    .gate-actions { display: flex; gap: 0.6rem; align-items: center; margin-top: 0.65rem; }
+    .gate-actions button {
+      border: none; border-radius: 8px; background: #4f46e5; color: #fff;
+      padding: 0.58rem 1rem; font-weight: 600; cursor: pointer;
+    }
+    .gate-msg { font-size: 0.82rem; color: #334155; }
+  </style>
 </head>
 <body class="tp">
   <aside class="sidebar">
@@ -67,6 +99,21 @@
       <img src="/images/robot.png" alt="" width="40" height="40" decoding="async">
     </a>
   </main>
+
+  <div class="feedback-gate" id="feedbackGate" aria-hidden="true">
+    <div class="panel">
+      <div class="top">
+        <div class="title">Ders Geri Bildirim Anketi (zorunlu)</div>
+        <div class="meta" id="gateMeta">Bu dersi acmadan once 15 soruyu 1-5 arasi puanlayin.</div>
+      </div>
+      <div id="gateQuestions"></div>
+      <div class="gate-actions">
+        <button type="button" id="btnGateSubmit">Anketi Gonder</button>
+        <span class="gate-msg" id="gateMsg"></span>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/out.js"></script>
   <script src="/js/user-fly.js"></script>
   <script>
@@ -79,6 +126,25 @@
 
     var BUBBLE_PALETTE = ['#f5e6d3', '#ffd6e0', '#fff4cc', '#ffdcc4', '#c8e7f5', '#e0d4f7', '#b8e0f0', '#d4edda', '#f0d9ff', '#ffeaa7'];
     var allCourses = [];
+    var FEEDBACK_QUESTIONS = [
+      'Dersin hedefleri ve icerigi donem basinda acik sekilde paylasildi.',
+      'Ders plani (syllabus) ile islenen konular su ana kadar uyumluydu.',
+      'Kullanilan dijital platformlar ders takibi ve etkilesim icin yeterliydi.',
+      'Sunulan ders materyalleri (notlar, sunumlar vb.) yeterli ve faydaliydi.',
+      'Ders kapsaminda onerilen ek kaynaklara ve okumalara erisim kolaydi.',
+      'Islenen ders konularini su ana kadar teorik duzeyde iyi anlayabildim.',
+      'Konularin pekismesi icin sinifta daha fazla tekrar veya uygulama yapilmasi gerektigini dusunuyorum.',
+      'Dersin islenisi sirasinda farkli ogrenme hizlarina ve seviyelerine sahip ogrenciler gozetildi.',
+      'Ders kapsaminda yapilan ornekler ve uygulamalar, gercek hayattaki/mesleki senaryolarla iyi iliskilendirildi.',
+      'Dersin islenis temposu (ilerleyis hizi), konulari sindirmem ve not almam icin uygundur.',
+      'Anlatilan konularin zorluk seviyesi, sahip oldugum on bilgilerle ve yetkinligimle ortusmektedir.',
+      'Ders sirasinda soru sorma, tartismaya katilma ve fikir beyan etme konusunda kendimi tesvik edilmis hissediyorum.',
+      'Verilen odevler, projeler veya kisa sinavlar ogrenme surecime gercek anlamda katki saglamaktadir.',
+      'Dersin icerigi ve hocanin anlatim tarzi, konuya olan merakimi ve derse olan motivasyonumu canli tutmaktadir.',
+      'Egitmen, karmasik kavramlari aciklarken farkli yontemler kullanarak anlasilirligi artirmaktadir.'
+    ];
+    var feedbackQuestionsFromDb = null;
+    var activeGateCourse = null;
 
     function initials(name) {
       if (!name) return '?';
@@ -236,6 +302,104 @@
           document.getElementById('courseList').innerHTML = '<p class="empty">Liste yüklenemedi.</p>';
         });
     }
+
+    function setGateVisible(v) {
+      var gate = document.getElementById('feedbackGate');
+      if (v) gate.classList.add('show');
+      else gate.classList.remove('show');
+      gate.setAttribute('aria-hidden', v ? 'false' : 'true');
+    }
+
+    function renderGateQuestions() {
+      var questions = feedbackQuestionsFromDb && feedbackQuestionsFromDb.length
+        ? feedbackQuestionsFromDb
+        : FEEDBACK_QUESTIONS.map(function(q, i){ return { questionNo: i + 1, questionText: q }; });
+      var host = document.getElementById('gateQuestions');
+      host.innerHTML = questions.map(function(q) {
+        var no = q.questionNo;
+        var radios = [1,2,3,4,5].map(function(r) {
+          return '<label><input type="radio" name="q' + no + '" value="' + r + '"> ' + r + '</label>';
+        }).join('');
+        return '<div class="q-card"><div class="q-text">' + no + '. ' + escapeHtml(q.questionText || '') + '</div><div class="q-rates">' + radios + '</div></div>';
+      }).join('');
+    }
+
+    function collectGateAnswers() {
+      var questions = feedbackQuestionsFromDb && feedbackQuestionsFromDb.length
+        ? feedbackQuestionsFromDb
+        : FEEDBACK_QUESTIONS.map(function(_, i){ return { questionNo: i + 1 }; });
+      var answers = [];
+      for (var i = 0; i < questions.length; i++) {
+        var no = questions[i].questionNo;
+        var sel = document.querySelector('input[name="q' + no + '"]:checked');
+        if (!sel) return null;
+        answers.push({ questionNo: no, rating: parseInt(sel.value, 10) });
+      }
+      return answers;
+    }
+
+    function findPendingFeedbackCourse() {
+      var queue = allCourses.slice();
+      function step(ix) {
+        if (ix >= queue.length) return Promise.resolve(null);
+        var c = queue[ix];
+        return fetch('/api/courses/' + c.id + '/feedback-status', { headers: authHeader() })
+          .then(function(r) { return r.ok ? r.json() : null; })
+          .then(function(s) {
+            if (s && s.windowOpen && !s.hasSubmitted) return c;
+            return step(ix + 1);
+          })
+          .catch(function() { return step(ix + 1); });
+      }
+      return step(0);
+    }
+
+    function checkFeedbackGate() {
+      fetch('/api/courses/feedback-questions', { headers: authHeader() })
+        .then(function(r){ return r.ok ? r.json() : []; })
+        .then(function(list){ feedbackQuestionsFromDb = Array.isArray(list) && list.length ? list : null; })
+        .catch(function(){ feedbackQuestionsFromDb = null; })
+        .finally(function() {
+          findPendingFeedbackCourse().then(function(course) {
+        if (!course) {
+          activeGateCourse = null;
+          setGateVisible(false);
+          return;
+        }
+        activeGateCourse = course;
+        document.getElementById('gateMeta').textContent = (course.courseCode || '') + ' - ' + (course.title || 'Ders') + ' icin anketi tamamlamadan devam edemezsiniz.';
+        renderGateQuestions();
+        document.getElementById('gateMsg').textContent = '';
+        setGateVisible(true);
+          });
+        });
+    }
+
+    document.getElementById('btnGateSubmit').addEventListener('click', function() {
+      if (!activeGateCourse) return;
+      var answers = collectGateAnswers();
+      if (!answers) {
+        document.getElementById('gateMsg').textContent = 'Lutfen tum sorulari 1-5 arasi yanitlayin.';
+        return;
+      }
+      var avg = Math.round(answers.reduce(function(sum, a){ return sum + a.rating; }, 0) / answers.length);
+      fetch('/api/courses/' + activeGateCourse.id + '/feedback', {
+        method: 'POST',
+        headers: authHeader(),
+        body: JSON.stringify({ rating: avg, comment: null, answers: answers })
+      })
+        .then(function(r) { return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
+        .then(function(x) {
+          if (!x.ok) {
+            document.getElementById('gateMsg').textContent = x.d.message || 'Gonderim basarisiz.';
+            return;
+          }
+          document.getElementById('gateMsg').textContent = 'Tesekkurler. Sonraki ders anketi kontrol ediliyor...';
+          checkFeedbackGate();
+        })
+        .catch(function() { document.getElementById('gateMsg').textContent = 'Baglanti hatasi.'; });
+    });
+
     loadCourses();
   </script>
 </body>

@@ -47,10 +47,26 @@
       padding: 0.6rem 1rem; border: none; border-radius: 8px;
       background: #4f46e5; color: #fff; font-weight: 600; cursor: pointer;
     }
+    .chat-input-wrap button:disabled { opacity: 0.45; cursor: not-allowed; }
     .chat-messages { max-height: 200px; overflow-y: auto; margin-bottom: 0.65rem; font-size: 0.82rem; }
     .chat-messages .bubble { margin-bottom: 0.45rem; padding: 0.45rem 0.65rem; border-radius: 8px; max-width: 95%; white-space: pre-wrap; }
     .chat-messages .user { background: rgba(255,255,255,0.2); margin-right: auto; }
     .chat-messages .bot { background: rgba(255,255,255,0.14); margin-left: auto; }
+    .chat-messages .bot.scope-deny {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid rgba(245, 158, 11, 0.55);
+    }
+    .chat-messages .bot.ai-offline {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.55);
+    }
+    .lock-note {
+      margin-top: 0.65rem;
+      font-size: 0.82rem;
+      color: #fde68a;
+      display: none;
+    }
+    .lock-note.show { display: block; }
   </style>
 </head>
 <body class="tp">
@@ -97,6 +113,7 @@
         <input type="text" id="questionInput" placeholder="Sorunu yaz…" autocomplete="off">
         <button type="button" id="btnAsk">Gönder</button>
       </div>
+      <p class="lock-note" id="lockNote">Bu ders için AI kilitli. Önce ders sayfasında müfredatı tamamen açıp "Okudum, anladım" onayı verin.</p>
     </div>
   </main>
 
@@ -124,31 +141,70 @@
         var sel = document.getElementById('courseSelect');
         if (!list || list.length === 0) {
           sel.innerHTML = '<option value="">Önce Derslerim’den ders ekleyin</option>';
+          updateAiLockForSelection();
           return;
         }
         sel.innerHTML = '<option value="">— Ders seçin —</option>' +
           list.map(function(c){ return '<option value="'+c.id+'">'+ (c.courseCode||'') + ' · ' + (c.title||''); }).join('');
+        updateAiLockForSelection();
       });
 
-    function addBubble(who, text) {
+    function addBubble(who, text, state) {
       var div = document.createElement('div');
       div.className = 'bubble ' + who;
+      if (who === 'bot' && state) div.classList.add(state);
       div.textContent = text;
       document.getElementById('chatMessages').appendChild(div);
       div.scrollIntoView({ block: 'nearest' });
+    }
+    function getReadState(courseId) {
+      var stage = parseInt(localStorage.getItem('syllabus_read_stage_' + courseId) || '1', 10);
+      if (!stage || stage < 1) stage = 1;
+      if (stage > 4) stage = 4;
+      var unlocked = localStorage.getItem('syllabus_read_unlock_' + courseId) === '1';
+      return { stage: stage, unlocked: unlocked };
+    }
+    function updateAiLockForSelection() {
+      var courseId = parseInt(document.getElementById('courseSelect').value, 10);
+      var s = courseId ? getReadState(courseId) : { stage: 1, unlocked: false };
+      var locked = !courseId || s.stage < 4 || !s.unlocked;
+      document.getElementById('questionInput').disabled = locked;
+      document.getElementById('btnAsk').disabled = locked;
+      var note = document.getElementById('lockNote');
+      if (locked) {
+        note.classList.add('show');
+        if (courseId) {
+          note.textContent = 'Bu ders icin AI kilitli. Once ders sayfasinda mufredati 4/4 asamaya kadar acip "Okudum, anladim" onayi verin. (Su an: ' + s.stage + '/4)';
+        } else {
+          note.textContent = 'Bu ders icin AI kilitli. Once ders sayfasinda mufredati tamamen acip "Okudum, anladim" onayi verin.';
+        }
+      } else note.classList.remove('show');
     }
     document.getElementById('btnAsk').onclick = function() {
       var q = document.getElementById('questionInput').value.trim();
       var courseId = parseInt(document.getElementById('courseSelect').value, 10);
       if (!q) return;
       if (!courseId) { addBubble('bot', 'Lütfen önce bir ders seçin.'); return; }
+      var read = getReadState(courseId);
+      if (read.stage < 4 || !read.unlocked) {
+        addBubble('bot', 'AI kilitli. Bu ders icin once mufredati 4/4 asamaya kadar acip "Okudum, anladim" onayi vermen gerekiyor.');
+        updateAiLockForSelection();
+        return;
+      }
       addBubble('user', q);
       document.getElementById('questionInput').value = '';
       fetch('/api/chat/ask', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseId: courseId, question: q }) })
         .then(function(r){ return r.json(); })
-        .then(function(d){ addBubble('bot', d.answer || 'Cevap alınamadı.'); })
+        .then(function(d){
+          var answer = d.answer || 'Cevap alınamadı.';
+          var state = '';
+          if (d && d.isOutOfScope) state = 'scope-deny';
+          if (d && d.fromSyllabus === false && answer.toLowerCase().indexOf('ai servisi') >= 0) state = 'ai-offline';
+          addBubble('bot', answer, state);
+        })
         .catch(function(){ addBubble('bot', 'Bağlantı hatası.'); });
     };
+    document.getElementById('courseSelect').onchange = updateAiLockForSelection;
   </script>
 </body>
 </html>

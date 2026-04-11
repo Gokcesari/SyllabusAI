@@ -222,11 +222,15 @@
         return;
       }
       var opts = '<option value="">Ders seçin…</option>' + list.map(function(c){
-        return '<option value="'+c.id+'">'+(c.courseCode||'')+' — '+(c.title||'')+'</option>';
+        var n = typeof c.feedbackResponseCount === 'number' ? c.feedbackResponseCount : 0;
+        return '<option value="'+c.id+'">'+(c.courseCode||'')+' — '+(c.title||'')+' ('+n+' geri bildirim)</option>';
       }).join('');
       sel.innerHTML = opts;
       if (fsel) fsel.innerHTML = opts;
-      var pick = preferredId || lastCreatedCourseId || urlCourseId;
+      var autoWithFeedback = (list || []).filter(function(c){
+        return (typeof c.feedbackResponseCount === 'number' ? c.feedbackResponseCount : 0) > 0;
+      })[0];
+      var pick = preferredId || lastCreatedCourseId || urlCourseId || (autoWithFeedback ? autoWithFeedback.id : (list[0] && list[0].id));
       if (pick) sel.value = String(pick);
       if (fsel && pick) fsel.value = String(pick);
       if (urlCourseId) {
@@ -260,6 +264,16 @@
       el.style.display = 'block';
     }
 
+    function openFeedbackPopup(courseId, feedbackId) {
+      var url = '/instructor-feedback-view.html?courseId=' + courseId + '&feedbackId=' + feedbackId;
+      var w = 920;
+      var h = 760;
+      var left = Math.max(20, Math.floor((window.screen.width - w) / 2));
+      var top = Math.max(20, Math.floor((window.screen.height - h) / 2));
+      var features = 'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes';
+      window.open(url, 'feedbackPopup', features);
+    }
+
     function loadFeedbackListForSelection() {
       var host = document.getElementById('feedbackListHost');
       var fsel = document.getElementById('feedbackCourseSelect');
@@ -269,15 +283,34 @@
       fetch('/api/courses/' + id + '/feedbacks', { headers: authHeader() })
         .then(function (r) { return r.json(); })
         .then(function (rows) {
-          if (!rows || rows.length === 0) { host.innerHTML = '<p class="page-meta">Henüz geri bildirim yok.</p>'; return; }
+          if (!rows || rows.length === 0) {
+            var withFeedback = (instructorCourseList || []).filter(function(c){
+              return (typeof c.feedbackResponseCount === 'number' ? c.feedbackResponseCount : 0) > 0;
+            });
+            if (withFeedback.length > 0) {
+              host.innerHTML = '<p class="page-meta">Bu ders için henüz geri bildirim yok. Geri bildirimi olan dersler: ' +
+                withFeedback.map(function(c){ return (c.courseCode || '') + ' (' + c.feedbackResponseCount + ')'; }).join(', ') + '.</p>';
+            } else {
+              host.innerHTML = '<p class="page-meta">Hesabınıza ait derslerde henüz geri bildirim yok.</p>';
+            }
+            return;
+          }
           host.innerHTML = '<ul class="ins-feedback-ul">' + rows.map(function (x) {
             var r = Math.min(5, Math.max(0, parseInt(x.rating, 10) || 0));
             var stars = '★'.repeat(r) + '☆'.repeat(5 - r);
-            var who = esc(x.studentName || x.studentEmail || '?');
+            var who = esc(x.studentName || '?');
             var when = x.submittedAtUtc ? new Date(x.submittedAtUtc).toLocaleString() : '';
             var com = esc(x.comment || '');
-            return '<li class="ins-feedback-li"><div class="ins-feedback-meta"><strong>' + who + '</strong> <span class="ins-feedback-stars">' + stars + '</span> <span class="ins-feedback-when">' + esc(when) + '</span></div>' + (com ? '<div class="ins-feedback-comment">' + com + '</div>' : '') + '</li>';
+            var detailBtn = '<button type="button" class="btn-view-feedback" data-cid="' + id + '" data-fid="' + x.id + '" style="margin-left:auto;padding:0.35rem 0.75rem;border-radius:999px;border:none;background:#6366f1;color:#fff;text-decoration:none;font-size:0.78rem;font-weight:600;cursor:pointer;">Cevaplari goruntule</button>';
+            return '<li class="ins-feedback-li"><div class="ins-feedback-meta" style="display:flex;align-items:center;gap:0.55rem;"><strong>' + who + '</strong> <span class="ins-feedback-stars">' + stars + '</span> <span class="ins-feedback-when">' + esc(when) + '</span>' + detailBtn + '</div>' + (com ? '<div class="ins-feedback-comment">' + com + '</div>' : '') + '</li>';
           }).join('') + '</ul>';
+          host.querySelectorAll('.btn-view-feedback').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var cid = parseInt(btn.getAttribute('data-cid'), 10);
+              var fid = parseInt(btn.getAttribute('data-fid'), 10);
+              openFeedbackPopup(cid, fid);
+            });
+          });
         })
         .catch(function () { host.innerHTML = '<p class="page-meta">Liste yüklenemedi.</p>'; });
     }

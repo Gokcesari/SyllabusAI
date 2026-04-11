@@ -28,7 +28,13 @@ public class MappingProfile : Profile
 
         CreateMap<CourseFeedback, CourseFeedbackItemDto>()
             .ForMember(d => d.StudentEmail, o => o.MapFrom(s => s.Student.Email))
-            .ForMember(d => d.StudentName, o => o.MapFrom(s => s.Student.FullName));
+            .ForMember(d => d.StudentName, o => o.MapFrom(s => s.Student.FullName))
+            // Answers alani CourseService icinde soru metniyle elle dolduruluyor.
+            .ForMember(d => d.Answers, o => o.Ignore());
+
+        CreateMap<CourseFeedbackAnswer, SurveyQuestionResponseDto>()
+            .ForMember(d => d.QuestionNo, o => o.MapFrom(s => s.FeedbackQuestion.QuestionNo))
+            .ForMember(d => d.QuestionText, o => o.MapFrom(s => s.FeedbackQuestion.Text));
 
         CreateMap<User, UserInfo>();
         CreateMap<User, UserSummaryDto>()
