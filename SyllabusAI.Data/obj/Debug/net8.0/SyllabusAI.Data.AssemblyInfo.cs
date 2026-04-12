@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SyllabusAI.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd9187446870ba42b295310cc022bdc50ea96bb0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+90f298523528379449afc4efe3957aa1de720063")]
 [assembly: System.Reflection.AssemblyProductAttribute("SyllabusAI.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SyllabusAI.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

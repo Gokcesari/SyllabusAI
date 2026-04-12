@@ -390,11 +390,29 @@
       readState.unlocked = localStorage.getItem(unlockStorageKey) === '1';
       var rawProgress = parseFloat(localStorage.getItem(progressStorageKey) || '0');
       readState.progress = clamp(isNaN(rawProgress) ? 0 : rawProgress, 0, 1);
+      // Bu ders icin bir kez sonuna kadar okunduysa kalici: tekrar scroll zorunlulugu yok.
+      if (readState.progress >= 0.999) {
+        readState.progress = 1;
+        readState.stage = totalStages;
+        readState.unlocked = true;
+        saveReadState();
+      }
+    }
+    function isSyllabusReadingComplete() {
+      return readState.progress >= 0.999;
     }
     function saveReadState() {
       localStorage.setItem(stageStorageKey, String(readState.stage));
       localStorage.setItem(unlockStorageKey, readState.unlocked ? '1' : '0');
       localStorage.setItem(progressStorageKey, String(readState.progress));
+    }
+    function ensureCompletedReadUi() {
+      if (!isSyllabusReadingComplete() || !hasSyllabusFile) return;
+      readState.unlocked = true;
+      readState.progress = 1;
+      readState.stage = totalStages;
+      saveReadState();
+      updateReadUi();
     }
     function updateReadUi() {
       var stage = readState.stage;
@@ -412,7 +430,13 @@
       var alphaBottom = (0.52 * (1 - readState.progress)).toFixed(3);
       blurLayer.style.backdropFilter = 'blur(' + blurPx.toFixed(2) + 'px) saturate(80%)';
       blurLayer.style.background = 'linear-gradient(to bottom, rgba(8, 10, 35, ' + alphaTop + '), rgba(8, 10, 35, ' + alphaBottom + '))';
-      btnUnlock.disabled = !(stage >= totalStages && hasSyllabusFile);
+      if (isSyllabusReadingComplete() && hasSyllabusFile) {
+        btnUnlock.disabled = true;
+        btnUnlock.textContent = 'Müfredat okundu — AI açık';
+      } else {
+        btnUnlock.textContent = 'AI Asistanı Aç';
+        btnUnlock.disabled = !(stage >= totalStages && hasSyllabusFile);
+      }
       setChatLocked(!(readState.unlocked && hasSyllabusFile));
     }
     function updateBottomFlagsForDebugOnly() {
@@ -420,6 +444,7 @@
       isPageAtBottom = !!page && ((page.scrollTop + page.clientHeight) >= (page.scrollHeight - 2));
     }
     function updateProgressFromScroll() {
+      if (isSyllabusReadingComplete()) return;
       var wrap = document.getElementById('previewWrap');
       var shell = document.getElementById('fileShell');
       var pdfHost = document.getElementById('pdfJsHost');
@@ -507,6 +532,7 @@
       setProgressFromPageNumbers(pages.current, pages.total);
     }
     function onReaderScroll() {
+      if (isSyllabusReadingComplete()) return;
       if (scrollTicking) return;
       scrollTicking = true;
       requestAnimationFrame(function () {
@@ -644,6 +670,7 @@
           msg.textContent = 'Dosya türü önizlenemiyor.';
         }
         updateReadUi();
+        ensureCompletedReadUi();
         updateProgressFromScroll();
       })
       .catch(function () { msg.textContent = 'Bağlantı hatası.'; hasSyllabusFile = false; setChatLocked(true); });
