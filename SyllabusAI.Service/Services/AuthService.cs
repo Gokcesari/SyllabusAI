@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
@@ -53,7 +53,7 @@ public class AuthService : IAuthService
         if (webPortalClient && string.Equals(roleName, "Admin", StringComparison.OrdinalIgnoreCase))
         {
             return LoginResult.AdminWebLoginForbidden(
-                "Yönetici hesabı ile bu giriş ekranından oturum açılamaz. Kullanıcı yönetimi için Swagger üzerinden oturum açın.");
+                "Admin accounts cannot sign in from this page. Use Swagger or API tools for user management.");
         }
 
         var jwt = GenerateJwt(user, roleName);

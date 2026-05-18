@@ -1,6 +1,6 @@
 /**
- * Oturumu kapat: JWT + kullanıcı JSON silinir, giriş sayfasına gider.
- * localStorage anahtarları login ile aynı olmalı.
+ * Sign out: clears JWT and user JSON, redirects to the login page.
+ * localStorage keys must match the login flow.
  */
 function out() {
   localStorage.removeItem('syllabus_token');

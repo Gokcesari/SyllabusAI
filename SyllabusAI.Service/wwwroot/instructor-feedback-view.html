@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="tr">
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Feedback Sorulari (Read Only)</title>
+  <title>Feedback detail (read only)</title>
   <style>
     body { margin: 0; font-family: Arial, sans-serif; background: #f3f5f8; color: #1f2937; }
     .wrap { max-width: 880px; margin: 14px auto; background: #fff; border: 1px solid #d9dce2; border-radius: 10px; padding: 12px; }
@@ -21,9 +21,9 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="top-actions"><button type="button" class="btn" onclick="window.close()">Kapat</button></div>
-    <h1 class="head">Ogrenci Feedback Sorulari (Read Only)</h1>
-    <div class="meta" id="meta">Yukleniyor...</div>
+    <div class="top-actions"><button type="button" class="btn" onclick="window.close()">Close</button></div>
+    <h1 class="head">Student feedback details</h1>
+    <div class="meta" id="meta">Loadingâ€¦</div>
     <div id="answers"></div>
     <div id="comment" class="comment" style="display:none;"></div>
   </div>
@@ -37,23 +37,24 @@
     var qs = new URLSearchParams(window.location.search);
     var courseId = parseInt(qs.get('courseId'), 10);
     var feedbackId = parseInt(qs.get('feedbackId'), 10);
+    var feedbackType = (qs.get('type') || 'term') === 'weekly' ? 'weekly' : 'term';
 
     function esc(s) {
       return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    fetch('/api/courses/' + courseId + '/feedbacks/' + feedbackId, {
+    fetch('/api/courses/' + courseId + (feedbackType === 'weekly' ? '/weekly-feedbacks/' : '/feedbacks/') + feedbackId, {
       headers: { 'Authorization': 'Bearer ' + token }
     })
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(x){
-        if (!x) { document.getElementById('meta').textContent = 'Geri bildirim bulunamadi.'; return; }
+        if (!x) { document.getElementById('meta').textContent = 'Feedback not found.'; return; }
         var when = x.submittedAtUtc ? new Date(x.submittedAtUtc).toLocaleString() : '-';
-        document.getElementById('meta').innerHTML = '<strong>Ogrenci:</strong> ' + esc(x.studentName || '?') + ' &nbsp;|&nbsp; <strong>Genel puan:</strong> ' + esc(x.rating) + '/5 &nbsp;|&nbsp; <strong>Tarih:</strong> ' + esc(when);
+        document.getElementById('meta').innerHTML = '<strong>Student:</strong> ' + esc(x.studentName || '?') + ' &nbsp;|&nbsp; <strong>Overall rating:</strong> ' + esc(x.rating) + '/5 &nbsp;|&nbsp; <strong>Date:</strong> ' + esc(when);
         var answers = Array.isArray(x.answers) ? x.answers : [];
         document.getElementById('answers').innerHTML = answers.map(function(a){
           var no = parseInt(a.questionNo, 10);
-          var t = a.questionText || ('Soru ' + no);
+          var t = a.questionText || ('Question ' + no);
           var r = parseInt(a.rating, 10);
           return '<div class="q"><div class="qt">' + no + '. ' + esc(t) + '</div><div class="rates">' +
             [1,2,3,4,5].map(function(v){
@@ -65,10 +66,11 @@
         var c = document.getElementById('comment');
         if (x.comment) {
           c.style.display = 'block';
-          c.innerHTML = '<strong>Yorum:</strong> ' + esc(x.comment);
+          c.innerHTML = '<strong>Comment:</strong> ' + esc(x.comment);
         } else c.style.display = 'none';
       })
-      .catch(function(){ document.getElementById('meta').textContent = 'Baglanti hatasi.'; });
+      .catch(function(){ document.getElementById('meta').textContent = 'Connection error.'; });
   </script>
 </body>
 </html>
+

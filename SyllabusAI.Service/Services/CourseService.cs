@@ -51,6 +51,7 @@ public class CourseService : ICourseService
         var courses = await _db.Courses.AsNoTracking()
             .Include(c => c.Instructor)
             .Include(c => c.Feedbacks)
+            .Include(c => c.WeeklyFeedbacks)
             .Where(c => c.InstructorId == instructorUserId)
             .OrderBy(c => c.CourseCode)
             .ToListAsync(ct);
@@ -90,6 +91,69 @@ public class CourseService : ICourseService
         return true;
     }
 
+    public async Task<(bool Ok, string? Error)> DeleteCourseAsync(int instructorUserId, int courseId, CancellationToken ct = default)
+    {
+        var course = await _db.Courses
+            .FirstOrDefaultAsync(c => c.Id == courseId && c.InstructorId == instructorUserId, ct);
+        if (course == null)
+            return (false, "Course not found or not owned by you.");
+
+        var uploads = await _db.SyllabusPdfUploads
+                        .Where(u => u.CourseId == courseId && u.IsActive)
+            .ToListAsync(ct);
+        var chunks = await _db.SyllabusChunks
+            .Where(c => c.CourseId == courseId)
+            .ToListAsync(ct);
+        var enrollments = await _db.Enrollments
+            .Where(e => e.CourseId == courseId)
+            .ToListAsync(ct);
+        var feedbacks = await _db.CourseFeedbacks
+            .Where(f => f.CourseId == courseId)
+            .ToListAsync(ct);
+        var feedbackIds = feedbacks.Select(f => f.Id).ToList();
+        var answers = feedbackIds.Count == 0
+            ? new List<CourseFeedbackAnswer>()
+            : await _db.CourseFeedbackAnswers.Where(a => feedbackIds.Contains(a.CourseFeedbackId)).ToListAsync(ct);
+
+        await using var tx = await _db.Database.BeginTransactionAsync(ct);
+        try
+        {
+            if (answers.Count > 0) _db.CourseFeedbackAnswers.RemoveRange(answers);
+            if (feedbacks.Count > 0) _db.CourseFeedbacks.RemoveRange(feedbacks);
+            if (enrollments.Count > 0) _db.Enrollments.RemoveRange(enrollments);
+            if (chunks.Count > 0) _db.SyllabusChunks.RemoveRange(chunks);
+            if (uploads.Count > 0) _db.SyllabusPdfUploads.RemoveRange(uploads);
+            _db.Courses.Remove(course);
+
+            await _db.SaveChangesAsync(ct);
+            await tx.CommitAsync(ct);
+        }
+        catch
+        {
+            await tx.RollbackAsync(ct);
+            throw;
+        }
+
+        foreach (var upload in uploads)
+        {
+            if (string.IsNullOrWhiteSpace(upload.StoredRelativePath)) continue;
+            try
+            {
+                var rel = upload.StoredRelativePath.Replace('/', Path.DirectorySeparatorChar);
+                var fullPath = Path.GetFullPath(Path.Combine(_env.ContentRootPath, rel));
+                var root = Path.GetFullPath(_env.ContentRootPath);
+                if (!fullPath.StartsWith(root, StringComparison.OrdinalIgnoreCase)) continue;
+                if (File.Exists(fullPath)) File.Delete(fullPath);
+            }
+            catch
+            {
+                // Keep DB delete successful even if a leftover file cannot be deleted.
+            }
+        }
+
+        return (true, null);
+    }
+
     public async Task<SyllabusDto?> GetSyllabusForStudentAsync(int studentUserId, int courseId, CancellationToken ct = default)
     {
         var allowed = await _db.Enrollments.AnyAsync(e => e.UserId == studentUserId && e.CourseId == courseId, ct);
@@ -124,7 +188,7 @@ public class CourseService : ICourseService
 
         var upload = await _db.SyllabusPdfUploads
             .AsNoTracking()
-            .Where(u => u.CourseId == courseId)
+                        .Where(u => u.CourseId == courseId && u.IsActive)
             .OrderByDescending(u => u.UploadedAtUtc)
             .FirstOrDefaultAsync(ct);
         if (upload == null || string.IsNullOrWhiteSpace(upload.StoredRelativePath)) return null;
@@ -170,12 +234,16 @@ public class CourseService : ICourseService
         var relative = Path.GetRelativePath(_env.ContentRootPath, fullPath).Replace('\\', '/');
         var kind = ext == ".docx" ? "docx" : "pdf";
 
+        var previousUploads = await _db.SyllabusPdfUploads.Where(x => x.CourseId == courseId && x.IsActive).ToListAsync(ct);
+        foreach (var old in previousUploads) old.IsActive = false;
+
         var row = new SyllabusPdfUpload
         {
             CourseId = courseId,
             OriginalFileName = Path.GetFileName(originalFileName) ?? $"syllabus{ext}",
             StoredRelativePath = relative,
             ExtractedText = extracted,
+            IsActive = true,
             UploadedAtUtc = DateTime.UtcNow
         };
         _db.SyllabusPdfUploads.Add(row);
@@ -215,11 +283,11 @@ public class CourseService : ICourseService
 
         string? msg = null;
         if (!configured)
-            msg = "Bu ders için geri bildirim penceresi henüz açılmadı. Eğitmen tarih aralığı tanımlayınca buradan gönderebilirsiniz.";
+            msg = "The feedback window for this course is not open yet. You can submit when the instructor sets the dates.";
         else if (now < course.FeedbackOpensAtUtc!.Value)
-            msg = "Geri bildirim penceresi henüz başlamadı.";
+            msg = "The feedback window has not started yet.";
         else if (now > course.FeedbackClosesAtUtc!.Value)
-            msg = "Geri bildirim penceresi kapandı.";
+            msg = "The feedback window has closed.";
 
         return new CourseFeedbackStatusDto
         {
@@ -237,40 +305,40 @@ public class CourseService : ICourseService
     public async Task<(bool Ok, string? Error)> SubmitCourseFeedbackAsync(int studentUserId, int courseId, SubmitCourseFeedbackRequest request, CancellationToken ct = default)
     {
         if (request.Rating < 1 || request.Rating > 5)
-            return (false, "Puan 1 ile 5 arasında olmalıdır.");
+            return (false, "Rating must be between 1 and 5.");
 
         var comment = request.Comment?.Trim();
         if (!string.IsNullOrEmpty(comment) && comment.Length > 2000)
-            return (false, "Yorum en fazla 2000 karakter olabilir.");
+            return (false, "Comment cannot exceed 2000 characters.");
 
         var allowed = await _db.Enrollments.AnyAsync(e => e.UserId == studentUserId && e.CourseId == courseId, ct);
         if (!allowed)
-            return (false, "Bu derse kayıtlı değilsiniz.");
+            return (false, "You are not enrolled in this course.");
 
         var course = await _db.Courses.FirstOrDefaultAsync(c => c.Id == courseId, ct);
         if (course == null)
-            return (false, "Ders bulunamadı.");
+            return (false, "Course not found.");
 
         var configured = course.FeedbackOpensAtUtc.HasValue && course.FeedbackClosesAtUtc.HasValue;
         if (!configured)
-            return (false, "Geri bildirim penceresi tanımlı değil.");
+            return (false, "No feedback window is configured.");
 
         var now = DateTime.UtcNow;
         if (now < course.FeedbackOpensAtUtc!.Value || now > course.FeedbackClosesAtUtc!.Value)
-            return (false, "Geri bildirim şu an kabul edilmiyor (tarih aralığı dışında).");
+            return (false, "Feedback is not being accepted right now (outside the allowed dates).");
 
         var dup = await _db.CourseFeedbacks.AnyAsync(f => f.CourseId == courseId && f.StudentUserId == studentUserId, ct);
         if (dup)
-            return (false, "Bu ders için zaten geri bildirim gönderdiniz.");
+            return (false, "You have already submitted feedback for this course.");
 
         var questions = await _db.FeedbackQuestions.AsNoTracking()
             .Where(q => q.IsActive)
             .OrderBy(q => q.QuestionNo)
             .ToListAsync(ct);
         if (questions.Count == 0)
-            return (false, "Anket sorulari tanimli degil.");
+            return (false, "Survey questions are not configured.");
         if (request.Answers == null || request.Answers.Count != questions.Count)
-            return (false, "Tum anket sorularini 1-5 arasinda cevaplamalisiniz.");
+            return (false, "Answer all survey questions with a rating from 1 to 5.");
 
         var map = request.Answers
             .GroupBy(a => a.QuestionNo)
@@ -278,7 +346,7 @@ public class CourseService : ICourseService
         foreach (var q in questions)
         {
             if (!map.TryGetValue(q.QuestionNo, out var rating) || rating < 1 || rating > 5)
-                return (false, "Anket cevaplari gecersiz. Tum sorular 1-5 arasinda doldurulmali.");
+                return (false, "Invalid survey answers. Every question must be rated from 1 to 5.");
         }
 
         var avg = (byte)Math.Clamp((int)Math.Round(map.Values.Average(x => x), MidpointRounding.AwayFromZero), 1, 5);
@@ -308,7 +376,7 @@ public class CourseService : ICourseService
     {
         var course = await _db.Courses.FirstOrDefaultAsync(c => c.Id == courseId && c.InstructorId == instructorUserId, ct);
         if (course == null)
-            return (false, "Ders bulunamadı veya size ait değil.");
+            return (false, "Course not found or not owned by you.");
 
         if (request.OpensAtUtc == null && request.ClosesAtUtc == null)
         {
@@ -319,10 +387,10 @@ public class CourseService : ICourseService
         }
 
         if (request.OpensAtUtc == null || request.ClosesAtUtc == null)
-            return (false, "Pencereyi açmak için hem başlangıç hem bitiş (UTC) gönderin; kapatmak için ikisini de boş gönderin.");
+            return (false, "To open the window, send both start and end (UTC); to close it, send both as empty.");
 
         if (request.OpensAtUtc.Value >= request.ClosesAtUtc.Value)
-            return (false, "Bitiş tarihi başlangıçtan sonra olmalıdır.");
+            return (false, "End time must be after start time.");
 
         course.FeedbackOpensAtUtc = request.OpensAtUtc.Value;
         course.FeedbackClosesAtUtc = request.ClosesAtUtc.Value;
@@ -423,12 +491,33 @@ public class CourseService : ICourseService
             }
         }
 
+        foreach (var q in summary.Questions)
+        {
+            q.TotalAnswers = q.Rate1Count + q.Rate2Count + q.Rate3Count + q.Rate4Count + q.Rate5Count;
+            if (q.TotalAnswers == 0)
+            {
+                q.AverageRating = 0;
+                q.AveragePercent = 0;
+                continue;
+            }
+
+            var weightedTotal =
+                (q.Rate1Count * 1) +
+                (q.Rate2Count * 2) +
+                (q.Rate3Count * 3) +
+                (q.Rate4Count * 4) +
+                (q.Rate5Count * 5);
+
+            q.AverageRating = Math.Round((double)weightedTotal / q.TotalAnswers, 2, MidpointRounding.AwayFromZero);
+            q.AveragePercent = Math.Round((q.AverageRating / 5d) * 100d, 2, MidpointRounding.AwayFromZero);
+        }
+
         return summary;
     }
 
     private static string BuildAnonymizedDisplayName(string? fullName, string? email)
     {
-        var source = string.IsNullOrWhiteSpace(fullName) ? email ?? "Ogrenci" : fullName;
+        var source = string.IsNullOrWhiteSpace(fullName) ? email ?? "Student" : fullName;
         var parts = source.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (parts.Length >= 2)
         {
@@ -438,7 +527,7 @@ public class CourseService : ICourseService
         }
         if (parts.Length == 1)
             return MaskName(parts[0]);
-        return "Ogrenci";
+        return "Student";
     }
 
     private static string MaskName(string s)
@@ -450,3 +539,5 @@ public class CourseService : ICourseService
     }
 
 }
+
+

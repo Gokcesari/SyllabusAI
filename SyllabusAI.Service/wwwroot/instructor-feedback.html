@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SyllabusAI - Student feedback</title>
+  <link rel="stylesheet" href="/css/app.css?v=20260426">
+</head>
+<body class="tp ins-soft">
+  <aside class="sidebar">
+    <div class="logo"><svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg> SYLLABUSAI</div>
+    <div class="menu-label">INSTRUCTOR MENU</div>
+    <nav>
+      <a href="/instructor.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add course
+      </a>
+      <a href="/instructor-courses.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+        My courses
+      </a>
+      <a href="/instructor-feedback.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Feedback
+      </a>
+      <a href="/instructor-ai.html">
+        <svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg>
+        AI assistant
+      </a>
+    </nav>
+    <div class="user-box has-drop">
+      <div class="user-drop">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
+          <div class="user-row">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta">Instructor</div></div>
+          </div>
+        </button>
+        <div class="user-fly" id="userFly" hidden role="menu">
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Sign out</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-area ins-form-page ins-form-page-wide">
+    <h1 class="page-title ins-feedback-page-title">Student feedback</h1>
+    <p class="page-meta">Set a date range stored in <strong>UTC</strong>; only enrolled students can submit a 1-5 rating and optional comment during this window (one submission per student).</p>
+
+    <div class="form-block">
+      <label for="feedbackCourseSelect">Course</label>
+      <select id="feedbackCourseSelect"></select>
+    </div>
+
+    <div class="form-block">
+      <label for="feedbackTypeSelect">Feedback type</label>
+      <select id="feedbackTypeSelect">
+        <option value="term">End of term</option>
+        <option value="weekly">Weekly lesson</option>
+      </select>
+    </div>
+
+    <div class="ins-feedback-dates-row">
+      <div class="form-block" style="margin-bottom:0;">
+        <label for="feedbackOpensLocal">Window opens (your local time)</label>
+        <input type="datetime-local" id="feedbackOpensLocal" autocomplete="off">
+      </div>
+      <div class="form-block" style="margin-bottom:0;">
+        <label for="feedbackClosesLocal">Window closes</label>
+        <input type="datetime-local" id="feedbackClosesLocal" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="ins-feedback-actions">
+      <button type="button" class="btn-create" id="btnSaveFeedbackWindow">Save window</button>
+      <button type="button" class="btn-secondary ins-btn-secondary" id="btnClearFeedbackWindow">Close window</button>
+    </div>
+    <div id="feedbackWindowMsg" class="msg" style="display:none;margin-top:0.75rem;"></div>
+
+    <h3 class="section-title ins-feedback-subtitle" style="margin-top:2rem;">Bu derse gelen geri bildirimler</h3>
+    <div id="feedbackListHost" class="ins-feedback-list"></div>
+  </main>
+
+  <div class="instructor-fab-stack" aria-label="Quick links">
+    <a href="/instructor-feedback.html" class="instructor-feedback-fab" title="Student feedback" aria-label="Student feedback" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    </a>
+    <a href="/instructor-ai.html" class="ai-assistant-fab" aria-label="AI assistant" title="AI assistant">
+      <img src="/images/robot.png" alt="" width="38" height="38" decoding="async">
+    </a>
+  </div>
+
+  <script src="/js/out.js"></script>
+  <script src="/js/user-fly.js"></script>
+  <script>
+    var token = localStorage.getItem('syllabus_token');
+    var userStr = localStorage.getItem('syllabus_user');
+    if (!token || !userStr) window.location.href = '/';
+
+    var user = JSON.parse(userStr);
+    if (user.role !== 'Instructor') window.location.href = user.role === 'Student' ? '/student.html' : '/';
+
+    var urlCourseId = (function () {
+      var q = new URLSearchParams(window.location.search).get('courseId');
+      if (!q) return null;
+      var n = parseInt(q, 10);
+      return isNaN(n) ? null : n;
+    })();
+
+    function initials(n) {
+      var p = (n || '').split(/\s+/);
+      return p.length >= 2 ? (p[0][0] + p[1][0]).toUpperCase() : ((n || '?')[0]).toUpperCase();
+    }
+
+    document.getElementById('userAvatar').textContent = initials(user.fullName || user.email);
+    document.getElementById('userName').textContent = user.fullName || user.email;
+
+    function authHeader() {
+      return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+    }
+
+    function selectedType() {
+      return document.getElementById('feedbackTypeSelect').value === 'weekly' ? 'weekly' : 'term';
+    }
+
+    function apiForType(courseId) {
+      if (selectedType() === 'weekly') {
+        return {
+          summary: '/api/courses/' + courseId + '/weekly-feedback-summary',
+          window: '/api/courses/' + courseId + '/weekly-feedback-window'
+        };
+      }
+      return {
+        summary: '/api/courses/' + courseId + '/feedback-summary',
+        window: '/api/courses/' + courseId + '/feedback-window'
+      };
+    }
+
+    function updateHeaderTexts() {
+      var isWeekly = selectedType() === 'weekly';
+      document.querySelector('.ins-feedback-subtitle').textContent = isWeekly
+        ? 'Weekly lesson feedback report (question based)'
+        : 'End of term feedback report (question based)';
+    }
+
+    function utcIsoToLocalInput(iso) {
+      if (!iso) return '';
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return '';
+      var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+
+    function localInputToUtcIso(id) {
+      var v = document.getElementById(id).value;
+      if (!v) return null;
+      var d = new Date(v);
+      if (isNaN(d.getTime())) return null;
+      return d.toISOString();
+    }
+
+    function esc(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    var instructorCourseList = [];
+
+    function fillCourseSelect(list) {
+      var sel = document.getElementById('feedbackCourseSelect');
+      if (!list || list.length === 0) {
+        sel.innerHTML = '<option value="">Create a course first</option>';
+        return;
+      }
+
+      sel.innerHTML = '<option value="">Select a course...</option>' + list.map(function (c) {
+        return '<option value="' + c.id + '">' + esc(c.courseCode || '') + ' - ' + esc(c.title || '') + '</option>';
+      }).join('');
+
+      var pick = urlCourseId || (list[0] && list[0].id);
+      if (pick) sel.value = String(pick);
+    }
+
+    function syncWindowInputs() {
+      var id = parseInt(document.getElementById('feedbackCourseSelect').value, 10);
+      var c = instructorCourseList.find(function (x) { return x.id === id; });
+      if (!c) {
+        document.getElementById('feedbackOpensLocal').value = '';
+        document.getElementById('feedbackClosesLocal').value = '';
+        return;
+      }
+
+      if (selectedType() === 'weekly') {
+        document.getElementById('feedbackOpensLocal').value = c.weeklyFeedbackOpensAtUtc ? utcIsoToLocalInput(c.weeklyFeedbackOpensAtUtc) : '';
+        document.getElementById('feedbackClosesLocal').value = c.weeklyFeedbackClosesAtUtc ? utcIsoToLocalInput(c.weeklyFeedbackClosesAtUtc) : '';
+      } else {
+        document.getElementById('feedbackOpensLocal').value = c.feedbackOpensAtUtc ? utcIsoToLocalInput(c.feedbackOpensAtUtc) : '';
+        document.getElementById('feedbackClosesLocal').value = c.feedbackClosesAtUtc ? utcIsoToLocalInput(c.feedbackClosesAtUtc) : '';
+      }
+    }
+
+    function showMsg(text, isError) {
+      var el = document.getElementById('feedbackWindowMsg');
+      el.textContent = text;
+      el.className = 'msg ' + (isError ? 'err' : 'ok');
+      el.style.display = 'block';
+    }
+
+    function openFeedbackPopup(courseId, feedbackId) {
+      var type = selectedType();
+      var url = '/instructor-feedback-view.html?courseId=' + courseId + '&feedbackId=' + feedbackId + '&type=' + type;
+      var w = 920;
+      var h = 760;
+      var left = Math.max(20, Math.floor((window.screen.width - w) / 2));
+      var top = Math.max(20, Math.floor((window.screen.height - h) / 2));
+      var features = 'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes';
+      window.open(url, 'feedbackPopup', features);
+    }
+
+    function loadFeedbackList() {
+      var host = document.getElementById('feedbackListHost');
+      var courseId = parseInt(document.getElementById('feedbackCourseSelect').value, 10);
+      if (!courseId) {
+        host.innerHTML = '<p class="page-meta">Select a course to see the question-based report.</p>';
+        return;
+      }
+
+      var api = apiForType(courseId);
+      fetch(api.summary, { headers: authHeader() })
+        .then(function (r) { return r.json(); })
+        .then(function (summary) {
+          if (!summary || !Array.isArray(summary.questions)) {
+            host.innerHTML = '<p class="page-meta">Could not load report.</p>';
+            return;
+          }
+
+          if ((summary.totalResponses || 0) === 0) {
+            host.innerHTML = '<p class="page-meta">No feedback yet for this course.</p>';
+            return;
+          }
+
+          var header = '<div class="ins-feedback-li" style="display:flex;justify-content:space-between;align-items:center;">' +
+            '<strong>Total responses</strong><strong>' + esc(summary.totalResponses) + '</strong></div>';
+
+          var questionRows = summary.questions.map(function (q) {
+            var avgRating = Number(q.averageRating || 0);
+            var avgPercent = Number(q.averagePercent || 0);
+            var totalAnswers = Number(q.totalAnswers || 0);
+            var barWidth = Math.max(0, Math.min(100, avgPercent));
+            return '<li class="ins-feedback-li">' +
+              '<div class="ins-feedback-meta" style="display:block;">' +
+              '<strong>Q' + esc(q.questionNo) + '.</strong> ' + esc(q.questionText || '') +
+              '</div>' +
+              '<div class="ins-feedback-comment" style="margin-top:0.45rem;">' +
+              '<strong>Average:</strong> ' + esc(avgRating.toFixed(2)) + '/5 (' + esc(avgPercent.toFixed(2)) + '%) &nbsp;|&nbsp; ' +
+              '<strong>Answers:</strong> ' + esc(totalAnswers) +
+              '</div>' +
+              '<div style="margin-top:0.4rem;height:8px;background:rgba(99,102,241,0.16);border-radius:999px;overflow:hidden;">' +
+              '<div style="height:100%;width:' + esc(barWidth.toFixed(2)) + '%;background:#6366f1;"></div>' +
+              '</div>' +
+              '<div class="ins-feedback-comment" style="margin-top:0.45rem;">' +
+              '1★: ' + esc(q.rate1Count || 0) + ' &nbsp;|&nbsp; ' +
+              '2★: ' + esc(q.rate2Count || 0) + ' &nbsp;|&nbsp; ' +
+              '3★: ' + esc(q.rate3Count || 0) + ' &nbsp;|&nbsp; ' +
+              '4★: ' + esc(q.rate4Count || 0) + ' &nbsp;|&nbsp; ' +
+              '5★: ' + esc(q.rate5Count || 0) +
+              '</div>' +
+              '</li>';
+          }).join('');
+
+          host.innerHTML = header + '<ul class="ins-feedback-ul">' + questionRows + '</ul>';
+        })
+        .catch(function () {
+          host.innerHTML = '<p class="page-meta">Could not load report.</p>';
+        });
+    }
+
+    document.getElementById('feedbackCourseSelect').addEventListener('change', function () {
+      syncWindowInputs();
+      loadFeedbackList();
+    });
+
+    document.getElementById('feedbackTypeSelect').addEventListener('change', function () {
+      var prev = document.getElementById('feedbackCourseSelect').value;
+      fillCourseSelect(instructorCourseList);
+      if (prev && instructorCourseList.some(function (c) { return String(c.id) === prev; })) {
+        document.getElementById('feedbackCourseSelect').value = prev;
+      }
+      updateHeaderTexts();
+      syncWindowInputs();
+      loadFeedbackList();
+    });
+
+    document.getElementById('btnSaveFeedbackWindow').addEventListener('click', function () {
+      var courseId = parseInt(document.getElementById('feedbackCourseSelect').value, 10);
+      if (!courseId) {
+        showMsg('Select a course first.', true);
+        return;
+      }
+
+      var opensAtUtc = localInputToUtcIso('feedbackOpensLocal');
+      var closesAtUtc = localInputToUtcIso('feedbackClosesLocal');
+      if (!opensAtUtc || !closesAtUtc) {
+        showMsg('Fill in start and end dates (or use Close window to clear).', true);
+        return;
+      }
+
+      fetch(apiForType(courseId).window, {
+        method: 'PUT',
+        headers: authHeader(),
+        body: JSON.stringify({ opensAtUtc: opensAtUtc, closesAtUtc: closesAtUtc })
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (x) {
+          if (!x.ok) {
+            showMsg(x.d.message || 'Could not save.', true);
+            return;
+          }
+          showMsg('Saved. Students can only submit during this window.', false);
+          loadCourses();
+        })
+        .catch(function () { showMsg('Connection error.', true); });
+    });
+
+    document.getElementById('btnClearFeedbackWindow').addEventListener('click', function () {
+      var courseId = parseInt(document.getElementById('feedbackCourseSelect').value, 10);
+      if (!courseId) {
+        showMsg('Select a course first.', true);
+        return;
+      }
+
+      fetch(apiForType(courseId).window, {
+        method: 'PUT',
+        headers: authHeader(),
+        body: JSON.stringify({ opensAtUtc: null, closesAtUtc: null })
+      })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (x) {
+          if (!x.ok) {
+            showMsg(x.d.message || 'Operation failed.', true);
+            return;
+          }
+          showMsg('Feedback window closed.', false);
+          document.getElementById('feedbackOpensLocal').value = '';
+          document.getElementById('feedbackClosesLocal').value = '';
+          loadCourses();
+        })
+        .catch(function () { showMsg('Connection error.', true); });
+    });
+
+    function loadCourses() {
+      fetch('/api/courses/instructor', { headers: authHeader() })
+        .then(function (r) { return r.json(); })
+        .then(function (list) {
+          instructorCourseList = list || [];
+          var prev = document.getElementById('feedbackCourseSelect').value;
+          fillCourseSelect(instructorCourseList);
+          if (prev && instructorCourseList.some(function (c) { return String(c.id) === prev; })) {
+            document.getElementById('feedbackCourseSelect').value = prev;
+          }
+          syncWindowInputs();
+          loadFeedbackList();
+        })
+        .catch(function () {
+          document.getElementById('feedbackCourseSelect').innerHTML = '<option value="">Could not load courses</option>';
+        });
+    }
+
+    updateHeaderTexts();
+    loadCourses();
+  </script>
+</body>
+</html>

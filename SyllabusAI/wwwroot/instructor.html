@@ -1,129 +1,126 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SyllabusAI - Eğitmen</title>
+  <title>SyllabusAI - Instructor</title>
   <link rel="stylesheet" href="/css/app.css?v=20260341">
 </head>
 <body class="tp ins-soft">
   <aside class="sidebar">
     <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> SYLLABUSAI</div>
-    <div class="menu-label">EĞİTMEN MENÜSÜ</div>
+    <div class="menu-label">INSTRUCTOR MENU</div>
     <nav>
       <a href="/instructor.html" class="active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Ders Ekle
+        Add course
       </a>
       <a href="/instructor-courses.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-        Derslerim
+        My courses
       </a>
       <a href="/instructor-ai.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
-        AI Asistan
+        AI assistant
       </a>
     </nav>
-    <div class="lang"><button type="button">TR / EN</button></div>
-    <!-- Öğrenci sayfalarıyla aynı: profil → üst menü → Çıkış -->
     <div class="user-box has-drop">
       <div class="user-drop">
-        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Hesap menüsü">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
           <div class="user-row">
             <div class="user-avatar" id="userAvatar">?</div>
-            <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta">Eğitmen</div></div>
+            <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta">Instructor</div></div>
           </div>
         </button>
         <div class="user-fly" id="userFly" hidden role="menu">
-          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Çıkış</button>
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Sign out</button>
         </div>
       </div>
     </div>
   </aside>
   <main class="main-area ins-form-page">
-    <h1 class="page-title">DERS VE SYLLABUS</h1>
-    <p class="page-meta">Önce dersi oluşturun (kod + ad). Ardından gerçek syllabus dosyanızı yükleyin — tıpkı <strong>COP4803 SYLLABUS.docx</strong> gibi Word veya PDF. Öğrenci yalnızca veritabanında kayıtlı ders kodunu girebilir; kod yoksa eklenemez.</p>
+    <h1 class="page-title">COURSE & SYLLABUS</h1>
+    <p class="page-meta">First create the course (code + title). Then upload your syllabus file — e.g. <strong>COP4803 SYLLABUS.docx</strong> as Word or PDF. Students can only enroll with a course code that exists in the system.</p>
 
-    <!-- Tıkla: ilgili bölüme kaydır + üst şerit durumu (setFlowStep) -->
     <div class="flow-steps" id="flowSteps">
-      <button type="button" class="flow-step active" id="step1box" title="Ders oluşturma formuna git">1 · Ders oluştur</button>
-      <button type="button" class="flow-step" id="step2box" title="Syllabus yükleme bölümüne git">2 · Syllabus yükle</button>
+      <button type="button" class="flow-step active" id="step1box" title="Go to create course form">1 · Create course</button>
+      <button type="button" class="flow-step" id="step2box" title="Go to syllabus upload">2 · Upload syllabus</button>
     </div>
 
-    <h2 class="section-title" id="step1Section">Adım 1 — Ders bilgisi</h2>
+    <h2 class="section-title" id="step1Section">Step 1 — Course details</h2>
     <div class="form-block">
-      <label>Ders kodu</label>
-      <input type="text" id="courseCode" placeholder="Örn: COP4803" maxlength="20" autocomplete="off">
-      <p class="hint">Öğrenci bu kodu &quot;Syllabus Ekle&quot; ekranında yazacak; sistemde olmayan kodla kayıt olunamaz.</p>
+      <label>Course code</label>
+      <input type="text" id="courseCode" placeholder="e.g. COP4803" maxlength="20" autocomplete="off">
+      <p class="hint">Students enter this code on the Add course screen; they cannot enroll with a code that does not exist.</p>
     </div>
     <div class="form-block">
-      <label>Ders adı</label>
-      <input type="text" id="title" placeholder="Örn: Keyvan AVIATION Navigating Future Skies" autocomplete="off">
+      <label>Course title</label>
+      <input type="text" id="title" placeholder="e.g. Keyvan AVIATION Navigating Future Skies" autocomplete="off">
     </div>
 
     <details class="optional-block">
-      <summary>İsteğe bağlı: metni elle yapıştır (dosya kullanmayacaksanız)</summary>
+      <summary>Optional: paste text manually (if you will not use a file)</summary>
       <div class="form-block" style="margin-top:0.75rem;margin-bottom:0;">
-        <label>Müfredat metni</label>
-        <textarea id="syllabusContent" placeholder="Boş bırakıp Adım 2’de .docx veya .pdf yükleyebilirsiniz."></textarea>
+        <label>Syllabus text</label>
+        <textarea id="syllabusContent" placeholder="Leave empty and upload .docx or .pdf in Step 2."></textarea>
       </div>
     </details>
 
     <div class="form-block">
-      <label>Öne çıkarılacak kelimeler (virgülle)</label>
-      <input type="text" id="highlightKeywords" placeholder="sınav, devam, not, plagiarism">
+      <label>Highlight keywords (comma-separated)</label>
+      <input type="text" id="highlightKeywords" placeholder="exam, attendance, grade, plagiarism">
     </div>
-    <button type="button" id="btnCreate" class="btn-create">Dersi oluştur</button>
+    <button type="button" id="btnCreate" class="btn-create">Create course</button>
     <div id="formMsg" class="msg" style="margin-top:1rem;"></div>
 
-    <h2 class="section-title" id="step2Section">Adım 2 — Syllabus dosyası (PDF veya Word)</h2>
-    <p class="page-meta" style="margin-bottom:1rem;">Capstone / ders syllabus formatınız genelde Word veya PDF; her ikisi de desteklenir. Dosya metne çevrilir, veritabanına ve RAG parçalarına işlenir.</p>
+    <h2 class="section-title" id="step2Section">Step 2 — Syllabus file (PDF or Word)</h2>
+    <p class="page-meta" style="margin-bottom:1rem;">Your syllabus is usually Word or PDF; both are supported. Text is extracted and stored for search and AI chunks.</p>
     <div class="form-block">
-      <label>Ders seçin</label>
+      <label>Select course</label>
       <select id="pdfCourseId">
-        <option value="">— Önce Adım 1’i tamamlayın veya listeden seçin —</option>
+        <option value="">— Complete Step 1 or pick from the list —</option>
       </select>
     </div>
     <div class="form-block">
-      <label>Dosya</label>
+      <label>File</label>
       <input type="file" id="syllabusFile" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
-      <p class="hint">Örnek: <code>COP4803 SYLLABUS.docx</code> veya PDF syllabus. Maks. ~20 MB.</p>
+      <p class="hint">Example: <code>COP4803 SYLLABUS.docx</code> or PDF syllabus. Max ~20 MB.</p>
     </div>
-    <button type="button" id="btnUploadSyllabus" class="btn-create">Syllabus yükle</button>
+    <button type="button" id="btnUploadSyllabus" class="btn-create">Upload syllabus</button>
     <div id="uploadMsg" class="msg" style="margin-top:1rem; display:none;"></div>
 
-    <h2 class="page-title ins-list-title" id="list">DERSLERİM</h2>
+    <h2 class="page-title ins-list-title" id="list">MY COURSES</h2>
     <ul class="instructor-list" id="courseList"></ul>
 
-    <h2 class="section-title ins-feedback-block-title">Öğrenci geri bildirimi (dönem sonu)</h2>
-    <p class="page-meta">Eğitmen olarak <strong>UTC</strong> ile saklanan bir tarih aralığı tanımlayın; yalnızca bu süre içinde derse kayıtlı öğrenciler 1–5 puan ve isteğe bağlı yorum gönderebilir (öğrenci başına tek kayıt). Kontrol tamamen bu pencereye bağlıdır.</p>
+    <h2 class="section-title ins-feedback-block-title">Student feedback (end of term)</h2>
+    <p class="page-meta">Set a date range stored in <strong>UTC</strong>; only enrolled students can submit a 1–5 rating and optional comment during this window (one submission per student).</p>
     <div class="form-block">
-      <label for="feedbackCourseSelect">Ders</label>
+      <label for="feedbackCourseSelect">Course</label>
       <select id="feedbackCourseSelect"></select>
     </div>
     <div class="form-block">
-      <label for="feedbackOpensLocal">Pencere başlangıcı (bilgisayarınızın saati)</label>
+      <label for="feedbackOpensLocal">Window opens (your local time)</label>
       <input type="datetime-local" id="feedbackOpensLocal" autocomplete="off">
     </div>
     <div class="form-block">
-      <label for="feedbackClosesLocal">Pencere bitişi</label>
+      <label for="feedbackClosesLocal">Window closes</label>
       <input type="datetime-local" id="feedbackClosesLocal" autocomplete="off">
     </div>
-    <button type="button" class="btn-create" id="btnSaveFeedbackWindow">Pencereyi kaydet</button>
-    <button type="button" class="btn-secondary ins-btn-secondary" id="btnClearFeedbackWindow">Pencereyi kapat</button>
+    <button type="button" class="btn-create" id="btnSaveFeedbackWindow">Save window</button>
+    <button type="button" class="btn-secondary ins-btn-secondary" id="btnClearFeedbackWindow">Close window</button>
     <div id="feedbackWindowMsg" class="msg" style="display:none;margin-top:0.75rem;"></div>
 
     <h3 class="section-title ins-feedback-subtitle">Bu derse gelen geri bildirimler</h3>
     <div id="feedbackListHost" class="ins-feedback-list"></div>
   </main>
 
-  <a href="/instructor-ai.html" class="ai-assistant-fab" aria-label="AI Asistan" title="AI Asistan">
+  <a href="/instructor-ai.html" class="ai-assistant-fab" aria-label="AI assistant" title="AI assistant">
     <img src="/images/robot.png" alt="" width="38" height="38" decoding="async">
   </a>
   <script src="/js/out.js"></script>
   <script src="/js/user-fly.js"></script>
   <script>
-    // Eğitmen: ders oluştur + syllabus dosya yükle
+    // Instructor: create course + upload syllabus file
     var token = localStorage.getItem('syllabus_token');
     var userStr = localStorage.getItem('syllabus_user');
     if (!token || !userStr) { window.location.href = '/'; }
@@ -175,22 +172,22 @@
       var title = document.getElementById('title').value.trim();
       var syllabus = document.getElementById('syllabusContent').value.trim();
       var keywords = document.getElementById('highlightKeywords').value.trim();
-      if (!code) { showFormMsg('Ders kodu zorunlu (örn. COP4803).', true); return; }
+      if (!code) { showFormMsg('Course code is required (e.g. COP4803).', true); return; }
       fetch('/api/courses', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseCode: code, title: title || code, syllabusContent: syllabus, highlightKeywords: keywords || null }) })
         .then(function(r){ return r.json().then(function(d){ return { ok: r.ok, data: d }; }); })
         .then(function(r) {
           if (r.ok) {
             lastCreatedCourseId = r.data.id;
-            showFormMsg('Ders kaydedildi. Öğrenciler yalnızca bu kod sistemde varken ekleyebilir: ' + code + '. Şimdi Adım 2’den syllabus dosyasını yükleyin.', false);
+            showFormMsg('Course saved. Students can only enroll when this code exists: ' + code + '. Now upload the syllabus file in Step 2.', false);
             document.getElementById('courseCode').value='';
             document.getElementById('title').value='';
             document.getElementById('syllabusContent').value='';
             document.getElementById('highlightKeywords').value='';
             setFlowStep(2);
             loadCourses();
-          } else showFormMsg(r.data.message || 'Eklenemedi.', true);
+          } else showFormMsg(r.data.message || 'Could not add.', true);
         })
-        .catch(function(){ showFormMsg('Bağlantı hatası.', true); });
+        .catch(function(){ showFormMsg('Connection error.', true); });
     };
 
     function utcIsoToLocalInput(iso) {
@@ -213,20 +210,24 @@
       var sel = document.getElementById('pdfCourseId');
       var fsel = document.getElementById('feedbackCourseSelect');
       if (!list || list.length === 0) {
-        sel.innerHTML = '<option value="">Önce ders oluşturun</option>';
-        if (fsel) fsel.innerHTML = '<option value="">Önce ders oluşturun</option>';
+        sel.innerHTML = '<option value="">Create a course first</option>';
+        if (fsel) fsel.innerHTML = '<option value="">Create a course first</option>';
         if (urlCourseId) {
           urlCourseId = null;
           try { history.replaceState({}, '', '/instructor.html'); } catch (e) {}
         }
         return;
       }
-      var opts = '<option value="">Ders seçin…</option>' + list.map(function(c){
-        return '<option value="'+c.id+'">'+(c.courseCode||'')+' — '+(c.title||'')+'</option>';
+      var opts = '<option value="">Select a course…</option>' + list.map(function(c){
+        var n = typeof c.feedbackResponseCount === 'number' ? c.feedbackResponseCount : 0;
+        return '<option value="'+c.id+'">'+(c.courseCode||'')+' — '+(c.title||'')+' ('+n+' feedback)</option>';
       }).join('');
       sel.innerHTML = opts;
       if (fsel) fsel.innerHTML = opts;
-      var pick = preferredId || lastCreatedCourseId || urlCourseId;
+      var autoWithFeedback = (list || []).filter(function(c){
+        return (typeof c.feedbackResponseCount === 'number' ? c.feedbackResponseCount : 0) > 0;
+      })[0];
+      var pick = preferredId || lastCreatedCourseId || urlCourseId || (autoWithFeedback ? autoWithFeedback.id : (list[0] && list[0].id));
       if (pick) sel.value = String(pick);
       if (fsel && pick) fsel.value = String(pick);
       if (urlCourseId) {
@@ -260,6 +261,16 @@
       el.style.display = 'block';
     }
 
+    function openFeedbackPopup(courseId, feedbackId) {
+      var url = '/instructor-feedback-view.html?courseId=' + courseId + '&feedbackId=' + feedbackId;
+      var w = 920;
+      var h = 760;
+      var left = Math.max(20, Math.floor((window.screen.width - w) / 2));
+      var top = Math.max(20, Math.floor((window.screen.height - h) / 2));
+      var features = 'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top + ',resizable=yes,scrollbars=yes';
+      window.open(url, 'feedbackPopup', features);
+    }
+
     function loadFeedbackListForSelection() {
       var host = document.getElementById('feedbackListHost');
       var fsel = document.getElementById('feedbackCourseSelect');
@@ -269,17 +280,36 @@
       fetch('/api/courses/' + id + '/feedbacks', { headers: authHeader() })
         .then(function (r) { return r.json(); })
         .then(function (rows) {
-          if (!rows || rows.length === 0) { host.innerHTML = '<p class="page-meta">Henüz geri bildirim yok.</p>'; return; }
+          if (!rows || rows.length === 0) {
+            var withFeedback = (instructorCourseList || []).filter(function(c){
+              return (typeof c.feedbackResponseCount === 'number' ? c.feedbackResponseCount : 0) > 0;
+            });
+            if (withFeedback.length > 0) {
+              host.innerHTML = '<p class="page-meta">No feedback for this course yet. Courses with feedback: ' +
+                withFeedback.map(function(c){ return (c.courseCode || '') + ' (' + c.feedbackResponseCount + ')'; }).join(', ') + '.</p>';
+            } else {
+              host.innerHTML = '<p class="page-meta">No feedback yet for your courses.</p>';
+            }
+            return;
+          }
           host.innerHTML = '<ul class="ins-feedback-ul">' + rows.map(function (x) {
             var r = Math.min(5, Math.max(0, parseInt(x.rating, 10) || 0));
             var stars = '★'.repeat(r) + '☆'.repeat(5 - r);
-            var who = esc(x.studentName || x.studentEmail || '?');
+            var who = esc(x.studentName || '?');
             var when = x.submittedAtUtc ? new Date(x.submittedAtUtc).toLocaleString() : '';
             var com = esc(x.comment || '');
-            return '<li class="ins-feedback-li"><div class="ins-feedback-meta"><strong>' + who + '</strong> <span class="ins-feedback-stars">' + stars + '</span> <span class="ins-feedback-when">' + esc(when) + '</span></div>' + (com ? '<div class="ins-feedback-comment">' + com + '</div>' : '') + '</li>';
+            var detailBtn = '<button type="button" class="btn-view-feedback" data-cid="' + id + '" data-fid="' + x.id + '" style="margin-left:auto;padding:0.35rem 0.75rem;border-radius:999px;border:none;background:#6366f1;color:#fff;text-decoration:none;font-size:0.78rem;font-weight:600;cursor:pointer;">View answers</button>';
+            return '<li class="ins-feedback-li"><div class="ins-feedback-meta" style="display:flex;align-items:center;gap:0.55rem;"><strong>' + who + '</strong> <span class="ins-feedback-stars">' + stars + '</span> <span class="ins-feedback-when">' + esc(when) + '</span>' + detailBtn + '</div>' + (com ? '<div class="ins-feedback-comment">' + com + '</div>' : '') + '</li>';
           }).join('') + '</ul>';
+          host.querySelectorAll('.btn-view-feedback').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              var cid = parseInt(btn.getAttribute('data-cid'), 10);
+              var fid = parseInt(btn.getAttribute('data-fid'), 10);
+              openFeedbackPopup(cid, fid);
+            });
+          });
         })
-        .catch(function () { host.innerHTML = '<p class="page-meta">Liste yüklenemedi.</p>'; });
+        .catch(function () { host.innerHTML = '<p class="page-meta">Could not load list.</p>'; });
     }
 
     document.getElementById('feedbackCourseSelect').addEventListener('change', function () {
@@ -289,53 +319,53 @@
 
     document.getElementById('btnSaveFeedbackWindow').onclick = function () {
       var id = parseInt(document.getElementById('feedbackCourseSelect').value, 10);
-      if (!id) { showFeedbackWindowMsg('Önce ders seçin.', true); return; }
+      if (!id) { showFeedbackWindowMsg('Select a course first.', true); return; }
       var o = localInputToUtcIso('feedbackOpensLocal');
       var cl = localInputToUtcIso('feedbackClosesLocal');
-      if (!o || !cl) { showFeedbackWindowMsg('Başlangıç ve bitiş tarihlerini doldurun (veya pencereyi kapatmak için ayrı düğmeyi kullanın).', true); return; }
+      if (!o || !cl) { showFeedbackWindowMsg('Fill in start and end dates (or use the other button to close the window).', true); return; }
       fetch('/api/courses/' + id + '/feedback-window', { method: 'PUT', headers: authHeader(), body: JSON.stringify({ opensAtUtc: o, closesAtUtc: cl }) })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
         .then(function (x) {
           if (x.ok) {
-            showFeedbackWindowMsg('Kaydedildi. Öğrenciler yalnızca bu aralıkta gönderim yapabilir.', false);
+            showFeedbackWindowMsg('Saved. Students can only submit during this window.', false);
             loadCourses();
-          } else showFeedbackWindowMsg(x.d.message || 'Kaydedilemedi.', true);
+          } else showFeedbackWindowMsg(x.d.message || 'Could not save.', true);
         })
-        .catch(function () { showFeedbackWindowMsg('Bağlantı hatası.', true); });
+        .catch(function () { showFeedbackWindowMsg('Connection error.', true); });
     };
 
     document.getElementById('btnClearFeedbackWindow').onclick = function () {
       var id = parseInt(document.getElementById('feedbackCourseSelect').value, 10);
-      if (!id) { showFeedbackWindowMsg('Önce ders seçin.', true); return; }
+      if (!id) { showFeedbackWindowMsg('Select a course first.', true); return; }
       fetch('/api/courses/' + id + '/feedback-window', { method: 'PUT', headers: authHeader(), body: JSON.stringify({ opensAtUtc: null, closesAtUtc: null }) })
         .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
         .then(function (x) {
           if (x.ok) {
-            showFeedbackWindowMsg('Geri bildirim penceresi kapatıldı.', false);
+            showFeedbackWindowMsg('Feedback window closed.', false);
             document.getElementById('feedbackOpensLocal').value = '';
             document.getElementById('feedbackClosesLocal').value = '';
             loadCourses();
-          } else showFeedbackWindowMsg(x.d.message || 'İşlem başarısız.', true);
+          } else showFeedbackWindowMsg(x.d.message || 'Operation failed.', true);
         })
-        .catch(function () { showFeedbackWindowMsg('Bağlantı hatası.', true); });
+        .catch(function () { showFeedbackWindowMsg('Connection error.', true); });
     };
 
     document.getElementById('btnUploadSyllabus').onclick = function() {
       var cid = document.getElementById('pdfCourseId').value;
       var input = document.getElementById('syllabusFile');
       var f = input.files && input.files[0];
-      if (!cid) { showUploadMsg('Önce listeden ders seçin.', true); return; }
-      if (!f) { showUploadMsg('.pdf veya .docx dosyası seçin.', true); return; }
+      if (!cid) { showUploadMsg('Select a course from the list first.', true); return; }
+      if (!f) { showUploadMsg('Choose a .pdf or .docx file.', true); return; }
       var name = (f.name || '').toLowerCase();
-      if (!name.endsWith('.pdf') && !name.endsWith('.docx')) { showUploadMsg('Yalnızca PDF veya Word (.docx).', true); return; }
+      if (!name.endsWith('.pdf') && !name.endsWith('.docx')) { showUploadMsg('Only PDF or Word (.docx).', true); return; }
       var fd = new FormData();
       fd.append('file', f);
-      showUploadMsg('Yükleniyor…', false);
+      showUploadMsg('Uploading…', false);
       fetch('/api/courses/' + cid + '/syllabus-upload', { method: 'POST', headers: authBearerOnly(), body: fd })
         .then(function(r){
           return r.text().then(function(t){
             var d = {};
-            try { d = t ? JSON.parse(t) : {}; } catch (e) { d = { message: 'Sunucu yanıtı okunamadı (HTTP ' + r.status + ')' }; }
+            try { d = t ? JSON.parse(t) : {}; } catch (e) { d = { message: 'Could not read server response (HTTP ' + r.status + ')' }; }
             return { ok: r.ok, status: r.status, data: d };
           });
         })
@@ -343,14 +373,14 @@
           if (r.ok) {
             var k = r.data.fileKind || 'pdf';
             var ch = r.data.ragChunkCount != null ? r.data.ragChunkCount : '?';
-            showUploadMsg('Syllabus yüklendi (' + k + '). Metin: ' + (r.data.extractedCharacterCount||0) + ' karakter · RAG parça: ' + ch + ' (0 ise PDF metin çıkmamış olabilir).', false);
+            showUploadMsg('Syllabus uploaded (' + k + '). Characters: ' + (r.data.extractedCharacterCount||0) + ' · RAG chunks: ' + ch + ' (0 may mean no text extracted from PDF).', false);
             input.value = '';
             lastCreatedCourseId = null;
             setFlowStep(2);
             loadCourses();
-          } else showUploadMsg(r.data.message || ('Yüklenemedi (HTTP ' + r.status + ').'), true);
+          } else showUploadMsg(r.data.message || ('Upload failed (HTTP ' + r.status + ').'), true);
         })
-        .catch(function(){ showUploadMsg('Bağlantı hatası.', true); });
+        .catch(function(){ showUploadMsg('Connection error.', true); });
     };
 
     function esc(s) {
@@ -365,13 +395,13 @@
           instructorCourseList = list || [];
           var el = document.getElementById('courseList');
           fillCourseSelect(list, lastCreatedCourseId);
-          if (!list || list.length === 0) { el.innerHTML = '<li class="empty">Henüz ders eklemediniz.</li>'; return; }
+          if (!list || list.length === 0) { el.innerHTML = '<li class="empty">You have not added any courses yet.</li>'; return; }
           el.innerHTML = list.map(function(c){
             var badge = c.hasSyllabus
-              ? '<span class="badge badge-ok">Syllabus yüklü</span>'
-              : '<span class="badge badge-warn">Syllabus bekleniyor</span>';
+              ? '<span class="badge badge-ok">Syllabus uploaded</span>'
+              : '<span class="badge badge-warn">Syllabus pending</span>';
             var n = typeof c.feedbackResponseCount === 'number' ? c.feedbackResponseCount : 0;
-            var fb = ' <span class="ins-fb-count">(' + n + ' geri bildirim)</span>';
+            var fb = ' <span class="ins-fb-count">(' + n + ' feedback)</span>';
             var code = esc(c.courseCode || '');
             var tit = esc(c.title || '');
             return '<li><span class="code">' + code + '</span><span class="tit">' + tit + '</span>' + badge + fb + '</li>';

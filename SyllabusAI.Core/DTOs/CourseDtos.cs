@@ -18,8 +18,11 @@ public class CourseDto
     /// <summary>Eğitmen listesi: geri bildirim zaman penceresi (UTC). İkisi de null ise kapalı.</summary>
     public DateTime? FeedbackOpensAtUtc { get; set; }
     public DateTime? FeedbackClosesAtUtc { get; set; }
+    public DateTime? WeeklyFeedbackOpensAtUtc { get; set; }
+    public DateTime? WeeklyFeedbackClosesAtUtc { get; set; }
     /// <summary>Eğitmen: gelen geri bildirim sayısı.</summary>
     public int FeedbackResponseCount { get; set; }
+    public int WeeklyFeedbackResponseCount { get; set; }
 }
 
 public class SyllabusDto
@@ -100,6 +103,9 @@ public class CourseFeedbackQuestionSummaryDto
 {
     public int QuestionNo { get; set; }
     public string QuestionText { get; set; } = string.Empty;
+    public int TotalAnswers { get; set; }
+    public double AverageRating { get; set; }
+    public double AveragePercent { get; set; }
     public int Rate1Count { get; set; }
     public int Rate2Count { get; set; }
     public int Rate3Count { get; set; }

@@ -1,8 +1,5 @@
-namespace SyllabusAI.Models;
+﻿namespace SyllabusAI.Models;
 
-/// <summary>
-/// RAG için müfredat parçası; metin + isteğe bağlı embedding (OpenAI anahtarı varsa doldurulur).
-/// </summary>
 public class SyllabusChunk
 {
     public int Id { get; set; }
@@ -12,6 +9,11 @@ public class SyllabusChunk
     public int ChunkIndex { get; set; }
     public string Text { get; set; } = string.Empty;
 
-    /// <summary>OpenAI embedding vektörü JSON dizisi [0.1,0.2,...]; yoksa sözcük eşleşmesi kullanılır.</summary>
+    public string? OriginalSectionTitle { get; set; }
+    public string NormalizedCategory { get; set; } = "unknown";
+    public int? PageStart { get; set; }
+    public int? PageEnd { get; set; }
+
+    // JSON array [0.1, 0.2, ...]
     public string? EmbeddingJson { get; set; }
 }

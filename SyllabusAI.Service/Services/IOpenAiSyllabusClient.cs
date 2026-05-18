@@ -10,6 +10,6 @@ public interface IOpenAiSyllabusClient
     /// <summary>Aynı sırada çoklu embedding (indeksleme).</summary>
     Task<IReadOnlyList<float[]?>?> EmbedManyAsync(IReadOnlyList<string> texts, CancellationToken ct = default);
 
-    /// <summary>Sistem + kullanıcı mesajı ile kısa cevap; hata veya yapılandırma yoksa null.</summary>
-    Task<string?> ChatAsync(string systemPrompt, string userMessage, CancellationToken ct = default);
+    /// <summary>Sistem + kullanıcı mesajı; hata veya yapılandırma yoksa null. Sıcaklık/uzunluk null ise <c>OpenAI:ChatTemperature</c> ve <c>OpenAI:ChatMaxTokens</c> kullanılır.</summary>
+    Task<string?> ChatAsync(string systemPrompt, string userMessage, CancellationToken ct = default, double? temperature = null, int? maxTokens = null);
 }

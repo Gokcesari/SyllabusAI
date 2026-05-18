@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SyllabusAI.DTOs;
 using SyllabusAI.Services;
 
@@ -43,7 +43,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
-            return BadRequest(new { message = "E-posta ve şifre gerekli." });
+            return BadRequest(new { message = "Email and password are required." });
 
         var webPortalClient = string.Equals(
             Request.Headers["X-Syllabus-Client"].ToString(),
@@ -67,7 +67,7 @@ public class AuthController : ControllerBase
         if (!result.Success)
         {
             _logger.LogWarning("Başarısız giriş denemesi: {Email}", request.Email);
-            return Unauthorized(new { message = result.ErrorMessage ?? "E-posta veya şifre hatalı." });
+            return Unauthorized(new { message = result.ErrorMessage ?? "Invalid email or password." });
         }
 
         _logger.LogInformation("Başarılı giriş: {Email}, Rol: {Role}", request.Email, result.Response!.User.Role);

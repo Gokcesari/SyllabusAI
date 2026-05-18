@@ -22,6 +22,71 @@ namespace SyllabusAI.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("SyllabusAI.Models.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChatSessionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsOutOfScope")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RetrievedCategoriesJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RetrievedChunkIdsJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatSessionId", "CreatedAtUtc");
+
+                    b.ToTable("ChatMessages");
+                });
+
+            modelBuilder.Entity("SyllabusAI.Models.ChatSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StudentUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("StudentUserId", "CourseId", "CreatedAtUtc");
+
+                    b.ToTable("ChatSessions");
+                });
+
             modelBuilder.Entity("SyllabusAI.Models.Course", b =>
                 {
                     b.Property<int>("Id")
@@ -58,6 +123,12 @@ namespace SyllabusAI.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("WeeklyFeedbackClosesAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("WeeklyFeedbackOpensAtUtc")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -130,6 +201,66 @@ namespace SyllabusAI.Data.Migrations
                     b.ToTable("CourseFeedbackAnswers");
                 });
 
+            modelBuilder.Entity("SyllabusAI.Models.CourseWeeklyFeedback", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<byte>("Rating")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int>("StudentUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("SubmittedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentUserId");
+
+                    b.HasIndex("CourseId", "StudentUserId")
+                        .IsUnique();
+
+                    b.ToTable("CourseWeeklyFeedbacks");
+                });
+
+            modelBuilder.Entity("SyllabusAI.Models.CourseWeeklyFeedbackAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseWeeklyFeedbackId")
+                        .HasColumnType("int");
+
+                    b.Property<byte>("Rating")
+                        .HasColumnType("tinyint");
+
+                    b.Property<int>("WeeklyFeedbackQuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WeeklyFeedbackQuestionId");
+
+                    b.HasIndex("CourseWeeklyFeedbackId", "WeeklyFeedbackQuestionId")
+                        .IsUnique();
+
+                    b.ToTable("CourseWeeklyFeedbackAnswers");
+                });
+
             modelBuilder.Entity("SyllabusAI.Models.Enrollment", b =>
                 {
                     b.Property<int>("Id")
@@ -189,105 +320,105 @@ namespace SyllabusAI.Data.Migrations
                             Id = 1,
                             IsActive = true,
                             QuestionNo = 1,
-                            Text = "Dersin hedefleri ve icerigi donem basinda acik sekilde paylasildi."
+                            Text = "Course objectives and content were clearly communicated at the start of the term."
                         },
                         new
                         {
                             Id = 2,
                             IsActive = true,
                             QuestionNo = 2,
-                            Text = "Ders plani (syllabus) ile islenen konular su ana kadar uyumluydu."
+                            Text = "Topics covered so far align with the syllabus."
                         },
                         new
                         {
                             Id = 3,
                             IsActive = true,
                             QuestionNo = 3,
-                            Text = "Kullanilan dijital platformlar ders takibi ve etkilesim icin yeterliydi."
+                            Text = "Digital platforms used were adequate for following the course and interaction."
                         },
                         new
                         {
                             Id = 4,
                             IsActive = true,
                             QuestionNo = 4,
-                            Text = "Sunulan ders materyalleri (notlar, sunumlar vb.) yeterli ve faydaliydi."
+                            Text = "Course materials (notes, slides, etc.) were sufficient and useful."
                         },
                         new
                         {
                             Id = 5,
                             IsActive = true,
                             QuestionNo = 5,
-                            Text = "Ders kapsaminda onerilen ek kaynaklara ve okumalara erisim kolaydi."
+                            Text = "Additional resources and readings suggested in the course were easy to access."
                         },
                         new
                         {
                             Id = 6,
                             IsActive = true,
                             QuestionNo = 6,
-                            Text = "Islenen ders konularini su ana kadar teorik duzeyde iyi anlayabildim."
+                            Text = "So far I understand the topics covered at a theoretical level."
                         },
                         new
                         {
                             Id = 7,
                             IsActive = true,
                             QuestionNo = 7,
-                            Text = "Konularin pekismesi icin sinifta daha fazla tekrar veya uygulama yapilmasi gerektigini dusunuyorum."
+                            Text = "I think more in-class review or practice is needed to reinforce topics."
                         },
                         new
                         {
                             Id = 8,
                             IsActive = true,
                             QuestionNo = 8,
-                            Text = "Dersin islenisi sirasinda farkli ogrenme hizlarina ve seviyelerine sahip ogrenciler gozetildi."
+                            Text = "During instruction, students with different learning speeds and levels were considered."
                         },
                         new
                         {
                             Id = 9,
                             IsActive = true,
                             QuestionNo = 9,
-                            Text = "Ders kapsaminda yapilan ornekler ve uygulamalar, gercek hayattaki/mesleki senaryolarla iyi iliskilendirildi."
+                            Text = "Examples and activities in the course were well linked to real-world or professional scenarios."
                         },
                         new
                         {
                             Id = 10,
                             IsActive = true,
                             QuestionNo = 10,
-                            Text = "Dersin islenis temposu (ilerleyis hizi), konulari sindirmem ve not almam icin uygundur."
+                            Text = "The pace of the course suits my ability to digest topics and take notes."
                         },
                         new
                         {
                             Id = 11,
                             IsActive = true,
                             QuestionNo = 11,
-                            Text = "Anlatilan konularin zorluk seviyesi, sahip oldugum on bilgilerle ve yetkinligimle ortusmektedir."
+                            Text = "The difficulty of topics matches my prior knowledge and skills."
                         },
                         new
                         {
                             Id = 12,
                             IsActive = true,
                             QuestionNo = 12,
-                            Text = "Ders sirasinda soru sorma, tartismaya katilma ve fikir beyan etme konusunda kendimi tesvik edilmis hissediyorum."
+                            Text = "I feel encouraged to ask questions, join discussions, and share ideas in class."
                         },
                         new
                         {
                             Id = 13,
                             IsActive = true,
                             QuestionNo = 13,
-                            Text = "Verilen odevler, projeler veya kisa sinavlar ogrenme surecime gercek anlamda katki saglamaktadir."
+                            Text = "Assignments, projects, or quizzes meaningfully support my learning."
                         },
                         new
                         {
                             Id = 14,
                             IsActive = true,
                             QuestionNo = 14,
-                            Text = "Dersin icerigi ve hocanin anlatim tarzi, konuya olan merakimi ve derse olan motivasyonumu canli tutmaktadir."
+                            Text = "The content and the instructor's style keep my interest and motivation for the course."
                         },
                         new
                         {
                             Id = 15,
                             IsActive = true,
                             QuestionNo = 15,
-                            Text = "Egitmen, karmasik kavramlari aciklarken farkli yontemler (gorsel araclar, benzetmeler, vaka analizleri vb.) kullanarak anlasilirligi artirmaktadir."
+                            Text = "The instructor explains complex concepts using different methods to improve clarity."
                         });
                 });
 
@@ -342,6 +473,19 @@ namespace SyllabusAI.Data.Migrations
                     b.Property<string>("EmbeddingJson")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("NormalizedCategory")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("OriginalSectionTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PageEnd")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PageStart")
+                        .HasColumnType("int");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -349,6 +493,8 @@ namespace SyllabusAI.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId", "ChunkIndex");
+
+                    b.HasIndex("CourseId", "NormalizedCategory");
 
                     b.ToTable("SyllabusChunks");
                 });
@@ -367,6 +513,9 @@ namespace SyllabusAI.Data.Migrations
                     b.Property<string>("ExtractedText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("OriginalFileName")
                         .IsRequired()
@@ -421,6 +570,114 @@ namespace SyllabusAI.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("SyllabusAI.Models.WeeklyFeedbackQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("QuestionNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionNo")
+                        .IsUnique();
+
+                    b.ToTable("WeeklyFeedbackQuestions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsActive = true,
+                            QuestionNo = 1,
+                            Text = "This week's lesson was productive overall."
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsActive = true,
+                            QuestionNo = 2,
+                            Text = "The lesson content was clear and understandable."
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsActive = true,
+                            QuestionNo = 3,
+                            Text = "The instructor's explanation was effective."
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsActive = true,
+                            QuestionNo = 4,
+                            Text = "The examples given in the lesson helped me understand the topic."
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsActive = true,
+                            QuestionNo = 5,
+                            Text = "There was sufficient interaction and participation during the lesson."
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsActive = true,
+                            QuestionNo = 6,
+                            Text = "I believe I can apply what I learned in this lesson."
+                        },
+                        new
+                        {
+                            Id = 7,
+                            IsActive = true,
+                            QuestionNo = 7,
+                            Text = "This week's lesson met my expectations."
+                        });
+                });
+
+            modelBuilder.Entity("SyllabusAI.Models.ChatMessage", b =>
+                {
+                    b.HasOne("SyllabusAI.Models.ChatSession", "ChatSession")
+                        .WithMany("Messages")
+                        .HasForeignKey("ChatSessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChatSession");
+                });
+
+            modelBuilder.Entity("SyllabusAI.Models.ChatSession", b =>
+                {
+                    b.HasOne("SyllabusAI.Models.Course", "Course")
+                        .WithMany("ChatSessions")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SyllabusAI.Models.User", "StudentUser")
+                        .WithMany()
+                        .HasForeignKey("StudentUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("StudentUser");
+                });
+
             modelBuilder.Entity("SyllabusAI.Models.Course", b =>
                 {
                     b.HasOne("SyllabusAI.Models.User", "Instructor")
@@ -468,6 +725,44 @@ namespace SyllabusAI.Data.Migrations
                     b.Navigation("CourseFeedback");
 
                     b.Navigation("FeedbackQuestion");
+                });
+
+            modelBuilder.Entity("SyllabusAI.Models.CourseWeeklyFeedback", b =>
+                {
+                    b.HasOne("SyllabusAI.Models.Course", "Course")
+                        .WithMany("WeeklyFeedbacks")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SyllabusAI.Models.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Student");
+                });
+
+            modelBuilder.Entity("SyllabusAI.Models.CourseWeeklyFeedbackAnswer", b =>
+                {
+                    b.HasOne("SyllabusAI.Models.CourseWeeklyFeedback", "CourseWeeklyFeedback")
+                        .WithMany("Answers")
+                        .HasForeignKey("CourseWeeklyFeedbackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SyllabusAI.Models.WeeklyFeedbackQuestion", "WeeklyFeedbackQuestion")
+                        .WithMany("Answers")
+                        .HasForeignKey("WeeklyFeedbackQuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CourseWeeklyFeedback");
+
+                    b.Navigation("WeeklyFeedbackQuestion");
                 });
 
             modelBuilder.Entity("SyllabusAI.Models.Enrollment", b =>
@@ -522,8 +817,15 @@ namespace SyllabusAI.Data.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("SyllabusAI.Models.ChatSession", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("SyllabusAI.Models.Course", b =>
                 {
+                    b.Navigation("ChatSessions");
+
                     b.Navigation("Enrollments");
 
                     b.Navigation("Feedbacks");
@@ -531,9 +833,16 @@ namespace SyllabusAI.Data.Migrations
                     b.Navigation("SyllabusChunks");
 
                     b.Navigation("SyllabusPdfUploads");
+
+                    b.Navigation("WeeklyFeedbacks");
                 });
 
             modelBuilder.Entity("SyllabusAI.Models.CourseFeedback", b =>
+                {
+                    b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("SyllabusAI.Models.CourseWeeklyFeedback", b =>
                 {
                     b.Navigation("Answers");
                 });
@@ -546,6 +855,11 @@ namespace SyllabusAI.Data.Migrations
             modelBuilder.Entity("SyllabusAI.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("SyllabusAI.Models.WeeklyFeedbackQuestion", b =>
+                {
+                    b.Navigation("Answers");
                 });
 #pragma warning restore 612, 618
         }

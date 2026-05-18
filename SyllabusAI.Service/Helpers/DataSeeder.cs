@@ -6,8 +6,8 @@ using SyllabusAI.Models;
 namespace SyllabusAI.Service.Helpers;
 
 /// <summary>
-/// Geliştirme ortamında veritabanı boşsa örnek kullanıcı ekler (Seed:CreateDemoUsers).
-/// Admin bootstrap için Seed:AdminEmail / Seed:AdminPassword kullanılır.
+/// Development: seeds demo users when DB is empty (Seed:CreateDemoUsers).
+/// Admin bootstrap uses Seed:AdminEmail / Seed:AdminPassword.
 /// </summary>
 public static class DataSeeder
 {
@@ -30,21 +30,21 @@ public static class DataSeeder
                 {
                     Email = "ogrenci@bahcesehir.edu.tr",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Test123!"),
-                    FullName = "Test Öğrenci",
+                    FullName = "Test Student",
                     RoleId = studentRoleId
                 },
                 new User
                 {
                     Email = "egitmen@bau.edu.tr",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Test123!"),
-                    FullName = "Test Eğitmen",
+                    FullName = "Test Instructor",
                     RoleId = instructorRoleId
                 },
                 new User
                 {
                     Email = "hoca@ou.bau.edu.tr",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("Test123!"),
-                    FullName = "Test Eğitmen (OU)",
+                    FullName = "Test Instructor (OU)",
                     RoleId = instructorRoleId
                 }
             }, ct);
@@ -88,12 +88,12 @@ public static class DataSeeder
                     CourseCode = "INE2001",
                     Title = "Statistics",
                     InstructorId = instructor.Id,
-                    HighlightKeywords = "sınav,devam,not",
+                    HighlightKeywords = "exam,attendance,grade",
                     SyllabusContent =
-                        "Devam kuralı: 4 devamsızlık hakkı.\n" +
-                        "Sınav tarihleri: Vize 7. hafta, Final 15. hafta.\n" +
-                        "Notlandırma: Vize %40, Final %60.\n" +
-                        "Haftalık plan: 1-2 Giriş, 3-4 Grafikler, 5-6 Olasılık..."
+                        "Attendance: up to 4 absences allowed.\n" +
+                        "Exam dates: Midterm week 7, Final week 15.\n" +
+                        "Grading: Midterm 40%, Final 60%.\n" +
+                        "Weekly outline: 1-2 Intro, 3-4 Charts, 5-6 Probability..."
                 };
                 db.Courses.Add(course);
                 await db.SaveChangesAsync(ct);

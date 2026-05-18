@@ -9,6 +9,6 @@ public class LoginResult
 
     public static LoginResult Ok(LoginResponse response) => new() { Response = response };
     public static LoginResult DomainNotAllowed(string message) => new() { ErrorCode = "DomainNotAllowed", ErrorMessage = message };
-    public static LoginResult InvalidCredentials() => new() { ErrorCode = "InvalidCredentials", ErrorMessage = "E-posta veya şifre hatalı." };
+    public static LoginResult InvalidCredentials() => new() { ErrorCode = "InvalidCredentials", ErrorMessage = "Invalid email or password." };
     public static LoginResult AdminWebLoginForbidden(string message) => new() { ErrorCode = "AdminWebLoginForbidden", ErrorMessage = message };
 }

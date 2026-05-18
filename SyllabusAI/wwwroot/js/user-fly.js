@@ -1,39 +1,39 @@
 /**
- * Sidebar profil menüsü:
- * - #userHit = tıklanınca aç/kapa
- * - #userFly = üstte açılan kutu (Çıkış burada)
- * - Sayfa dışına veya Esc ile kapanır
+ * Sidebar profile menu:
+ * - #userHit toggles open/closed
+ * - #userFly is the popover (Sign out)
+ * - Closes on outside click or Escape
  */
 (function () {
-  function hazir() {
+  function ready() {
     var hit = document.getElementById('userHit');
     var fly = document.getElementById('userFly');
     if (!hit || !fly) return;
 
-    function kapat() {
+    function closeMenu() {
       fly.hidden = true;
       hit.setAttribute('aria-expanded', 'false');
     }
 
     hit.addEventListener('click', function (e) {
       e.stopPropagation();
-      var ac = fly.hidden;
-      fly.hidden = !ac;
-      hit.setAttribute('aria-expanded', ac ? 'true' : 'false');
+      var open = fly.hidden;
+      fly.hidden = !open;
+      hit.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
 
     document.addEventListener('click', function () {
-      kapat();
+      closeMenu();
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') kapat();
+      if (e.key === 'Escape') closeMenu();
     });
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', hazir);
+    document.addEventListener('DOMContentLoaded', ready);
   } else {
-    hazir();
+    ready();
   }
 })();

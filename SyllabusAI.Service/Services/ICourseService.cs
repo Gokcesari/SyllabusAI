@@ -1,4 +1,4 @@
-using SyllabusAI.DTOs;
+﻿using SyllabusAI.DTOs;
 
 namespace SyllabusAI.Services;
 
@@ -8,11 +8,10 @@ public interface ICourseService
     Task<List<CourseDto>> GetInstructorCoursesAsync(int instructorUserId, CancellationToken ct = default);
     Task<List<CourseDto>> GetMyEnrolledCoursesAsync(int studentUserId, CancellationToken ct = default);
     Task<EnrollResult> EnrollByCourseCodeAsync(int studentUserId, string courseCode, CancellationToken ct = default);
-    /// <summary>Öğrenci: Kayıtlı dersten çıkar (Enrollment satırını siler).</summary>
     Task<bool> UnenrollAsync(int studentUserId, int courseId, CancellationToken ct = default);
+    Task<(bool Ok, string? Error)> DeleteCourseAsync(int instructorUserId, int courseId, CancellationToken ct = default);
     Task<SyllabusDto?> GetSyllabusForStudentAsync(int studentUserId, int courseId, CancellationToken ct = default);
     Task<List<FeedbackQuestionDto>> GetFeedbackQuestionsAsync(CancellationToken ct = default);
-    /// <summary>Öğrenci: derse yüklenen son syllabus dosyasının ham içeriği (kayıtlıysa).</summary>
     Task<SyllabusFileStreamDto?> GetSyllabusFileForStudentAsync(int studentUserId, int courseId, CancellationToken ct = default);
     Task<SyllabusPdfUploadResponseDto?> UploadSyllabusFileAsync(int instructorUserId, int courseId, Stream fileStream, string originalFileName, CancellationToken ct = default);
 

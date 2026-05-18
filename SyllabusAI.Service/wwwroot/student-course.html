@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SyllabusAI - Ders dosyası</title>
-  <link rel="stylesheet" href="/css/app.css?v=20260341">
+  <title>SyllabusAI - Course file</title>
+  <link rel="stylesheet" href="/css/app.css?v=20260431">
   <style>
     .back { display: inline-block; margin-bottom: 0.75rem; color: #a5b4fc; text-decoration: none; font-size: 0.875rem; }
     .back:hover { color: #c4b5fd; }
-    /* Ham müfredat metni gösterilmez; yalnız PDF önizleme veya Word indirme */
+    /* Raw syllabus text is not shown; PDF preview or Word download only */
     .main-area.reader-col {
       max-width: min(1180px, 96vw);
     }
@@ -138,162 +138,84 @@
     .chat-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
     .chat-row input { flex: 1; min-width: 160px; padding: 0.55rem 0.75rem; border: none; border-radius: 8px; font-size: 0.88rem; }
     .chat-row button { padding: 0.55rem 0.95rem; border: none; border-radius: 8px; background: #4f46e5; color: #fff; font-weight: 600; cursor: pointer; }
-    .feedback-box {
-      margin-top: 1.25rem;
-      padding: 1.1rem 1.2rem;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(30, 58, 95, 0.35);
-      color: rgba(240, 236, 252, 0.95);
-    }
-    .feedback-box h3 { font-size: 0.95rem; margin-bottom: 0.5rem; }
-    .feedback-hint { font-size: 0.86rem; line-height: 1.5; color: rgba(215, 208, 232, 0.88); margin-bottom: 0.75rem; }
-    .feedback-box label { display: block; font-size: 0.82rem; margin: 0.5rem 0 0.25rem; }
-    .feedback-box select, .feedback-box textarea {
-      width: 100%; max-width: 100%; padding: 0.5rem 0.65rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
-      background: rgba(15, 12, 28, 0.6); color: #f5f3ff; font-size: 0.9rem;
-    }
-    .feedback-box textarea { min-height: 5rem; resize: vertical; }
-    .feedback-box button {
-      margin-top: 0.65rem; padding: 0.55rem 1.1rem; border: none; border-radius: 8px; background: #6366f1; color: #fff; font-weight: 600; cursor: pointer;
-    }
-    .feedback-gate {
-      position: fixed; inset: 0; z-index: 1200;
-      background: rgba(3, 5, 20, 0.78);
-      display: none; align-items: center; justify-content: center;
-      padding: 1.25rem;
-    }
-    .feedback-gate.show { display: flex; }
-    .feedback-gate .panel {
-      width: min(980px, 96vw);
-      max-height: 90vh;
-      overflow: auto;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.16);
-      background: #f8fafc;
-      color: #0f172a;
-      padding: 1rem 1.1rem;
-    }
-    .feedback-gate .title { font-size: 1.05rem; font-weight: 700; }
-    .feedback-gate .meta { font-size: 0.84rem; color: #334155; margin: 0.25rem 0 0.75rem; }
-    .feedback-gate .q-card { background: #dbeafe; border-radius: 10px; padding: 0.7rem 0.8rem; margin-bottom: 0.65rem; }
-    .feedback-gate .q-text { font-size: 0.9rem; font-weight: 600; color: #1e293b; margin-bottom: 0.45rem; }
-    .feedback-gate .q-rates { display: flex; gap: 0.6rem; flex-wrap: wrap; }
-    .feedback-gate .q-rates label { font-size: 0.82rem; color: #0f172a; display: inline-flex; gap: 0.25rem; align-items: center; }
-    .feedback-gate .gate-actions { display: flex; gap: 0.6rem; align-items: center; margin-top: 0.65rem; }
-    .feedback-gate .gate-actions button {
-      border: none; border-radius: 8px; background: #4f46e5; color: #fff;
-      padding: 0.58rem 1rem; font-weight: 600; cursor: pointer;
-    }
-    .feedback-gate .gate-msg { font-size: 0.82rem; color: #334155; }
   </style>
 </head>
 <body class="tp">
   <aside class="sidebar">
-    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> SYLLABUSAI</div>
-    <div class="menu-label">ÖĞRENCİ MENÜSÜ</div>
+    <div class="logo"><svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg> SYLLABUSAI</div>
+    <div class="menu-label">STUDENT MENU</div>
     <nav>
-      <a href="/student.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> Derslerim</a>
-      <a href="/student-ai.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> AI Asistan</a>
+      <a href="/student.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> My courses</a>
+      <a href="/student-ai.html"><svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg> AI assistant</a>
     </nav>
-    <div class="lang"><button type="button">TR / EN</button></div>
     <div class="user-box has-drop">
       <div class="user-drop">
-        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Hesap menüsü">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
           <div class="user-row">
             <div class="user-avatar" id="userAvatar">?</div>
             <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta"></div></div>
           </div>
         </button>
         <div class="user-fly" id="userFly" hidden role="menu">
-          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Çıkış</button>
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Sign out</button>
         </div>
       </div>
     </div>
   </aside>
   <main class="main-area reader-col">
-    <a href="/student.html" class="back">← Derslerime dön</a>
-    <h1 class="page-title" id="courseTitle">Ders</h1>
-    <p class="page-meta" style="margin-bottom:1rem;font-size:0.85rem;">Hocanın yüklediği dosya (PDF veya Word). Metin çıktısı burada gösterilmez; yalnızca dosya.</p>
+    <a href="/student.html" class="back">← Back to my courses</a>
+    <h1 class="page-title" id="courseTitle">Course</h1>
 
     <div class="reader-stage" id="readerStage">
       <div class="stage-head">
-        <div class="stage-title">Okuma aşaması</div>
-        <div class="stage-note">Tüm sayfalar okunduğunda blur açılır.</div>
+        <div class="stage-title">Reading progress</div>
       </div>
       <div class="stage-bar"><div class="stage-fill" id="stageFill"></div></div>
       <div class="stage-actions">
-        <button type="button" id="btnUnlockAi" disabled>AI Asistanı Aç</button>
+        <button type="button" id="btnUnlockAi" disabled>Open AI assistant</button>
       </div>
     </div>
 
     <div class="file-shell" id="fileShell">
       <div class="preview-wrap" id="previewWrap">
-        <p class="file-msg" id="fileMsg">Yükleniyor…</p>
+        <p class="file-msg" id="fileMsg">Loading...</p>
         <iframe id="pdfFrame" title="Syllabus PDF" style="display:none"></iframe>
         <div id="pdfJsHost" class="pdfjs-host"></div>
         <div class="docx-actions" id="docxWrap">
-          <a href="#" id="docxLink" download="syllabus.docx">Word dosyasını indir</a>
+          <a href="#" id="docxLink" download="syllabus.docx">Download Word file</a>
         </div>
-        <div class="blur-layer" id="blurLayer">Alt kısım kilitli: okumaya devam ettikçe açılır</div>
+        <div class="blur-layer" id="blurLayer">Bottom locked - keeps unlocking as you read</div>
       </div>
     </div>
 
     <div class="chat-box" id="chat">
-      <h3>Soru–cevap (AI)</h3>
+      <h3>Question-Answer (AI)</h3>
       <div class="chat-messages" id="chatMessages"></div>
       <div class="chat-row">
-        <input type="text" id="questionInput" placeholder="Bu ders hakkında soru yaz…" autocomplete="off">
-        <button type="button" id="btnAsk">Gönder</button>
+        <input type="text" id="questionInput" placeholder="Ask a question about this course..." autocomplete="off">
+        <button type="button" id="btnAsk">Send</button>
       </div>
     </div>
 
-    <div class="feedback-box" id="feedbackPanel">
-      <h3>Ders geri bildirimi</h3>
-      <p class="feedback-hint" id="feedbackStatusText">Yükleniyor…</p>
-      <div id="feedbackForm" style="display:none;">
-        <label for="fbRating">Genel değerlendirme (1–5)</label>
-        <select id="fbRating">
-          <option value="5">5 — Çok iyi</option>
-          <option value="4">4</option>
-          <option value="3">3 — Orta</option>
-          <option value="2">2</option>
-          <option value="1">1 — Zayıf</option>
-        </select>
-        <label for="fbComment">Yorum (isteğe bağlı, en fazla 2000 karakter)</label>
-        <textarea id="fbComment" maxlength="2000" placeholder="Ders hakkında kısa görüşünüz…"></textarea>
-        <button type="button" id="btnFeedbackSend">Gönder</button>
-      </div>
-    </div>
-
-    <a href="/student-ai.html" class="ai-assistant-fab" aria-label="AI Asistan" title="AI Asistan">
+    <a href="/student-ai.html" class="ai-assistant-fab" aria-label="AI assistant" title="AI assistant">
       <img src="/images/robot.png" alt="" width="40" height="40" decoding="async">
     </a>
   </main>
-  <div class="feedback-gate" id="feedbackGate" aria-hidden="true">
-    <div class="panel">
-      <div class="title">Ders Geri Bildirim Anketi (zorunlu)</div>
-      <div class="meta" id="gateMeta">Anketi tamamlamadan bu ders ekraninda devam edemezsiniz.</div>
-      <div id="gateQuestions"></div>
-      <div class="gate-actions">
-        <button type="button" id="btnGateSubmit">Anketi Gonder</button>
-        <span class="gate-msg" id="gateMsg"></span>
-      </div>
-    </div>
-  </div>
   <script src="/js/out.js"></script>
   <script src="/js/user-fly.js"></script>
   <script>
-    // Başlık için /syllabus (yalnız isim); dosya için /syllabus-file. SyllabusContent ekranda yok.
+    // Title: GET /syllabus; file: GET /syllabus-file. Raw SyllabusContent is not shown on this page.
     var token = localStorage.getItem('syllabus_token');
     var userStr = localStorage.getItem('syllabus_user');
     if (!token || !userStr) { window.location.href = '/'; }
     var user = JSON.parse(userStr);
     if (user.role !== 'Student') { window.location.href = '/student.html'; }
+    var userScopeKey = String(user.id || user.userId || user.email || 'student')
+      .replace(/[^a-zA-Z0-9_\-.@]/g, '_');
     function initials(n){ var p=(n||'').split(/\s+/); return p.length>=2 ? (p[0][0]+p[1][0]).toUpperCase() : ((n||'?')[0]).toUpperCase(); }
     document.getElementById('userAvatar').textContent = initials(user.fullName || user.email);
     document.getElementById('userName').textContent = user.fullName || user.email;
-    document.getElementById('userMeta').textContent = user.email || 'Öğrenci';
+    document.getElementById('userMeta').textContent = user.email || 'Student';
 
     var params = new URLSearchParams(window.location.search);
     var courseId = parseInt(params.get('id'), 10);
@@ -301,6 +223,21 @@
 
     function authHeader() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }; }
     function authBearer() { return { 'Authorization': 'Bearer ' + token }; }
+    function ensureFeedbackCompletedForCourse() {
+      Promise.all([
+        fetch('/api/courses/' + courseId + '/feedback-status', { headers: authHeader() }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+        fetch('/api/courses/' + courseId + '/weekly-feedback-status', { headers: authHeader() }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      ]).then(function (statuses) {
+        var termStatus = statuses[0];
+        var weeklyStatus = statuses[1];
+        var termPending = termStatus && termStatus.windowOpen && !termStatus.hasSubmitted;
+        var weeklyPending = weeklyStatus && weeklyStatus.windowOpen && !weeklyStatus.hasSubmitted;
+        if (termPending || weeklyPending) {
+          alert('Bu ders icin acik geri bildirim var. Devam etmeden once My courses ekranindaki feedback formunu doldurman gerekiyor.');
+          window.location.href = '/student.html';
+        }
+      });
+    }
 
     var blobUrl = null;
     var hasSyllabusFile = false;
@@ -321,46 +258,7 @@
     var unlockStorageKey = '';
     var progressStorageKey = '';
     var scrollTicking = false;
-    var feedbackQuestions = [];
-    var feedbackStatus = null;
-
-    function setGateVisible(v) {
-      var gate = document.getElementById('feedbackGate');
-      if (v) gate.classList.add('show');
-      else gate.classList.remove('show');
-      gate.setAttribute('aria-hidden', v ? 'false' : 'true');
-    }
-    function renderGateQuestions() {
-      var host = document.getElementById('gateQuestions');
-      host.innerHTML = (feedbackQuestions || []).map(function(q) {
-        var no = q.questionNo;
-        var radios = [1,2,3,4,5].map(function(r) {
-          return '<label><input type="radio" name="q' + no + '" value="' + r + '"> ' + r + '</label>';
-        }).join('');
-        return '<div class="q-card"><div class="q-text">' + no + '. ' + (q.questionText || '') + '</div><div class="q-rates">' + radios + '</div></div>';
-      }).join('');
-    }
-    function collectGateAnswers() {
-      var answers = [];
-      for (var i = 0; i < feedbackQuestions.length; i++) {
-        var no = feedbackQuestions[i].questionNo;
-        var sel = document.querySelector('input[name="q' + no + '"]:checked');
-        if (!sel) return null;
-        answers.push({ questionNo: no, rating: parseInt(sel.value, 10) });
-      }
-      return answers;
-    }
-    function maybeShowFeedbackGate() {
-      if (!feedbackStatus) return;
-      if (feedbackStatus.windowOpen && !feedbackStatus.hasSubmitted) {
-        document.getElementById('gateMeta').textContent = 'Bu dersin anketini tamamlamadan devam edemezsiniz.';
-        renderGateQuestions();
-        document.getElementById('gateMsg').textContent = '';
-        setGateVisible(true);
-      } else {
-        setGateVisible(false);
-      }
-    }
+    ensureFeedbackCompletedForCourse();
 
     function setChatLocked(locked) {
       var box = document.getElementById('chat');
@@ -382,9 +280,9 @@
 
     function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
     function loadReadState() {
-      stageStorageKey = 'syllabus_read_stage_' + courseId;
-      unlockStorageKey = 'syllabus_read_unlock_' + courseId;
-      progressStorageKey = 'syllabus_read_progress_' + courseId;
+      stageStorageKey = 'syllabus_read_stage_' + userScopeKey + '_' + courseId;
+      unlockStorageKey = 'syllabus_read_unlock_' + userScopeKey + '_' + courseId;
+      progressStorageKey = 'syllabus_read_progress_' + userScopeKey + '_' + courseId;
       var rawStage = parseInt(localStorage.getItem(stageStorageKey) || '1', 10);
       readState.stage = clamp(isNaN(rawStage) ? 1 : rawStage, 1, totalStages);
       readState.unlocked = localStorage.getItem(unlockStorageKey) === '1';
@@ -432,12 +330,16 @@
       blurLayer.style.background = 'linear-gradient(to bottom, rgba(8, 10, 35, ' + alphaTop + '), rgba(8, 10, 35, ' + alphaBottom + '))';
       if (isSyllabusReadingComplete() && hasSyllabusFile) {
         btnUnlock.disabled = true;
-        btnUnlock.textContent = 'Müfredat okundu — AI açık';
+        btnUnlock.textContent = 'Syllabus read - AI unlocked';
+        if (!readState.unlocked) {
+          readState.unlocked = true;
+          saveReadState();
+        }
       } else {
-        btnUnlock.textContent = 'AI Asistanı Aç';
+        btnUnlock.textContent = 'Open AI assistant';
         btnUnlock.disabled = !(stage >= totalStages && hasSyllabusFile);
       }
-      setChatLocked(!(readState.unlocked && hasSyllabusFile));
+      setChatLocked(!(hasSyllabusFile && (readState.unlocked || isSyllabusReadingComplete())));
     }
     function updateBottomFlagsForDebugOnly() {
       var page = document.scrollingElement || document.documentElement;
@@ -448,7 +350,7 @@
       var wrap = document.getElementById('previewWrap');
       var shell = document.getElementById('fileShell');
       var pdfHost = document.getElementById('pdfJsHost');
-      var usePdfHost = isPdfPreview && pdfHost && pdfHost.style.display !== 'none' && (pdfHost.scrollHeight - pdfHost.clientHeight) > 1;
+      var usePdfHost = isPdfPreview && pdfHost && pdfHost.style.display !== 'none' && (pdfHost.scrollHeight - pdfHost.clientHeight) >= 0;
       var useWrap = wrap && (wrap.scrollHeight - wrap.clientHeight) > 1;
       var useShell = !useWrap && shell && (shell.scrollHeight - shell.clientHeight) > 1;
       var progress = null;
@@ -456,10 +358,16 @@
       updateBottomFlagsForDebugOnly();
       if (usePdfHost) {
         lastProgressSource = 'pdfjs-scroll';
-        progress = clamp(pdfHost.scrollTop / Math.max(1, (pdfHost.scrollHeight - pdfHost.clientHeight)), 0, 1);
-        if ((pdfHost.scrollTop + pdfHost.clientHeight) >= (pdfHost.scrollHeight - 4)) {
+        var maxScroll = pdfHost.scrollHeight - pdfHost.clientHeight;
+        if (maxScroll <= 1) {
           progress = 1;
           isViewerAtBottom = true;
+        } else {
+          progress = clamp(pdfHost.scrollTop / maxScroll, 0, 1);
+          if ((pdfHost.scrollTop + pdfHost.clientHeight) >= (pdfHost.scrollHeight - 4)) {
+            progress = 1;
+            isViewerAtBottom = true;
+          }
         }
       }
 
@@ -483,6 +391,7 @@
       if (isViewerAtBottom || progress >= 0.999) {
         readState.progress = 1;
         readState.stage = totalStages;
+        readState.unlocked = true;
         if (lastProgressSource === 'none') lastProgressSource = 'bottom-force';
       }
       saveReadState();
@@ -499,6 +408,7 @@
       if (p >= 0.999) {
         readState.progress = 1;
         readState.stage = totalStages;
+        readState.unlocked = true;
         isViewerAtBottom = true;
       }
       saveReadState();
@@ -524,8 +434,8 @@
       return null;
     }
     function onViewerMessage(ev) {
-      // Bazı viewer implementasyonlarında mesaj source'u nested frame olabilir.
-      // Bu yüzden source filtresini gevşek tutuyoruz.
+      // Bazi viewer implementasyonlarinda mesaj source'u nested frame olabilir.
+      // Bu yuzden source filtresini gevsek tutuyoruz.
       var pages = extractPageNumbers(ev.data);
       if (!pages) return;
       if (pages.total && pages.total > 0) lastKnownPdfTotalPages = pages.total;
@@ -615,7 +525,7 @@
       .then(function (r) { if (!r.ok) { window.location.href = '/student.html'; return; } return r.json(); })
       .then(function (d) {
         if (!d) return;
-        document.getElementById('courseTitle').textContent = d.title || d.courseCode || 'Ders';
+        document.getElementById('courseTitle').textContent = d.title || d.courseCode || 'Course';
       })
       .catch(function () { window.location.href = '/student.html'; });
 
@@ -623,12 +533,12 @@
     fetch('/api/courses/' + courseId + '/syllabus-file', { headers: authBearer() })
       .then(function (r) {
         if (r.status === 404) {
-          msg.textContent = 'Bu ders için henüz PDF veya Word dosyası yüklenmemiş. Eğitmen yüklediğinde burada görünür.';
+          msg.textContent = 'No PDF or Word file has been uploaded for this course yet. It will appear here when the instructor uploads one.';
           hasSyllabusFile = false;
           setChatLocked(true);
           return null;
         }
-        if (!r.ok) { msg.textContent = 'Dosya alınamadı.'; return null; }
+        if (!r.ok) { msg.textContent = 'Could not load file.'; return null; }
         var hdr = (r.headers.get('content-type') || '').toLowerCase();
         return r.blob().then(function (b) { return { blob: b, hdr: hdr }; });
       })
@@ -659,7 +569,7 @@
           hasSyllabusFile = true;
           isPdfPreview = false;
           blobUrl = URL.createObjectURL(blob);
-          msg.textContent = 'Bu ders Word (.docx) ile yüklenmiş. Aşamaları tamamladıktan sonra dosyayı indirip açabilirsiniz.';
+          msg.textContent = 'This course uploaded as Word (.docx). After you complete the reading steps, you can download and open the file.';
           var link = document.getElementById('docxLink');
           link.href = blobUrl;
           link.download = 'syllabus.docx';
@@ -667,13 +577,13 @@
         } else {
           isPdfPreview = false;
           hasSyllabusFile = false;
-          msg.textContent = 'Dosya türü önizlenemiyor.';
+          msg.textContent = 'This file type cannot be previewed.';
         }
         updateReadUi();
         ensureCompletedReadUi();
         updateProgressFromScroll();
       })
-      .catch(function () { msg.textContent = 'Bağlantı hatası.'; hasSyllabusFile = false; setChatLocked(true); });
+      .catch(function () { msg.textContent = 'Connection error.'; hasSyllabusFile = false; setChatLocked(true); });
 
     document.getElementById('btnUnlockAi').onclick = function () {
       if (!hasSyllabusFile) return;
@@ -681,7 +591,7 @@
       readState.unlocked = true;
       saveReadState();
       updateReadUi();
-      addMsg('bot', 'Tebrikler. Müfredat okuma adımlarını tamamladınız, AI Asistan açıldı.');
+      addMsg('bot', 'You finished the syllabus reading steps. The AI assistant is now unlocked.');
     };
     document.getElementById('previewWrap').addEventListener('scroll', onReaderScroll, { passive: true });
     document.getElementById('fileShell').addEventListener('scroll', onReaderScroll, { passive: true });
@@ -698,8 +608,8 @@
     }
     document.getElementById('btnAsk').onclick = function () {
       var q = document.getElementById('questionInput').value.trim();
-      if (!(readState.unlocked && hasSyllabusFile)) {
-        addMsg('bot', 'AI Asistan kilitli. Önce müfredatı tamamen okuyun.');
+      if (!(hasSyllabusFile && (readState.unlocked || isSyllabusReadingComplete()))) {
+        addMsg('bot', 'AI assistant is locked. Finish reading the full syllabus first.');
         return;
       }
       if (!q) return;
@@ -708,104 +618,27 @@
       fetch('/api/chat/ask', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseId: courseId, question: q }) })
         .then(function (r) { return r.json(); })
         .then(function (d) {
-          var answer = d.answer || 'Cevap alınamadı.';
+          var answer = d.answer || 'No answer received.';
           var state = '';
           if (d && d.isOutOfScope) state = 'scope-deny';
-          if (d && d.fromSyllabus === false && answer.toLowerCase().indexOf('ai servisi') >= 0) state = 'ai-offline';
+          if (d && d.fromSyllabus === false && answer.toLowerCase().indexOf('ai service') >= 0) state = 'ai-offline';
           addMsg('bot', answer, state);
         })
-        .catch(function () { addMsg('bot', 'Bağlantı hatası.'); });
+        .catch(function () { addMsg('bot', 'Connection error.'); });
     };
     if (window.location.hash === '#chat') document.getElementById('chat').scrollIntoView();
-
-    function refreshFeedbackUi() {
-      Promise.all([
-        fetch('/api/courses/feedback-questions', { headers: authHeader() }).then(function(r){ return r.ok ? r.json() : []; }),
-        fetch('/api/courses/' + courseId + '/feedback-status', { headers: authHeader() }).then(function(r){ return r.json(); })
-      ])
-        .then(function (res) {
-          feedbackQuestions = Array.isArray(res[0]) ? res[0] : [];
-          var s = res[1];
-          feedbackStatus = s;
-          var hint = document.getElementById('feedbackStatusText');
-          var form = document.getElementById('feedbackForm');
-          if (s.hasSubmitted) {
-            hint.textContent = 'Geri bildiriminiz kayıtlı (puan: ' + s.myRating + '). Teşekkürler.';
-            form.style.display = 'none';
-            maybeShowFeedbackGate();
-            return;
-          }
-          if (!s.windowConfigured) {
-            hint.textContent = s.message || 'Bu ders için geri bildirim henüz açılmadı.';
-            form.style.display = 'none';
-            maybeShowFeedbackGate();
-            return;
-          }
-          if (!s.windowOpen) {
-            hint.textContent = s.message || 'Geri bildirim şu an kabul edilmiyor.';
-            form.style.display = 'none';
-            maybeShowFeedbackGate();
-            return;
-          }
-          hint.textContent = 'Dönem sonu geri bildiriminizi buradan gönderebilirsiniz (tek sefer).';
-          form.style.display = 'none';
-          maybeShowFeedbackGate();
-        })
-        .catch(function () {
-          document.getElementById('feedbackStatusText').textContent = 'Geri bildirim bilgisi alınamadı.';
-          document.getElementById('feedbackForm').style.display = 'none';
-          setGateVisible(false);
-        });
-    }
-    refreshFeedbackUi();
-
-    document.getElementById('btnFeedbackSend').onclick = function () {
-      var rating = parseInt(document.getElementById('fbRating').value, 10);
-      var comment = document.getElementById('fbComment').value.trim();
-      fetch('/api/courses/' + courseId + '/feedback', {
-        method: 'POST',
-        headers: authHeader(),
-        body: JSON.stringify({ rating: rating, comment: comment || null, answers: [] })
-      })
-        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-        .then(function (x) {
-          if (x.ok) {
-            document.getElementById('fbComment').value = '';
-            refreshFeedbackUi();
-          } else alert(x.d.message || 'Gönderilemedi.');
-        })
-        .catch(function () { alert('Bağlantı hatası.'); });
-    };
-
-    document.getElementById('btnGateSubmit').addEventListener('click', function () {
-      if (!feedbackQuestions || feedbackQuestions.length === 0) {
-        document.getElementById('gateMsg').textContent = 'Anket sorulari yuklenemedi.';
-        return;
-      }
-      var answers = collectGateAnswers();
-      if (!answers) {
-        document.getElementById('gateMsg').textContent = 'Lutfen tum sorulari 1-5 arasi yanitlayin.';
-        return;
-      }
-      var avg = Math.round(answers.reduce(function(sum, a){ return sum + a.rating; }, 0) / answers.length);
-      fetch('/api/courses/' + courseId + '/feedback', {
-        method: 'POST',
-        headers: authHeader(),
-        body: JSON.stringify({ rating: avg, comment: null, answers: answers })
-      })
-        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
-        .then(function (x) {
-          if (!x.ok) {
-            document.getElementById('gateMsg').textContent = x.d.message || 'Gonderilemedi.';
-            return;
-          }
-          setGateVisible(false);
-          refreshFeedbackUi();
-        })
-        .catch(function () { document.getElementById('gateMsg').textContent = 'Baglanti hatasi.'; });
-    });
 
     window.addEventListener('beforeunload', clearFile);
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+

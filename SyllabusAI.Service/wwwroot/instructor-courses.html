@@ -1,41 +1,43 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SyllabusAI - Eğitmen Derslerim</title>
-  <link rel="stylesheet" href="/css/app.css?v=20260341">
+  <title>SyllabusAI - Instructor courses</title>
+  <link rel="stylesheet" href="/css/app.css?v=20260426">
 </head>
 <body class="tp ins-soft">
   <aside class="sidebar">
-    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> SYLLABUSAI</div>
-    <div class="menu-label">EĞİTMEN MENÜSÜ</div>
+    <div class="logo"><svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg> SYLLABUSAI</div>
+    <div class="menu-label">INSTRUCTOR MENU</div>
     <nav>
       <a href="/instructor.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Ders Ekle
+        Add course
       </a>
       <a href="/instructor-courses.html" class="active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-        Derslerim
+        My courses
+      </a>
+      <a href="/instructor-feedback.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        Feedback
       </a>
       <a href="/instructor-ai.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
-        AI Asistan
+        <svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg>
+        AI assistant
       </a>
     </nav>
-    <div class="lang"><button type="button">TR / EN</button></div>
-    <!-- Profil → üst menü → Çıkış (öğrenci / eğitmen ortak) -->
     <div class="user-box has-drop">
       <div class="user-drop">
-        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Hesap menüsü">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
           <div class="user-row">
             <div class="user-avatar" id="userAvatar">?</div>
-            <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta">Eğitmen</div></div>
+            <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta">Instructor</div></div>
           </div>
         </button>
         <div class="user-fly" id="userFly" hidden role="menu">
-          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Çıkış</button>
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Sign out</button>
         </div>
       </div>
     </div>
@@ -43,26 +45,30 @@
 
   <main class="main-area main-area--lms">
     <div class="lms-page-head-row">
-      <h1 class="page-title">Derslerim</h1>
+      <h1 class="page-title">My courses</h1>
       <div class="lms-search-wrap">
-        <input type="text" id="searchCourses" placeholder="Ders bul…" autocomplete="off">
-        <a href="/instructor.html" style="padding:0.5rem 1rem;border-radius:999px;background:#6366f1;color:#fff;font-weight:600;font-size:0.8rem;text-decoration:none;white-space:nowrap;">+ Yeni ders</a>
+        <input type="text" id="searchCourses" placeholder="Search courses..." autocomplete="off">
+        <a href="/instructor.html" style="padding:0.5rem 1rem;border-radius:999px;background:#6366f1;color:#fff;font-weight:600;font-size:0.8rem;text-decoration:none;white-space:nowrap;">+ New course</a>
       </div>
     </div>
-    <p class="page-meta">Öğrenciler yalnızca bu ders kodlarıyla kayıt olabilir. Syllabus yüklemek için karttaki düğmeyi veya <a href="/instructor.html" style="color:#a5b4fc;">Ders Ekle</a> sayfasını kullanın.</p>
+    <p class="page-meta">Students enroll using these course codes. Use each card or <a href="/instructor.html" style="color:#a5b4fc;">Add course</a> to upload a <strong>PDF</strong> syllabus.</p>
 
-    <h2 class="lms-subhead">Açtığım dersler</h2>
+    <h2 class="lms-subhead">Courses I teach</h2>
 
     <div class="bubble-grid" id="courseList"></div>
   </main>
 
-  <a href="/instructor-ai.html" class="ai-assistant-fab" aria-label="AI Asistan" title="AI Asistan">
-    <img src="/images/robot.png" alt="" width="38" height="38" decoding="async">
-  </a>
+  <div class="instructor-fab-stack" aria-label="Quick links">
+    <a href="/instructor-feedback.html" class="instructor-feedback-fab" title="Student feedback" aria-label="Student feedback">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    </a>
+    <a href="/instructor-ai.html" class="ai-assistant-fab" aria-label="AI assistant" title="AI assistant">
+      <img src="/images/robot.png" alt="" width="38" height="38" decoding="async">
+    </a>
+  </div>
   <script src="/js/out.js"></script>
   <script src="/js/user-fly.js"></script>
   <script>
-    // Eğitmen ders listesi (kartlar + arama)
     var token = localStorage.getItem('syllabus_token');
     var userStr = localStorage.getItem('syllabus_user');
     if (!token || !userStr) { window.location.href = '/'; }
@@ -99,10 +105,10 @@
     function renderCourses(list) {
       var el = document.getElementById('courseList');
       if (!list || list.length === 0) {
-        el.innerHTML = '<p class="empty">Henüz ders yok. <a href="/instructor.html" style="color:#a5b4fc;">Ders Ekle</a> ile yeni ders ve syllabus oluşturun.</p>';
+        el.innerHTML = '<p class="empty">No courses yet. Use <a href="/instructor.html" style="color:#a5b4fc;">Add course</a> to create a course and syllabus.</p>';
         return;
       }
-      var me = user.fullName || user.email || 'Siz';
+      var me = user.fullName || user.email || 'You';
       var meIni = initials(me);
       el.innerHTML = list.map(function(c) {
         var bg = bubbleColor(c.id);
@@ -110,14 +116,15 @@
         return '<div class="bubble-card-wrap">' +
           '<div class="bubble-card-inner bc-s" style="--bubble-bg:' + bg + '">' +
           '<span class="bubble-code">' + escapeHtml(c.courseCode || '') + '</span>' +
-          '<h3 class="bubble-title">' + escapeHtml(c.title || c.courseCode || 'Ders') + '</h3>' +
-          '<div class="bubble-instructor"><span class="bubble-avatar">' + escapeHtml(meIni) + '</span> ' + escapeHtml(me) + ' · eğitmen</div>' +
+          '<h3 class="bubble-title">' + escapeHtml(c.title || c.courseCode || 'Course') + '</h3>' +
+          '<div class="bubble-instructor"><span class="bubble-avatar">' + escapeHtml(meIni) + '</span> ' + escapeHtml(me) + ' - instructor</div>' +
           '<div class="bubble-footer bubble-footer--instructor">' +
-          '<span class="bubble-stat">' + (hasS ? '✓ Syllabus yüklü' : '○ Syllabus eksik') + '</span>' +
-          '<span class="bubble-stat">Öğrenci kodu: <strong>' + escapeHtml(c.courseCode || '') + '</strong></span>' +
+          '<span class="bubble-stat">' + (hasS ? 'Syllabus uploaded' : 'Syllabus missing') + '</span>' +
+          '<span class="bubble-stat">Enrollment code: <strong>' + escapeHtml(c.courseCode || '') + '</strong></span>' +
           '<div class="bubble-actions">' +
-          '<a class="btn-primary" href="/instructor.html?courseId=' + c.id + '">Syllabus yükle / güncelle</a>' +
-          '<a class="btn-ghost" href="/instructor.html">Tüm dersler · oluştur</a>' +
+          '<a class="btn-primary" href="/instructor.html?courseId=' + c.id + '">Upload / update syllabus</a>' +
+          '<a class="btn-ghost" href="/instructor.html">All courses - create</a>' +
+          '<button type="button" class="btn-ghost btn-delete-course" data-cid="' + c.id + '">Delete course</button>' +
           '</div></div></div></div>';
       }).join('');
     }
@@ -126,6 +133,26 @@
       var q = document.getElementById('searchCourses').value.trim();
       renderCourses(filterCourses(allCourses, q));
     }
+
+    document.getElementById('courseList').addEventListener('click', function (ev) {
+      var btn = ev.target.closest('.btn-delete-course');
+      if (!btn) return;
+      var courseId = parseInt(btn.getAttribute('data-cid'), 10);
+      if (!courseId) return;
+      if (!confirm('Delete this course and all related data?')) return;
+
+      fetch('/api/courses/instructor/' + courseId, { method: 'DELETE', headers: authHeader() })
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+        .then(function (x) {
+          if (!x.ok) {
+            alert((x.data && x.data.message) || 'Could not delete course.');
+            return;
+          }
+          allCourses = allCourses.filter(function (c) { return c.id !== courseId; });
+          applyFilter();
+        })
+        .catch(function () { alert('Connection error.'); });
+    });
 
     document.getElementById('searchCourses').addEventListener('input', applyFilter);
 
@@ -137,7 +164,7 @@
           applyFilter();
         })
         .catch(function() {
-          document.getElementById('courseList').innerHTML = '<p class="empty">Liste yüklenemedi.</p>';
+          document.getElementById('courseList').innerHTML = '<p class="empty">Could not load list.</p>';
         });
     }
     loadCourses();

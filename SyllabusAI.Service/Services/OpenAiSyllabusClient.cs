@@ -73,17 +73,19 @@ public class OpenAiSyllabusClient : IOpenAiSyllabusClient
         return all;
     }
 
-    public async Task<string?> ChatAsync(string systemPrompt, string userMessage, CancellationToken ct = default)
+    public async Task<string?> ChatAsync(string systemPrompt, string userMessage, CancellationToken ct = default, double? temperature = null, int? maxTokens = null)
     {
         if (!IsConfigured) return null;
 
         var client = CreateClient();
         var model = _config["OpenAI:ChatModel"] ?? "gpt-4o-mini";
+        var t = temperature ?? _config.GetValue("OpenAI:ChatTemperature", 0.7);
+        var m = maxTokens ?? _config.GetValue("OpenAI:ChatMaxTokens", 2000);
         var payload = new
         {
             model,
-            temperature = 0.2,
-            max_tokens = 600,
+            temperature = t,
+            max_tokens = m,
             messages = new object[]
             {
                 new { role = "system", content = systemPrompt },

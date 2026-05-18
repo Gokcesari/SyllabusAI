@@ -9,9 +9,9 @@ using SyllabusAI.Service.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Yerel geliştirme: SQLite dosya DB (Data/syllabus_local.db). SQL Server için connection string değiştirin.
+// ConnectionStrings:DefaultConnection -> SQL Server (appsettings / appsettings.Development).
 var defaultCs = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection tanımlı olmalı.");
+    ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection must be set.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(defaultCs);
@@ -19,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IWeeklyFeedbackService, WeeklyFeedbackService>();
 builder.Services.AddScoped<IAiService, AiService>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IRolesService, RolesService>();
@@ -35,12 +36,14 @@ builder.Services.AddHttpClient(nameof(OpenAiSyllabusClient), (sp, client) =>
 });
 builder.Services.AddSingleton<IOpenAiSyllabusClient, OpenAiSyllabusClient>();
 builder.Services.AddScoped<ISyllabusRagIndexService, SyllabusRagIndexService>();
+builder.Services.AddSingleton<SyllabusCategoryMapper>();
+builder.Services.AddSingleton<QuestionCategoryHintService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddControllers();
 
 // JWT (rapor: 401 Unauthorized, 403 Forbidden - RBAC)
-var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key appsettings'te tanımlanmalı.");
+var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key must be set in appsettings.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -67,7 +70,7 @@ builder.Services.AddSwaggerGen(options =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Önce POST /api/Auth/login ile giriş yapın; dönen accessToken değerini buraya yapıştırın (Bearer yazmadan sadece token da olur)."
+        Description = "Sign in with POST /api/Auth/login first; paste the returned accessToken here (with or without the Bearer prefix)."
     });
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -89,7 +92,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Sadece HTTP kullanıldığında "Failed to determine the https port" uyarısını önlemek için
+// In Development, skip HTTPS redirect to avoid "Failed to determine the https port" when using HTTP only.
 if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 
@@ -99,7 +102,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-// Demo mod kapalıysa DB (UseDemoAuth: true iken veritabanına bağlanmaz)
+// When UseDemoAuth is false, run migrations / seed / schema patch.
 var useDemoAuth = app.Configuration.GetValue<bool>("UseDemoAuth");
 if (!useDemoAuth)
 {
@@ -115,7 +118,7 @@ if (!useDemoAuth)
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "EF Migrate tamamlanamadı (eski DB / geçmiş uyumsuz olabilir). SQL Server ise şema yaması denenecek.");
+            logger.LogWarning(ex, "EF Migrate failed (old DB / migration mismatch). SQL Server schema patch will be attempted.");
         }
 
         try
@@ -124,7 +127,7 @@ if (!useDemoAuth)
         }
         catch (Exception ex)
         {
-            logger.LogWarning(ex, "Seed atlandı.");
+            logger.LogWarning(ex, "Seed atlandÄ±.");
         }
     }
 
@@ -134,13 +137,14 @@ if (!useDemoAuth)
     }
     catch (Exception ex)
     {
-        logger.LogWarning(ex, "SQL Server syllabus tablo yaması atlandı.");
+        logger.LogWarning(ex, "SQL Server syllabus schema patch skipped.");
     }
 }
 else if (useDemoAuth)
 {
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Demo mod aktif: Giriş veritabanı olmadan test edilebilir (şifre: appsettings'teki DemoPassword).");
+    logger.LogInformation("Demo auth: login without DB seed; password from appsettings DemoPassword.");
 }
 
 app.Run();
+

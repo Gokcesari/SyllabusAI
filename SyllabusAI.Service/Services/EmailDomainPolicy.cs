@@ -17,5 +17,5 @@ public static class EmailDomainPolicy
                || e.EndsWith("@ou.bau.edu.tr");
     }
 
-    public const string DomainErrorMessage = "Sadece @bahcesehir.edu.tr (öğrenci), @bau.edu.tr ve @ou.bau.edu.tr (eğitmen) adresleri ile giriş yapılabilir.";
+    public const string DomainErrorMessage = "Only @bahcesehir.edu.tr (students), @bau.edu.tr and @ou.bau.edu.tr (instructors) email addresses can sign in.";
 }

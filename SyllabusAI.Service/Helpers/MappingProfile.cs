@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using SyllabusAI.DTOs;
 using SyllabusAI.Models;
 
@@ -11,7 +11,8 @@ public class MappingProfile : Profile
         CreateMap<Course, CourseDto>()
             .ForMember(d => d.InstructorName, o => o.MapFrom(s => s.Instructor.FullName ?? s.Instructor.Email))
             .ForMember(d => d.HasSyllabus, o => o.MapFrom(s => !string.IsNullOrWhiteSpace(s.SyllabusContent)))
-            .ForMember(d => d.FeedbackResponseCount, o => o.MapFrom(s => s.Feedbacks.Count));
+            .ForMember(d => d.FeedbackResponseCount, o => o.MapFrom(s => s.Feedbacks.Count))
+            .ForMember(d => d.WeeklyFeedbackResponseCount, o => o.MapFrom(s => s.WeeklyFeedbacks.Count));
 
         CreateMap<Course, SyllabusDto>()
             .ForMember(d => d.CourseId, o => o.MapFrom(s => s.Id))
@@ -43,3 +44,4 @@ public class MappingProfile : Profile
         CreateMap<Role, RoleDto>();
     }
 }
+

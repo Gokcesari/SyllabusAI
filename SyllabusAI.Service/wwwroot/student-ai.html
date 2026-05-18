@@ -1,123 +1,192 @@
-<!DOCTYPE html>
-<html lang="tr">
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SyllabusAI - AI Asistan</title>
-  <link rel="stylesheet" href="/css/app.css?v=20260341">
+  <title>SyllabusAI - AI assistant</title>
+  <link rel="stylesheet" href="/css/app.css?v=20260431">
   <style>
-    /* Genişlik: app.css .tp .main-area.ai-wrap */
-    .ai-top { display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    .main-area.ai-wrap {
+      width: 100%;
+      max-width: none;
+      margin: 0;
+      padding-top: 0.85rem;
+    }
+    .ai-top {
+      display: flex;
+      gap: 0.85rem;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
     .robot-illus {
-      width: 72px; height: 72px; flex-shrink: 0;
+      width: 72px;
+      height: 72px;
+      flex-shrink: 0;
       background: linear-gradient(180deg, rgba(99,102,241,0.35) 0%, rgba(79,70,229,0.2) 100%);
       border-radius: 16px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border: 1px solid rgba(255,255,255,0.1);
     }
     .robot-illus svg { width: 40px; height: 40px; color: #a5b4fc; }
-    .course-strip { flex: 1; min-width: 200px; }
-    .course-strip label { display: block; font-size: 0.78rem; color: rgba(220, 214, 235, 0.78); margin-bottom: 0.35rem; }
+    .course-strip { flex: 1; min-width: 260px; }
+    .course-strip label { display: block; font-size: 0.8rem; color: rgba(220, 214, 235, 0.9); margin-bottom: 0.35rem; }
     .course-strip select {
       width: 100%;
-      padding: 0.5rem 0.65rem; border-radius: 10px;
+      padding: 0.58rem 0.72rem;
+      border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.18);
       background: rgba(20, 16, 36, 0.85);
       color: #f1f5f9;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       color-scheme: dark;
     }
-    .hint { font-size: 0.82rem; color: rgba(200, 192, 220, 0.75); line-height: 1.45; margin-bottom: 1rem; }
+
     .chat-panel {
       width: 100%;
-      background: linear-gradient(160deg, #1e3a5f 0%, #312e81 100%);
+      background: linear-gradient(160deg, #203a62 0%, #312e81 100%);
       border-radius: 14px;
-      padding: 1.1rem 1.2rem;
+      padding: 1.05rem 1.1rem;
+      border: 1px solid rgba(196, 181, 253, 0.22);
+      box-shadow: 0 12px 28px rgba(10, 8, 22, 0.22);
       color: #fff;
     }
-    .chat-panel h2 { font-size: 1rem; margin-bottom: 0.35rem; }
-    .chat-panel .desc { font-size: 0.82rem; opacity: 0.92; margin-bottom: 0.85rem; line-height: 1.45; }
-    .chat-input-wrap { display: flex; gap: 0.45rem; flex-wrap: wrap; }
+    .chat-panel h2 { font-size: 1rem; margin-bottom: 0.45rem; color: #eef2ff; }
+    .chat-input-wrap { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
     .chat-input-wrap input {
-      flex: 1; min-width: 160px;
-      padding: 0.6rem 0.85rem; border: none; border-radius: 8px;
-      font-size: 0.88rem; background: #fff; color: #1e293b;
+      flex: 1;
+      min-width: 360px;
+      padding: 0.62rem 0.88rem;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      background: rgba(248, 250, 252, 0.97);
+      color: #1e293b;
+    }
+    .chat-input-wrap input::placeholder {
+      color: #6b7280;
+      opacity: 1;
     }
     .chat-input-wrap button {
-      padding: 0.6rem 1rem; border: none; border-radius: 8px;
-      background: #4f46e5; color: #fff; font-weight: 600; cursor: pointer;
+      padding: 0.62rem 1rem;
+      border: none;
+      border-radius: 10px;
+      background: #4f46e5;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 78px;
     }
     .chat-input-wrap button:disabled { opacity: 0.45; cursor: not-allowed; }
-    .chat-messages { max-height: 200px; overflow-y: auto; margin-bottom: 0.65rem; font-size: 0.82rem; }
-    .chat-messages .bubble { margin-bottom: 0.45rem; padding: 0.45rem 0.65rem; border-radius: 8px; max-width: 95%; white-space: pre-wrap; }
-    .chat-messages .user { background: rgba(255,255,255,0.2); margin-right: auto; }
+
+    .chat-messages {
+      max-height: 520px;
+      overflow-y: auto;
+      margin-bottom: 0.7rem;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      padding-right: 0.15rem;
+    }
+    .chat-messages .bubble {
+      margin-bottom: 0.5rem;
+      padding: 0.55rem 0.72rem;
+      border-radius: 10px;
+      max-width: 95%;
+      white-space: pre-wrap;
+    }
+    .chat-messages .user { background: rgba(255,255,255,0.22); margin-right: auto; }
     .chat-messages .bot { background: rgba(255,255,255,0.14); margin-left: auto; }
-    .chat-messages .bot.scope-deny {
-      background: rgba(245, 158, 11, 0.2);
-      border: 1px solid rgba(245, 158, 11, 0.55);
-    }
-    .chat-messages .bot.ai-offline {
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.55);
-    }
-    .lock-note {
-      margin-top: 0.65rem;
-      font-size: 0.82rem;
-      color: #fde68a;
-      display: none;
-    }
+    .chat-messages .bot.scope-deny { background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.55); }
+    .chat-messages .bot.ai-offline { background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.55); }
+    .chat-messages .source-note { margin-top: 0.35rem; font-size: 0.76rem; color: #dbeafe; line-height: 1.35; }
+    .lock-note { margin-top: 0.65rem; font-size: 0.83rem; color: #fde68a; display: none; }
     .lock-note.show { display: block; }
+
+    /* Light mode: softer lilac with readable text */
+    .tp.tl .robot-illus {
+      background: linear-gradient(180deg, rgba(167, 139, 250, 0.24) 0%, rgba(129, 140, 248, 0.18) 100%);
+      border-color: rgba(139, 92, 246, 0.25);
+    }
+    .tp.tl .course-strip label { color: #4b5563; }
+    .tp.tl .course-strip select {
+      background: rgba(248, 245, 255, 0.95);
+      color: #1f2937;
+      border-color: rgba(139, 92, 246, 0.28);
+      color-scheme: light;
+    }
+    .tp.tl .chat-panel {
+      background: linear-gradient(160deg, #eee9ff 0%, #e6dfff 100%);
+      border-color: rgba(139, 92, 246, 0.3);
+      color: #1f2937;
+      box-shadow: 0 10px 24px rgba(124, 58, 237, 0.1);
+    }
+    .tp.tl .chat-panel h2 { color: #312e81; }
+    .tp.tl .chat-input-wrap input {
+      background: #ffffff;
+      color: #1f2937;
+      border-color: rgba(99, 102, 241, 0.32);
+    }
+    .tp.tl .chat-input-wrap button { background: #4f46e5; color: #fff; }
+    .tp.tl .chat-messages .user {
+      background: linear-gradient(135deg, #dbeafe 0%, #ddd6fe 100%);
+      color: #1f2937;
+    }
+    .tp.tl .chat-messages .bot {
+      background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+      color: #1f2937;
+    }
+    .tp.tl .chat-messages .source-note { color: #4338ca; }
+    .tp.tl .lock-note { color: #92400e; }
   </style>
 </head>
 <body class="tp">
   <aside class="sidebar">
-    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> SYLLABUSAI</div>
-    <div class="menu-label">ÖĞRENCİ MENÜSÜ</div>
+    <div class="logo"><svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg> SYLLABUSAI</div>
+    <div class="menu-label">STUDENT MENU</div>
     <nav>
-      <a href="/student.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> Derslerim</a>
-      <a href="/student-ai.html" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg> AI Asistan</a>
+      <a href="/student.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> My courses</a>
+      <a href="/student-ai.html" class="active"><svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg> AI assistant</a>
     </nav>
-    <div class="lang"><button type="button">TR / EN</button></div>
     <div class="user-box has-drop">
       <div class="user-drop">
-        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Hesap menüsü">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
           <div class="user-row">
             <div class="user-avatar" id="userAvatar">?</div>
             <div class="user-info"><div class="name" id="userName"></div><div class="meta" id="userMeta"></div></div>
           </div>
         </button>
         <div class="user-fly" id="userFly" hidden role="menu">
-          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Çıkış</button>
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Sign out</button>
         </div>
       </div>
     </div>
   </aside>
   <main class="main-area ai-wrap">
-    <h1 class="page-title">AI Asistan</h1>
+    <h1 class="page-title">AI assistant</h1>
     <div class="ai-top">
       <div class="robot-illus" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+        <svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg>
       </div>
       <div class="course-strip">
-        <label for="courseSelect">Soru soracağın ders</label>
+        <label for="courseSelect">Course to ask about</label>
         <select id="courseSelect"></select>
       </div>
     </div>
-    <p class="hint">Hocanın yüklediği PDF veya Word dosyasını görmek için <strong>Derslerim</strong>’den derse tıklayın. Bu sayfada yalnızca seçtiğin derse göre soru sorarsınız.</p>
 
     <div class="chat-panel">
-      <h2>Sohbet</h2>
-      <p class="desc">Müfredatla ilgili sorunuzu yazın; cevap arka plandaki içerikten üretilir.</p>
+      <h2>Chat</h2>
       <div class="chat-messages" id="chatMessages"></div>
       <div class="chat-input-wrap">
-        <input type="text" id="questionInput" placeholder="Sorunu yaz…" autocomplete="off">
-        <button type="button" id="btnAsk">Gönder</button>
+        <input type="text" id="questionInput" placeholder="Type your question..." autocomplete="off">
+        <button type="button" id="btnAsk">Send</button>
       </div>
-      <p class="lock-note" id="lockNote">Bu ders için AI kilitli. Önce ders sayfasında müfredatı tamamen açıp "Okudum, anladım" onayı verin.</p>
+      <p class="lock-note" id="lockNote">AI is locked for this course. On the course page, scroll through the full syllabus and complete the reading unlock.</p>
     </div>
   </main>
 
-  <a href="/student-ai.html" class="ai-assistant-fab" aria-label="AI Asistan" title="AI Asistan">
+  <a href="/student-ai.html" class="ai-assistant-fab" aria-label="AI assistant" title="AI assistant">
     <img src="/images/robot.png" alt="" width="38" height="38" decoding="async">
   </a>
   <script src="/js/out.js"></script>
@@ -128,24 +197,34 @@
     if (!token || !userStr) { window.location.href = '/'; }
     var user = JSON.parse(userStr);
     if (user.role !== 'Student') { window.location.href = '/student.html'; }
+    var chatSessionByCourse = {};
+
     function initials(n){ var p=(n||'').split(/\s+/); return p.length>=2 ? (p[0][0]+p[1][0]).toUpperCase() : ((n||'?')[0]).toUpperCase(); }
     document.getElementById('userAvatar').textContent = initials(user.fullName || user.email);
     document.getElementById('userName').textContent = user.fullName || user.email;
-    document.getElementById('userMeta').textContent = user.email || 'Öğrenci';
+    document.getElementById('userMeta').textContent = user.email || 'Student';
 
     function authHeader(){ return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }; }
+
+    function syllabusReadComplete(courseId) {
+      var p = parseFloat(localStorage.getItem('syllabus_read_progress_' + courseId) || '0');
+      if (p >= 0.99) return true;
+      var stage = parseInt(localStorage.getItem('syllabus_read_stage_' + courseId) || '1', 10);
+      var unlocked = localStorage.getItem('syllabus_read_unlock_' + courseId) === '1';
+      return stage >= 4 && unlocked;
+    }
 
     fetch('/api/courses/my', { headers: authHeader() })
       .then(function(r){ return r.json(); })
       .then(function(list){
         var sel = document.getElementById('courseSelect');
         if (!list || list.length === 0) {
-          sel.innerHTML = '<option value="">Önce Derslerim’den ders ekleyin</option>';
+          sel.innerHTML = '<option value="">Add a course from My courses first</option>';
           updateAiLockForSelection();
           return;
         }
-        sel.innerHTML = '<option value="">— Ders seçin —</option>' +
-          list.map(function(c){ return '<option value="'+c.id+'">'+ (c.courseCode||'') + ' · ' + (c.title||''); }).join('');
+        sel.innerHTML = '<option value="">- Select a course -</option>' +
+          list.map(function(c){ return '<option value="'+c.id+'">'+ (c.courseCode||'') + ' - ' + (c.title||''); }).join('');
         updateAiLockForSelection();
       });
 
@@ -157,54 +236,71 @@
       document.getElementById('chatMessages').appendChild(div);
       div.scrollIntoView({ block: 'nearest' });
     }
-    function getReadState(courseId) {
-      var stage = parseInt(localStorage.getItem('syllabus_read_stage_' + courseId) || '1', 10);
-      if (!stage || stage < 1) stage = 1;
-      if (stage > 4) stage = 4;
-      var unlocked = localStorage.getItem('syllabus_read_unlock_' + courseId) === '1';
-      return { stage: stage, unlocked: unlocked };
+
+    function addBotWithSources(answer, state, sections, snippets) {
+      var div = document.createElement('div');
+      div.className = 'bubble bot';
+      if (state) div.classList.add(state);
+      div.textContent = answer;
+
+      var lines = [];
+      if (sections && sections.length) lines.push('Sections: ' + sections.join(', '));
+      if (snippets && snippets.length) lines.push('Sources: ' + snippets.slice(0, 2).join(' | '));
+
+      if (lines.length > 0) {
+        var note = document.createElement('div');
+        note.className = 'source-note';
+        note.textContent = lines.join('\n');
+        div.appendChild(note);
+      }
+
+      document.getElementById('chatMessages').appendChild(div);
+      div.scrollIntoView({ block: 'nearest' });
     }
+
     function updateAiLockForSelection() {
       var courseId = parseInt(document.getElementById('courseSelect').value, 10);
-      var s = courseId ? getReadState(courseId) : { stage: 1, unlocked: false };
-      var locked = !courseId || s.stage < 4 || !s.unlocked;
+      var locked = !courseId || !syllabusReadComplete(courseId);
       document.getElementById('questionInput').disabled = locked;
       document.getElementById('btnAsk').disabled = locked;
       var note = document.getElementById('lockNote');
       if (locked) {
         note.classList.add('show');
         if (courseId) {
-          note.textContent = 'Bu ders icin AI kilitli. Once ders sayfasinda mufredati 4/4 asamaya kadar acip "Okudum, anladim" onayi verin. (Su an: ' + s.stage + '/4)';
+          note.textContent = 'AI is locked for this course. On the course page, scroll through the entire syllabus PDF to the bottom. When reading is complete, AI unlocks for this course.';
         } else {
-          note.textContent = 'Bu ders icin AI kilitli. Once ders sayfasinda mufredati tamamen acip "Okudum, anladim" onayi verin.';
+          note.textContent = 'AI is locked until you select a course and complete the syllabus reading on the course page.';
         }
       } else note.classList.remove('show');
     }
+
     document.getElementById('btnAsk').onclick = function() {
       var q = document.getElementById('questionInput').value.trim();
       var courseId = parseInt(document.getElementById('courseSelect').value, 10);
       if (!q) return;
-      if (!courseId) { addBubble('bot', 'Lütfen önce bir ders seçin.'); return; }
-      var read = getReadState(courseId);
-      if (read.stage < 4 || !read.unlocked) {
-        addBubble('bot', 'AI kilitli. Bu ders icin once mufredati 4/4 asamaya kadar acip "Okudum, anladim" onayi vermen gerekiyor.');
+      if (!courseId) { addBubble('bot', 'Please select a course first.'); return; }
+      if (!syllabusReadComplete(courseId)) {
+        addBubble('bot', 'AI is locked. On the course page, scroll through the full syllabus to unlock AI for this course.');
         updateAiLockForSelection();
         return;
       }
       addBubble('user', q);
       document.getElementById('questionInput').value = '';
-      fetch('/api/chat/ask', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseId: courseId, question: q }) })
+      var sid = chatSessionByCourse[courseId] || null;
+      fetch('/api/chat/ask', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseId: courseId, sessionId: sid, question: q }) })
         .then(function(r){ return r.json(); })
         .then(function(d){
-          var answer = d.answer || 'Cevap alınamadı.';
+          if (d && d.sessionId) chatSessionByCourse[courseId] = d.sessionId;
+          var answer = d.answer || 'No answer received.';
           var state = '';
           if (d && d.isOutOfScope) state = 'scope-deny';
-          if (d && d.fromSyllabus === false && answer.toLowerCase().indexOf('ai servisi') >= 0) state = 'ai-offline';
-          addBubble('bot', answer, state);
+          if (d && d.fromSyllabus === false && answer.toLowerCase().indexOf('ai service') >= 0) state = 'ai-offline';
+          addBotWithSources(answer, state, d.sourceSections || [], d.sourceSnippets || []);
         })
-        .catch(function(){ addBubble('bot', 'Bağlantı hatası.'); });
+        .catch(function(){ addBubble('bot', 'Connection error.'); });
     };
     document.getElementById('courseSelect').onchange = updateAiLockForSelection;
   </script>
 </body>
 </html>
+

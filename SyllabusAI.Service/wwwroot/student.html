@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SyllabusAI - Derslerim</title>
-  <link rel="stylesheet" href="/css/app.css?v=20260341">
+  <title>SyllabusAI - My courses</title>
+  <link rel="stylesheet" href="/css/app.css?v=20260429">
   <style>
     .feedback-gate {
       position: fixed; inset: 0; z-index: 1000;
@@ -41,53 +41,50 @@
 <body class="tp">
   <aside class="sidebar">
     <div class="logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+      <svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg>
       SYLLABUSAI
     </div>
-    <div class="menu-label">ÖĞRENCİ MENÜSÜ</div>
+    <div class="menu-label">STUDENT MENU</div>
     <nav>
       <a href="/student.html" class="active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-        Derslerim
+        My courses
       </a>
       <a href="/student-ai.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
-        AI Asistan
+        <svg class="icon-ai" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"><line x1="12" y1="5.5" x2="6.2" y2="11.5"/><line x1="12" y1="5.5" x2="17.8" y2="11.5"/><line x1="6.2" y1="11.5" x2="12" y2="18.5"/><line x1="17.8" y1="11.5" x2="12" y2="18.5"/><line x1="6.2" y1="11.5" x2="17.8" y2="11.5"/></g><circle cx="12" cy="5.5" r="2" fill="currentColor"/><circle cx="6.2" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="17.8" cy="11.5" r="1.65" fill="currentColor" opacity="0.88"/><circle cx="12" cy="18.5" r="2.1" fill="currentColor" opacity="0.95"/></svg>
+        AI assistant
       </a>
     </nav>
-    <div class="lang"><button type="button">TR / EN</button></div>
-    <!-- Profil satırına tıkla → üstte menü; Çıkış = out() (out.js). Aç/kapa: user-fly.js -->
     <div class="user-box has-drop">
       <div class="user-drop">
-        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Hesap menüsü">
+        <button type="button" class="user-hit" id="userHit" aria-expanded="false" aria-haspopup="true" aria-label="Account menu">
           <div class="user-row">
             <div class="user-avatar" id="userAvatar">?</div>
             <div class="user-info">
               <div class="name" id="userName"></div>
-              <div class="meta" id="userMeta">Öğrenci</div>
+              <div class="meta" id="userMeta">Student</div>
             </div>
           </div>
         </button>
         <div class="user-fly" id="userFly" hidden role="menu">
-          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Çıkış</button>
+          <button type="button" class="user-fly-out" role="menuitem" onclick="out()">Sign out</button>
         </div>
       </div>
     </div>
   </aside>
   <main class="main-area main-area--lms">
-    <h1 class="page-title">Derslerim</h1>
-    <p class="page-meta meta-c" id="semesterMeta">Derse tıklayınca hocanın yüklediği PDF veya Word açılır. Soru sormak için menüden AI Asistan.</p>
+    <h1 class="page-title">My courses</h1>
+    <p class="page-meta meta-c" id="semesterMeta">Select a course to continue.</p>
 
     <div class="lms-pills">
-      <button type="button" class="lms-pill active" id="pillCourses">Derslerim</button>
-      <button type="button" class="lms-pill" id="pillUpdates" title="Yakında">Güncellemeler</button>
+      <button type="button" class="lms-pill active" id="pillCourses">My courses</button>
     </div>
 
     <div class="en-row" id="enrollRow">
-      <label class="en-lbl" for="courseCode">Ders ekle</label>
+      <label class="en-lbl" for="courseCode">Add course</label>
       <div class="en-in">
-        <input type="text" id="courseCode" placeholder="Ders kodu" maxlength="20" autocomplete="off" title="Eğitmenin paylaştığı kod">
-        <button type="button" id="btnAdd">Ekle</button>
+        <input type="text" id="courseCode" placeholder="Course code" maxlength="20" autocomplete="off" title="Code shared by your instructor">
+        <button type="button" id="btnAdd">Add</button>
       </div>
     </div>
 
@@ -95,7 +92,7 @@
 
     <div class="bubble-grid" id="courseList"></div>
 
-    <a href="/student-ai.html" class="ai-assistant-fab" aria-label="AI Asistan" title="AI Asistan">
+    <a href="/student-ai.html" class="ai-assistant-fab" aria-label="AI assistant" title="AI assistant">
       <img src="/images/robot.png" alt="" width="40" height="40" decoding="async">
     </a>
   </main>
@@ -103,12 +100,12 @@
   <div class="feedback-gate" id="feedbackGate" aria-hidden="true">
     <div class="panel">
       <div class="top">
-        <div class="title">Ders Geri Bildirim Anketi (zorunlu)</div>
-        <div class="meta" id="gateMeta">Bu dersi acmadan once 15 soruyu 1-5 arasi puanlayin.</div>
+        <div class="title">Course feedback survey (required)</div>
+        <div class="meta" id="gateMeta">Rate all 15 questions from 1 to 5 before opening this course.</div>
       </div>
       <div id="gateQuestions"></div>
       <div class="gate-actions">
-        <button type="button" id="btnGateSubmit">Anketi Gonder</button>
+        <button type="button" id="btnGateSubmit">Submit survey</button>
         <span class="gate-msg" id="gateMsg"></span>
       </div>
     </div>
@@ -117,34 +114,47 @@
   <script src="/js/out.js"></script>
   <script src="/js/user-fly.js"></script>
   <script>
-    // Derslerim: oturum kontrolü, liste/enroll/sil, favori — API /api/courses/*
+    // My courses: session, list / enroll / remove / star - API /api/courses/*
     var token = localStorage.getItem('syllabus_token');
     var userStr = localStorage.getItem('syllabus_user');
     if (!token || !userStr) { window.location.href = '/'; }
     var user = JSON.parse(userStr);
     if (user.role !== 'Student') { window.location.href = user.role === 'Instructor' ? '/instructor.html' : '/'; }
+    var userScopeKey = String(user.id || user.userId || user.email || 'student')
+      .replace(/[^a-zA-Z0-9_\-.@]/g, '_');
 
     var BUBBLE_PALETTE = ['#f5e6d3', '#ffd6e0', '#fff4cc', '#ffdcc4', '#c8e7f5', '#e0d4f7', '#b8e0f0', '#d4edda', '#f0d9ff', '#ffeaa7'];
     var allCourses = [];
     var FEEDBACK_QUESTIONS = [
-      'Dersin hedefleri ve icerigi donem basinda acik sekilde paylasildi.',
-      'Ders plani (syllabus) ile islenen konular su ana kadar uyumluydu.',
-      'Kullanilan dijital platformlar ders takibi ve etkilesim icin yeterliydi.',
-      'Sunulan ders materyalleri (notlar, sunumlar vb.) yeterli ve faydaliydi.',
-      'Ders kapsaminda onerilen ek kaynaklara ve okumalara erisim kolaydi.',
-      'Islenen ders konularini su ana kadar teorik duzeyde iyi anlayabildim.',
-      'Konularin pekismesi icin sinifta daha fazla tekrar veya uygulama yapilmasi gerektigini dusunuyorum.',
-      'Dersin islenisi sirasinda farkli ogrenme hizlarina ve seviyelerine sahip ogrenciler gozetildi.',
-      'Ders kapsaminda yapilan ornekler ve uygulamalar, gercek hayattaki/mesleki senaryolarla iyi iliskilendirildi.',
-      'Dersin islenis temposu (ilerleyis hizi), konulari sindirmem ve not almam icin uygundur.',
-      'Anlatilan konularin zorluk seviyesi, sahip oldugum on bilgilerle ve yetkinligimle ortusmektedir.',
-      'Ders sirasinda soru sorma, tartismaya katilma ve fikir beyan etme konusunda kendimi tesvik edilmis hissediyorum.',
-      'Verilen odevler, projeler veya kisa sinavlar ogrenme surecime gercek anlamda katki saglamaktadir.',
-      'Dersin icerigi ve hocanin anlatim tarzi, konuya olan merakimi ve derse olan motivasyonumu canli tutmaktadir.',
-      'Egitmen, karmasik kavramlari aciklarken farkli yontemler kullanarak anlasilirligi artirmaktadir.'
+      'Course objectives and content were clearly communicated at the start of the term.',
+      'Topics covered so far align with the syllabus.',
+      'Digital platforms used were adequate for following the course and interaction.',
+      'Course materials (notes, slides, etc.) were sufficient and useful.',
+      'Additional resources and readings suggested in the course were easy to access.',
+      'So far I understand the topics covered at a theoretical level.',
+      'I think more in-class review or practice is needed to reinforce topics.',
+      'During instruction, students with different learning speeds and levels were considered.',
+      'Examples and activities in the course were well linked to real-world or professional scenarios.',
+      'The pace of the course suits my ability to digest topics and take notes.',
+      'The difficulty of topics matches my prior knowledge and skills.',
+      'I feel encouraged to ask questions, join discussions, and share ideas in class.',
+      'Assignments, projects, or quizzes meaningfully support my learning.',
+      "The content and the instructor's style keep my interest and motivation for the course.",
+      'The instructor explains complex concepts using different methods to improve clarity.'
+    ];
+    var WEEKLY_FEEDBACK_QUESTIONS = [
+      "This week's lesson was productive overall.",
+      'The lesson content was clear and understandable.',
+      "The instructor's explanation was effective.",
+      'The examples given in the lesson helped me understand the topic.',
+      'There was sufficient interaction and participation during the lesson.',
+      'I believe I can apply what I learned in this lesson.',
+      "This week's lesson met my expectations."
     ];
     var feedbackQuestionsFromDb = null;
+    var weeklyFeedbackQuestionsFromDb = null;
     var activeGateCourse = null;
+    var activeGateType = 'term';
 
     function initials(name) {
       if (!name) return '?';
@@ -154,7 +164,7 @@
     }
     document.getElementById('userAvatar').textContent = initials(user.fullName || user.email);
     document.getElementById('userName').textContent = user.fullName || user.email;
-    document.getElementById('userMeta').textContent = user.email || 'Öğrenci';
+    document.getElementById('userMeta').textContent = user.email || 'Student';
 
     function authHeader() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }; }
     function authBearerOnly() { return { 'Authorization': 'Bearer ' + token }; }
@@ -162,9 +172,9 @@
     function bubbleColor(id) { return BUBBLE_PALETTE[(id * 7 + 3) % BUBBLE_PALETTE.length]; }
 
     function getStarred() {
-      try { return JSON.parse(localStorage.getItem('syllabus_starred_courses') || '[]'); } catch (e) { return []; }
+      try { return JSON.parse(localStorage.getItem('syllabus_starred_courses_' + userScopeKey) || '[]'); } catch (e) { return []; }
     }
-    function setStarred(ids) { localStorage.setItem('syllabus_starred_courses', JSON.stringify(ids)); }
+    function setStarred(ids) { localStorage.setItem('syllabus_starred_courses_' + userScopeKey, JSON.stringify(ids)); }
     function toggleStar(courseId, btn, ev) {
       ev.preventDefault();
       ev.stopPropagation();
@@ -183,7 +193,7 @@
         var sa = starred.indexOf(String(a.id)) >= 0 ? 1 : 0;
         var sb = starred.indexOf(String(b.id)) >= 0 ? 1 : 0;
         if (sb !== sa) return sb - sa;
-        return (a.courseCode || '').localeCompare(b.courseCode || '', 'tr');
+        return (a.courseCode || '').localeCompare(b.courseCode || '', 'en');
       });
     }
 
@@ -201,43 +211,43 @@
         .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, status: r.status, data: d }; }); })
         .then(function(r) {
           if (r.ok) {
-            showAddMsg(r.data.message || 'Ders eklendi.', false);
+            showAddMsg(r.data.message || 'Course added.', false);
             document.getElementById('courseCode').value = '';
             loadCourses();
           } else if (r.status === 404) {
-            showAddMsg('Bu ders kodu sistemde yok. Kod yanlış veya eğitmen henüz dersi oluşturmamış olabilir.', true);
+            showAddMsg('This course code was not found. The code may be wrong or the instructor may not have created the course yet.', true);
           } else {
-            showAddMsg(r.data.message || 'Eklenemedi.', true);
+            showAddMsg(r.data.message || 'Could not add.', true);
           }
         })
-        .catch(function() { showAddMsg('Bağlantı hatası.', true); });
+        .catch(function() { showAddMsg('Connection error.', true); });
     });
 
     function renderCourses(list) {
       list = sortCoursesStarredFirst(list);
       var el = document.getElementById('courseList');
       if (!list || list.length === 0) {
-        el.innerHTML = '<p class="empty">Henüz kayıtlı ders yok. Yukarıdaki <strong>Ders ekle</strong> alanına eğitmenin verdiği kodu yazıp Ekle\'ye basın.</p>';
+        el.innerHTML = '<p class="empty">No enrolled courses yet. Enter the code from your instructor in <strong>Add course</strong> above and click Add.</p>';
         return;
       }
       var starred = getStarred();
       el.innerHTML = list.map(function(c) {
         var bg = bubbleColor(c.id);
-        var inst = c.instructorName || 'Eğitmen';
+        var inst = c.instructorName || 'Instructor';
         var instIni = initials(inst);
         var hasS = !!c.hasSyllabus;
         var starOn = starred.indexOf(String(c.id)) >= 0 ? ' on' : '';
         return '<div class="bubble-card-shell" style="--bubble-bg:' + bg + '">' +
-          '<button type="button" class="bubble-star' + starOn + '" aria-label="Favori" data-cid="' + c.id + '">★</button>' +
-          '<button type="button" class="bubble-remove" data-cid="' + c.id + '" title="Listeden kaldır">Kaldır</button>' +
+          '<button type="button" class="bubble-star' + starOn + '" aria-label="Favorite" data-cid="' + c.id + '">&#9733;</button>' +
+          '<button type="button" class="bubble-remove" data-cid="' + c.id + '" title="Remove from list">Remove</button>' +
           '<a href="/student-course.html?id=' + c.id + '" class="bubble-card-main">' +
           '<div class="bubble-card-inner bc-s">' +
           '<span class="bubble-code">' + escapeHtml(c.courseCode || '') + '</span>' +
-          '<h3 class="bubble-title">' + escapeHtml(c.title || c.courseCode || 'Ders') + '</h3>' +
+          '<h3 class="bubble-title">' + escapeHtml(c.title || c.courseCode || 'Course') + '</h3>' +
           '<div class="bubble-instructor"><span class="bubble-avatar">' + escapeHtml(instIni) + '</span> ' + escapeHtml(inst) + '</div>' +
           '<div class="bubble-footer">' +
-          '<span class="bubble-stat">' + (hasS ? '✓ Müfredat hazır' : '○ Müfredat bekleniyor') + '</span>' +
-          '<span class="bubble-stat">AI için menüden «AI Asistan»</span>' +
+          '<span class="bubble-stat">' + (hasS ? '&#10003; Syllabus ready' : '&#9675; Syllabus pending') + '</span>' +
+          '<span class="bubble-stat">Use AI assistant in the menu</span>' +
           '</div></div></a></div>';
       }).join('');
 
@@ -251,7 +261,7 @@
           ev.preventDefault();
           ev.stopPropagation();
           var cid = parseInt(btn.getAttribute('data-cid'), 10);
-          if (!confirm('Bu dersi listenizden kaldırmak istiyor musunuz? (Veritabanındaki ders silinmez; yalnızca sizin eklemeniz kalkar.)')) return;
+          if (!confirm('Remove this course from your list? (The course is not deleted from the system - only your enrollment here is removed.)')) return;
           fetch('/api/courses/my/' + cid, { method: 'DELETE', headers: authBearerOnly() })
             .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
             .then(function(r) {
@@ -260,10 +270,10 @@
                 setStarred(s);
                 allCourses = allCourses.filter(function(x) { return x.id !== cid; });
                 refreshCourseList();
-                showAddMsg(r.data.message || 'Kaldırıldı.', false);
-              } else showAddMsg(r.data.message || 'Kaldırılamadı.', true);
+                showAddMsg(r.data.message || 'Removed.', false);
+              } else showAddMsg(r.data.message || 'Could not remove.', true);
             })
-            .catch(function() { showAddMsg('Bağlantı hatası.', true); });
+            .catch(function() { showAddMsg('Connection error.', true); });
         });
       });
     }
@@ -279,16 +289,9 @@
 
     document.getElementById('pillCourses').onclick = function() {
       document.getElementById('pillCourses').classList.add('active');
-      document.getElementById('pillUpdates').classList.remove('active');
       document.getElementById('enrollRow').style.display = '';
       document.getElementById('courseList').style.display = '';
       refreshCourseList();
-    };
-    document.getElementById('pillUpdates').onclick = function() {
-      document.getElementById('pillUpdates').classList.add('active');
-      document.getElementById('pillCourses').classList.remove('active');
-      document.getElementById('enrollRow').style.display = 'none';
-      document.getElementById('courseList').innerHTML = '<p class="empty">Bu bölüm yakında: duyurular ve hatırlatmalar burada görünecek.</p>';
     };
 
     function loadCourses() {
@@ -296,10 +299,12 @@
         .then(function(r) { return r.json(); })
         .then(function(list) {
           allCourses = list || [];
-          if (document.getElementById('pillCourses').classList.contains('active')) refreshCourseList();
+          refreshCourseList();
+          checkFeedbackGate();
         })
         .catch(function() {
-          document.getElementById('courseList').innerHTML = '<p class="empty">Liste yüklenemedi.</p>';
+          document.getElementById('courseList').innerHTML = '<p class="empty">Could not load list.</p>';
+          setGateVisible(false);
         });
     }
 
@@ -310,14 +315,28 @@
       gate.setAttribute('aria-hidden', v ? 'false' : 'true');
     }
 
-    function renderGateQuestions() {
-      var questions = feedbackQuestionsFromDb && feedbackQuestionsFromDb.length
+    function buildQuestionFallback(type) {
+      var source = type === 'weekly' ? WEEKLY_FEEDBACK_QUESTIONS : FEEDBACK_QUESTIONS;
+      return source.map(function (q, i) { return { questionNo: i + 1, questionText: q }; });
+    }
+
+    function getActiveQuestions() {
+      if (activeGateType === 'weekly') {
+        return (weeklyFeedbackQuestionsFromDb && weeklyFeedbackQuestionsFromDb.length)
+          ? weeklyFeedbackQuestionsFromDb
+          : buildQuestionFallback('weekly');
+      }
+      return (feedbackQuestionsFromDb && feedbackQuestionsFromDb.length)
         ? feedbackQuestionsFromDb
-        : FEEDBACK_QUESTIONS.map(function(q, i){ return { questionNo: i + 1, questionText: q }; });
+        : buildQuestionFallback('term');
+    }
+
+    function renderGateQuestions() {
+      var questions = getActiveQuestions();
       var host = document.getElementById('gateQuestions');
-      host.innerHTML = questions.map(function(q) {
+      host.innerHTML = questions.map(function (q) {
         var no = q.questionNo;
-        var radios = [1,2,3,4,5].map(function(r) {
+        var radios = [1, 2, 3, 4, 5].map(function (r) {
           return '<label><input type="radio" name="q' + no + '" value="' + r + '"> ' + r + '</label>';
         }).join('');
         return '<div class="q-card"><div class="q-text">' + no + '. ' + escapeHtml(q.questionText || '') + '</div><div class="q-rates">' + radios + '</div></div>';
@@ -325,9 +344,7 @@
     }
 
     function collectGateAnswers() {
-      var questions = feedbackQuestionsFromDb && feedbackQuestionsFromDb.length
-        ? feedbackQuestionsFromDb
-        : FEEDBACK_QUESTIONS.map(function(_, i){ return { questionNo: i + 1 }; });
+      var questions = getActiveQuestions();
       var answers = [];
       for (var i = 0; i < questions.length; i++) {
         var no = questions[i].questionNo;
@@ -343,64 +360,93 @@
       function step(ix) {
         if (ix >= queue.length) return Promise.resolve(null);
         var c = queue[ix];
+
         return fetch('/api/courses/' + c.id + '/feedback-status', { headers: authHeader() })
-          .then(function(r) { return r.ok ? r.json() : null; })
-          .then(function(s) {
-            if (s && s.windowOpen && !s.hasSubmitted) return c;
-            return step(ix + 1);
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (termStatus) {
+            if (termStatus && termStatus.windowOpen && !termStatus.hasSubmitted) {
+              return { course: c, type: 'term' };
+            }
+            return fetch('/api/courses/' + c.id + '/weekly-feedback-status', { headers: authHeader() })
+              .then(function (r) { return r.ok ? r.json() : null; })
+              .then(function (weeklyStatus) {
+                if (weeklyStatus && weeklyStatus.windowOpen && !weeklyStatus.hasSubmitted) {
+                  return { course: c, type: 'weekly' };
+                }
+                return step(ix + 1);
+              });
           })
-          .catch(function() { return step(ix + 1); });
+          .catch(function () { return step(ix + 1); });
       }
       return step(0);
     }
 
     function checkFeedbackGate() {
-      fetch('/api/courses/feedback-questions', { headers: authHeader() })
-        .then(function(r){ return r.ok ? r.json() : []; })
-        .then(function(list){ feedbackQuestionsFromDb = Array.isArray(list) && list.length ? list : null; })
-        .catch(function(){ feedbackQuestionsFromDb = null; })
-        .finally(function() {
-          findPendingFeedbackCourse().then(function(course) {
-        if (!course) {
-          activeGateCourse = null;
-          setGateVisible(false);
-          return;
-        }
-        activeGateCourse = course;
-        document.getElementById('gateMeta').textContent = (course.courseCode || '') + ' - ' + (course.title || 'Ders') + ' icin anketi tamamlamadan devam edemezsiniz.';
-        renderGateQuestions();
-        document.getElementById('gateMsg').textContent = '';
-        setGateVisible(true);
-          });
+      Promise.all([
+        fetch('/api/courses/feedback-questions', { headers: authHeader() }).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; }),
+        fetch('/api/courses/feedback-questions-weekly', { headers: authHeader() }).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
+      ]).then(function (data) {
+        var termList = data[0];
+        var weeklyList = data[1];
+        feedbackQuestionsFromDb = Array.isArray(termList) && termList.length ? termList : null;
+        weeklyFeedbackQuestionsFromDb = Array.isArray(weeklyList) && weeklyList.length ? weeklyList : null;
+      }).finally(function () {
+        findPendingFeedbackCourse().then(function (pending) {
+          if (!pending) {
+            activeGateCourse = null;
+            setGateVisible(false);
+            return;
+          }
+
+          activeGateCourse = pending.course;
+          activeGateType = pending.type;
+          var label = activeGateType === 'weekly' ? 'weekly lesson' : 'end of term';
+          document.getElementById('gateMeta').textContent = 'You must complete the ' + label + ' survey for ' + (activeGateCourse.courseCode || '') + ' - ' + (activeGateCourse.title || 'Course') + ' before continuing.';
+          renderGateQuestions();
+          document.getElementById('gateMsg').textContent = '';
+          setGateVisible(true);
         });
+      });
     }
 
-    document.getElementById('btnGateSubmit').addEventListener('click', function() {
+    document.getElementById('btnGateSubmit').addEventListener('click', function () {
       if (!activeGateCourse) return;
       var answers = collectGateAnswers();
       if (!answers) {
-        document.getElementById('gateMsg').textContent = 'Lutfen tum sorulari 1-5 arasi yanitlayin.';
+        document.getElementById('gateMsg').textContent = 'Please answer all questions with a rating from 1 to 5.';
         return;
       }
-      var avg = Math.round(answers.reduce(function(sum, a){ return sum + a.rating; }, 0) / answers.length);
-      fetch('/api/courses/' + activeGateCourse.id + '/feedback', {
+
+      var avg = Math.round(answers.reduce(function (sum, a) { return sum + a.rating; }, 0) / answers.length);
+      var submitUrl = activeGateType === 'weekly'
+        ? '/api/courses/' + activeGateCourse.id + '/weekly-feedback'
+        : '/api/courses/' + activeGateCourse.id + '/feedback';
+
+      fetch(submitUrl, {
         method: 'POST',
         headers: authHeader(),
         body: JSON.stringify({ rating: avg, comment: null, answers: answers })
       })
-        .then(function(r) { return r.json().then(function(d){ return { ok: r.ok, d: d }; }); })
-        .then(function(x) {
+        .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+        .then(function (x) {
           if (!x.ok) {
-            document.getElementById('gateMsg').textContent = x.d.message || 'Gonderim basarisiz.';
+            document.getElementById('gateMsg').textContent = x.d.message || 'Submission failed.';
             return;
           }
-          document.getElementById('gateMsg').textContent = 'Tesekkurler. Sonraki ders anketi kontrol ediliyor...';
+          document.getElementById('gateMsg').textContent = 'Thank you. Checking the next course survey...';
           checkFeedbackGate();
         })
-        .catch(function() { document.getElementById('gateMsg').textContent = 'Baglanti hatasi.'; });
+        .catch(function () { document.getElementById('gateMsg').textContent = 'Connection error.'; });
     });
-
     loadCourses();
   </script>
 </body>
 </html>
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-/* Ortak layout: koyu mavi sidebar + beyaz ana alan */
+﻿/* Ortak layout: koyu mavi sidebar + beyaz ana alan */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; display: flex; background: #f8fafc; color: #1e293b; }
 .sidebar {
@@ -20,6 +20,14 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; displa
   letter-spacing: 0.02em;
 }
 .sidebar .logo svg { width: 28px; height: 28px; opacity: 0.95; }
+/* Neural / AI mark (sidebar logo + AI assistant nav link) */
+.sidebar .logo svg.icon-ai,
+.sidebar nav a svg.icon-ai {
+  filter: drop-shadow(0 0 6px rgba(165, 180, 252, 0.42));
+}
+.tp .sidebar .logo svg.icon-ai {
+  filter: drop-shadow(0 0 8px rgba(196, 181, 253, 0.38));
+}
 .sidebar .menu-label { font-size: 0.7rem; color: rgba(255,255,255,0.6); letter-spacing: 0.08em; padding: 0 1.5rem; margin-bottom: 0.5rem; }
 .sidebar nav { flex: 1; padding: 0.5rem 0; }
 .sidebar nav a {
@@ -37,7 +45,7 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; displa
 .sidebar nav a svg { width: 20px; height: 20px; flex-shrink: 0; }
 .sidebar .lang { padding: 0.5rem 1.5rem; }
 .sidebar .lang button { padding: 0.3rem 0.6rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.3); background: transparent; color: #fff; font-size: 0.75rem; cursor: pointer; }
-/* Alt köşe profil: .has-drop + .user-hit tık → üstte .user-fly (user-fly.js) */
+/* Alt kÃƒÂ¶Ã…Å¸e profil: .has-drop + .user-hit tÃ„Â±k Ã¢â€ â€™ ÃƒÂ¼stte .user-fly (user-fly.js) */
 .sidebar .user-box {
   padding: 1rem 1.5rem;
   border-top: 1px solid rgba(255,255,255,0.1);
@@ -45,9 +53,9 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; displa
   align-items: center;
   gap: 0.75rem;
 }
-/* Profil kutusu: içinde user-drop varsa tam genişlik */
+/* Profil kutusu: iÃƒÂ§inde user-drop varsa tam geniÃ…Å¸lik */
 .sidebar .user-box.has-drop { flex-direction: column; align-items: stretch; gap: 0; }
-/* Tıklanabilir alan + üstte açılan menü */
+/* TÃ„Â±klanabilir alan + ÃƒÂ¼stte aÃƒÂ§Ã„Â±lan menÃƒÂ¼ */
 .sidebar .user-drop { position: relative; width: 100%; }
 .sidebar .user-hit {
   display: block;
@@ -96,7 +104,7 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; displa
 .sidebar .user-info .meta { color: rgba(255,255,255,0.7); }
 .main-area { flex: 1; padding: 1.5rem 2rem; overflow: auto; background: #fff; margin: 1rem; margin-left: 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 
-/* Ders kartları */
+/* Ders kartlarÃ„Â± */
 .page-title { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem; }
 .page-meta { font-size: 0.875rem; color: #64748b; margin-bottom: 1.5rem; }
 .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
@@ -128,7 +136,7 @@ body { font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; displa
 a { color: #4f46e5; text-decoration: none; }
 a:hover { text-decoration: underline; }
 
-/* —— LMS tarzı koyu dashboard + pastel baloncuk kartlar —— */
+/* Ã¢â‚¬â€Ã¢â‚¬â€ LMS tarzÃ„Â± koyu dashboard + pastel baloncuk kartlar Ã¢â‚¬â€Ã¢â‚¬â€ */
 .main-area--lms {
   background: linear-gradient(165deg, #1a1523 0%, #12101a 45%, #0f0d14 100%);
   color: #e8e4f0;
@@ -162,7 +170,7 @@ a:hover { text-decoration: underline; }
   margin-bottom: 1.5rem;
 }
 .lms-toolbar h2 { font-size: 1rem; font-weight: 700; color: #fff; margin: 0; }
-/* Eğitmen Derslerim: başlık + arama aynı üst satırda, içerik dikey ortalanmaz */
+/* EÃ„Å¸itmen Derslerim: baÃ…Å¸lÃ„Â±k + arama aynÃ„Â± ÃƒÂ¼st satÃ„Â±rda, iÃƒÂ§erik dikey ortalanmaz */
 .lms-page-head-row {
   display: flex;
   flex-wrap: wrap;
@@ -410,7 +418,7 @@ a.bubble-card-main:hover { color: inherit; }
 .main-area--lms .msg.err { background: rgba(239,68,68,0.15); color: #fecaca; }
 .main-area--lms .msg.ok { background: rgba(34,197,94,0.15); color: #bbf7d0; }
 
-/* tp = tek tip koyu mor-siyah arka plan (#0c081e tabanı, giriş hariç) */
+/* tp = tek tip koyu mor-siyah arka plan (#0c081e tabanÃ„Â±, giriÃ…Å¸ hariÃƒÂ§) */
 .tp {
   margin: 0;
   min-height: 100vh;
@@ -432,6 +440,27 @@ a.bubble-card-main:hover { color: inherit; }
 .tp .sidebar .user-box { border-top-color: rgba(255, 255, 255, 0.1); }
 .tp .sidebar .menu-label { color: rgba(230, 225, 240, 0.55); }
 .tp .sidebar .logo { color: #faf8ff; }
+.tp .sidebar .user-box {
+  border-top-color: rgba(221, 214, 254, 0.28);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(196, 181, 253, 0.16) 100%);
+  backdrop-filter: blur(4px);
+}
+.tp .sidebar .user-hit {
+  border: 1px solid rgba(221, 214, 254, 0.22);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(196, 181, 253, 0.18) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 6px 16px rgba(30, 18, 52, 0.24);
+}
+.tp .sidebar .user-hit:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.17) 0%, rgba(196, 181, 253, 0.24) 100%);
+  border-color: rgba(221, 214, 254, 0.34);
+}
+.tp .sidebar .user-avatar {
+  border: 2px solid rgba(255, 255, 255, 0.42);
+  box-shadow: 0 6px 14px rgba(17, 24, 39, 0.3);
+  background: linear-gradient(145deg, #ddd6fe 0%, #a78bfa 55%, #7c3aed 100%);
+}
+.tp .sidebar .user-info .name { color: #f8f4ff; }
+.tp .sidebar .user-info .meta { color: rgba(238, 229, 255, 0.86); }
 .tp .main-area {
   margin: 0;
   border-radius: 0;
@@ -442,7 +471,8 @@ a.bubble-card-main:hover { color: inherit; }
   width: 100%;
   max-width: none;
   align-self: stretch;
-  background: linear-gradient(165deg, #0f0820 0%, #0c081e 48%, #090510 100%);
+  /* Alt kÃ„Â±sÃ„Â±m daha belirgin mor-indigo; ÃƒÂ¼st koyu kalÃ„Â±r */
+  background: linear-gradient(165deg, #0f0820 0%, #0c081e 35%, #12081e 55%, #18102a 78%, #1f0f32 100%);
   padding: 1.35rem 1.5rem 2rem 1.75rem;
   color: #e8e4ef;
 }
@@ -450,6 +480,161 @@ a.bubble-card-main:hover { color: inherit; }
 .tp .main-area .page-meta { color: rgba(200, 192, 220, 0.7); }
 .tp .main-area a { color: #c4b5fd; }
 .tp .main-area a:hover { color: #ddd6ff; }
+.tp .theme-toggle {
+  margin: 0 0 0.65rem 0;
+  width: 100%;
+}
+.tp .theme-toggle-btn {
+  width: 100%;
+  border: 1px solid rgba(221, 214, 254, 0.3);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.11) 0%, rgba(196, 181, 253, 0.22) 100%);
+  color: #f5f3ff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem;
+  padding: 0.35rem 0.5rem 0.35rem 0.72rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 20px rgba(14, 9, 31, 0.28);
+}
+.tp .theme-toggle-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.tp .theme-toggle-switch {
+  width: 50px;
+  height: 28px;
+  border-radius: 999px;
+  background: linear-gradient(145deg, #7c3aed 0%, #6366f1 100%);
+  position: relative;
+  flex-shrink: 0;
+}
+.tp .theme-toggle-switch::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #f8fafc;
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.35);
+  transition: transform 0.2s ease;
+}
+.tp .theme-toggle-btn:focus-visible {
+  outline: 2px solid #c4b5fd;
+  outline-offset: 2px;
+}
+
+/* Light theme (login haricindeki tp ekranlarÃ„Â±) */
+.tp.tl {
+  color: #1f2937;
+  background: linear-gradient(165deg, #eef2ff 0%, #f7f7ff 55%, #f5f3ff 100%);
+}
+.tp.tl .sidebar {
+  background: linear-gradient(180deg, #f5f3ff 0%, #ede9fe 52%, #e9e8ff 100%);
+  border-right: 1px solid rgba(99, 102, 241, 0.18);
+  box-shadow: 4px 0 24px rgba(76, 29, 149, 0.08);
+  color: #312e81;
+}
+.tp.tl .sidebar .logo,
+.tp.tl .sidebar .menu-label,
+.tp.tl .sidebar .user-info .name,
+.tp.tl .sidebar .user-info .meta {
+  color: #312e81;
+}
+.tp.tl .sidebar nav a {
+  color: rgba(49, 46, 129, 0.85);
+}
+.tp.tl .sidebar nav a:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #312e81;
+}
+.tp.tl .sidebar nav a.active {
+  background: rgba(99, 102, 241, 0.16);
+  border-left-color: #6366f1;
+}
+.tp.tl .sidebar .user-box {
+  border-top-color: rgba(99, 102, 241, 0.22);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(224, 231, 255, 0.95) 100%);
+}
+.tp.tl .sidebar .user-hit {
+  border-color: rgba(99, 102, 241, 0.22);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(224, 231, 255, 0.96) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 6px 14px rgba(99, 102, 241, 0.12);
+}
+.tp.tl .sidebar .user-avatar {
+  border-color: rgba(99, 102, 241, 0.26);
+  background: linear-gradient(145deg, #a5b4fc 0%, #818cf8 65%, #6366f1 100%);
+}
+.tp.tl .theme-toggle-btn {
+  border-color: rgba(99, 102, 241, 0.26);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.94) 0%, rgba(224, 231, 255, 0.95) 100%);
+  color: #312e81;
+  box-shadow: 0 5px 14px rgba(99, 102, 241, 0.14);
+}
+.tp.tl .theme-toggle-switch {
+  background: linear-gradient(145deg, #93c5fd 0%, #60a5fa 100%);
+}
+.tp.tl .theme-toggle-switch::before {
+  transform: translateX(22px);
+  background: #ffffff;
+}
+.tp.tl .main-area {
+  background: linear-gradient(165deg, #f3f5fb 0%, #f7f8fc 52%, #f1f2f9 100%);
+  color: #1f2937;
+}
+.tp.tl .main-area .page-title,
+.tp.tl .main-area .section-title {
+  color: #27204f;
+}
+.tp.tl .main-area .page-meta,
+.tp.tl .main-area .empty {
+  color: rgba(55, 48, 111, 0.8);
+}
+.tp.tl .main-area a {
+  color: #4f46e5;
+}
+.tp.tl .main-area a:hover {
+  color: #4338ca;
+}
+.tp.tl .main-area.ins-form-page .page-title.ins-page-hero-title {
+  background: none;
+  -webkit-text-fill-color: #30275e;
+  color: #30275e;
+  text-shadow: none;
+}
+.tp.tl .main-area.ins-form-page .page-title.ins-page-hero-title::after {
+  background: linear-gradient(90deg, #7c83f8, #a78bfa, #c4b5fd);
+  opacity: 0.72;
+  box-shadow: 0 0 10px rgba(124, 131, 248, 0.2);
+}
+.tp.tl .main-area.ins-form-page .page-title.ins-page-hero-title .ins-hero-amp {
+  -webkit-text-fill-color: #5b4b9a;
+  color: #5b4b9a;
+  text-shadow: none;
+}
+.tp.tl .ins-step-panel {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(139, 92, 246, 0.16);
+}
+.tp.tl .ins-my-courses-section {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(139, 92, 246, 0.14);
+}
+.tp.tl .main-area.ins-form-page .form-block input,
+.tp.tl .main-area.ins-form-page .form-block textarea,
+.tp.tl .main-area.ins-form-page .form-block select {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(99, 102, 241, 0.22);
+  color: #1f2937;
+}
+.tp.tl .main-area.ins-form-page .form-block .hint {
+  color: rgba(55, 48, 111, 0.66);
+}
 .tp .main-area .section-title { color: #ebe6f2; }
 .tp .main-area .empty { color: rgba(210, 204, 224, 0.62); }
 .tp .main-area .msg.err { background: rgba(239, 68, 68, 0.12); color: #fecaca; display: block; }
@@ -463,7 +648,7 @@ a.bubble-card-main:hover { color: inherit; }
   border-color: rgba(255, 255, 255, 0.35);
 }
 
-/* Eğitmen: iki adım çubuğu (buton, tıkla → ilgili bölüme kaydır) */
+/* EÃ„Å¸itmen: iki adÃ„Â±m ÃƒÂ§ubuÃ„Å¸u (buton, tÃ„Â±kla Ã¢â€ â€™ ilgili bÃƒÂ¶lÃƒÂ¼me kaydÃ„Â±r) */
 .flow-steps { display: flex; gap: 0.85rem; margin-bottom: 1.5rem; flex-wrap: wrap; max-width: 640px; }
 .flow-steps .flow-step {
   flex: 1;
@@ -497,7 +682,7 @@ a.bubble-card-main:hover { color: inherit; }
   color: #d1fae5;
 }
 
-/* Eğitmen alt liste: kod + ders adı aynı boy */
+/* EÃ„Å¸itmen alt liste: kod + ders adÃ„Â± aynÃ„Â± boy */
 .tp .instructor-list .code,
 .tp .instructor-list .tit {
   font-size: 1rem;
@@ -506,7 +691,7 @@ a.bubble-card-main:hover { color: inherit; }
 }
 .tp .instructor-list .tit { font-weight: 700; margin-left: 0.35rem; }
 
-/* Eğitmen kart ızgarası: kod + başlık eşit (öğrenci bc-s ile aynı mantık) */
+/* EÃ„Å¸itmen kart Ã„Â±zgarasÃ„Â±: kod + baÃ…Å¸lÃ„Â±k eÃ…Å¸it (ÃƒÂ¶Ã„Å¸renci bc-s ile aynÃ„Â± mantÃ„Â±k) */
 .tp .bc-s .bubble-code,
 .tp .bc-s .bubble-title {
   font-size: 1rem;
@@ -517,10 +702,10 @@ a.bubble-card-main:hover { color: inherit; }
 }
 .tp .bc-s .bubble-code { margin-bottom: 0.35rem; }
 .tp .bc-s .bubble-title { margin: 0 0 0.75rem 0; }
-/* öğrenci kartında yıldız için sağ boşluk */
+/* ÃƒÂ¶Ã„Å¸renci kartÃ„Â±nda yÃ„Â±ldÃ„Â±z iÃƒÂ§in saÃ„Å¸ boÃ…Å¸luk */
 .tp .bubble-card-shell .bc-s .bubble-title { margin-right: 2.2rem; }
 
-/* öğrenci: kod + ekle */
+/* ÃƒÂ¶Ã„Å¸renci: kod + ekle */
 .en-row {
   display: flex;
   flex-wrap: wrap;
@@ -572,23 +757,23 @@ a.bubble-card-main:hover { color: inherit; }
 }
 .tp.bare a { color: #c4b5fd; font-weight: 600; }
 
-/* Dar içerik sütunu: ders dosyası + AI (öğrenci ders sayfası) */
+/* Ãƒâ€“Ã„Å¸renci ders sayfasÃ„Â±: okunabilir geniÃ…Å¸ sÃƒÂ¼tun */
 .tp .reader-col {
-  max-width: 720px;
+  max-width: min(1100px, 96vw);
   width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Öğrenci AI: yalnız sohbet — dar sütun */
+/* Ãƒâ€“Ã„Å¸renci AI: geniÃ…Å¸ sohbet sÃƒÂ¼tunu (ÃƒÂ¶nceki 560px daraltÃ„Â±yordu) */
 .tp .main-area.ai-wrap {
-  max-width: 560px;
+  max-width: min(1400px, 98vw);
   width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Eğitmen sayfaları: formlardaki beyazları yumuşat */
+/* EÃ„Å¸itmen sayfalarÃ„Â±: formlardaki beyazlarÃ„Â± yumuÃ…Å¸at */
 .tp.ins-soft .form-block input,
 .tp.ins-soft .form-block textarea,
 .tp.ins-soft .form-block select {
@@ -618,7 +803,7 @@ a.bubble-card-main:hover { color: inherit; }
   color: #431407;
   border: 1px solid rgba(67, 20, 7, 0.35);
 }
-/* Eğitmen sayfaları: ana sütun içeriği her zaman üstten başlasın (min-yükseklikte ortalanmasın) */
+/* EÃ„Å¸itmen sayfalarÃ„Â±: ana sÃƒÂ¼tun iÃƒÂ§eriÃ„Å¸i her zaman ÃƒÂ¼stten baÃ…Å¸lasÃ„Â±n (min-yÃƒÂ¼kseklikte ortalanmasÃ„Â±n) */
 .tp.ins-soft .main-area {
   display: flex;
   flex-direction: column;
@@ -627,7 +812,7 @@ a.bubble-card-main:hover { color: inherit; }
   align-content: flex-start;
 }
 
-/* Eğitmen — Ders Ekle: ortalanmış dar sütun, okunaklı puntolar */
+/* EÃ„Å¸itmen Ã¢â‚¬â€ Ders Ekle: ortalanmÃ„Â±Ã…Å¸ dar sÃƒÂ¼tun, okunaklÃ„Â± puntolar */
 .tp.ins-soft .main-area.ins-form-page {
   max-width: 46rem;
   width: 100%;
@@ -645,6 +830,69 @@ a.bubble-card-main:hover { color: inherit; }
   line-height: 1.25;
   margin-bottom: 0.6rem;
 }
+
+/* Instructor add-course: hero page title (gradient + display typography) */
+.tp.ins-soft .main-area.ins-form-page .page-title.ins-page-hero-title {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  max-width: 100%;
+  font-family: ui-sans-serif, "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+  font-size: clamp(1.5rem, 2.8vw, 1.95rem);
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-wrap: balance;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.55rem;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  background: linear-gradient(
+    115deg,
+    #faf5ff 0%,
+    #f5f3ff 18%,
+    #ddd6fe 45%,
+    #a78bfa 78%,
+    #c4b5fd 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Fallback (no clip support) */
+  color: #f3e8ff;
+}
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .tp.ins-soft .main-area.ins-form-page .page-title.ins-page-hero-title {
+    color: transparent;
+  }
+}
+.tp.ins-soft .main-area.ins-form-page .page-title.ins-page-hero-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #6366f1, #a78bfa, #c4b5fd);
+  opacity: 0.95;
+  box-shadow: 0 0 18px rgba(99, 102, 241, 0.35);
+}
+.tp.ins-soft .main-area.ins-form-page .page-title.ins-page-hero-title .ins-hero-amp {
+  -webkit-text-fill-color: #e9d5ff;
+  color: #e9d5ff;
+  background: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  margin: 0 0.1em;
+  text-shadow: 0 0 20px rgba(167, 139, 250, 0.5);
+}
+
 .tp.ins-soft .main-area.ins-form-page .page-meta {
   font-size: 1.05rem;
   line-height: 1.6;
@@ -853,11 +1101,11 @@ a.bubble-card-main:hover { color: inherit; }
   color: rgba(215, 208, 232, 0.85);
 }
 
-.tp.ins-soft .flow-step { /* üst şerit: zaten .tp; ekstra yumuşaklık */
+.tp.ins-soft .flow-step { /* ÃƒÂ¼st Ã…Å¸erit: zaten .tp; ekstra yumuÃ…Å¸aklÃ„Â±k */
   border-color: rgba(255, 255, 255, 0.16);
 }
 
-/* Öğrenci + eğitmen: sağ altta AI kısayolu (robot.png) — kenardan yeterince içeride */
+/* Ãƒâ€“Ã„Å¸renci + eÃ„Å¸itmen: saÃ„Å¸ altta AI kÃ„Â±sayolu (robot.png) Ã¢â‚¬â€ kenardan yeterince iÃƒÂ§eride */
 .ai-assistant-fab {
   position: fixed;
   right: max(2rem, calc(1rem + env(safe-area-inset-right, 0px)));
@@ -887,3 +1135,290 @@ a.bubble-card-main:hover { color: inherit; }
   pointer-events: none;
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25));
 }
+
+/* EÃ„Å¸itmen: geniÃ…Å¸ add-course, iki sÃƒÂ¼tun + FAB istifi (feedback, AI) */
+.tp.ins-soft .main-area.ins-form-page.ins-form-page-wide {
+  max-width: min(1180px, 96vw);
+}
+.ins-create-upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.15rem 1.35rem;
+  align-items: stretch;
+  margin-top: 0.2rem;
+}
+@media (max-width: 900px) {
+  .ins-create-upload-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.ins-step-panel {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 1.1rem 1.25rem 1.35rem;
+  min-width: 0;
+}
+.ins-step-panel .section-title {
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+}
+.ins-step-panel .form-block:first-of-type {
+  margin-top: 0;
+}
+.ins-my-courses-section {
+  margin-top: 2rem;
+  padding: 1.15rem 1.25rem 1.4rem;
+  background: rgba(0, 0, 0, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+.ins-my-courses-section .ins-list-title {
+  margin-top: 0;
+  border-top: none;
+  padding-top: 0;
+  margin-bottom: 0.75rem;
+}
+.ins-my-courses-hint a {
+  color: #a5b4fc;
+  font-weight: 600;
+  text-decoration: none;
+}
+.ins-my-courses-hint a:hover {
+  text-decoration: underline;
+}
+.tp.ins-soft .ins-feedback-dates-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+  margin-bottom: 0.5rem;
+}
+@media (max-width: 700px) {
+  .tp.ins-soft .ins-feedback-dates-row {
+    grid-template-columns: 1fr;
+  }
+}
+.instructor-fab-stack {
+  position: fixed;
+  right: max(2rem, calc(1rem + env(safe-area-inset-right, 0px)));
+  bottom: max(2rem, calc(1rem + env(safe-area-inset-bottom, 0px)));
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  align-items: center;
+}
+.instructor-fab-stack .ai-assistant-fab {
+  position: static;
+  right: auto;
+  bottom: auto;
+}
+.instructor-feedback-fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #c4b5fd 0%, #7c3aed 96%);
+  border: 2px solid rgba(255, 255, 255, 0.38);
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.38);
+  text-decoration: none;
+  color: #fff;
+  box-sizing: border-box;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.instructor-feedback-fab:hover {
+  transform: scale(1.07);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
+}
+.instructor-feedback-fab svg {
+  width: 26px;
+  height: 26px;
+  stroke: currentColor;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+}
+.instructor-fab-stack .instructor-feedback-fab,
+.instructor-fab-stack .ai-assistant-fab {
+  margin: 0;
+}
+.tp.ins-soft .main-area.ins-form-page .ins-feedback-page-title {
+  margin-bottom: 0.5rem;
+  font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.02em;
+}
+.tp.ins-soft .main-area.ins-form-page .ins-feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+.tp.ins-soft .main-area.ins-form-page .ins-feedback-actions .btn-create,
+.tp.ins-soft .main-area.ins-form-page .ins-feedback-actions .ins-btn-secondary {
+  flex: 1 1 12rem;
+}
+.tp.tl .main-area.ins-form-page .btn-secondary.ins-btn-secondary {
+  background: #e7e2ff;
+  border: 1px solid #a99be8;
+  color: #2d2357;
+}
+.tp.tl .main-area.ins-form-page .btn-secondary.ins-btn-secondary:hover {
+  background: #dcd4ff;
+  border-color: #9482de;
+}
+/* Light theme refinements: softer white and clearer headings */
+.tp.tl .main-area {
+  background: linear-gradient(165deg, #f3f5fb 0%, #f7f8fc 52%, #f1f2f9 100%);
+  color: #1f2937;
+}
+.tp.tl .main-area .page-title,
+.tp.tl .main-area .section-title {
+  color: #27204f;
+}
+.tp.tl .main-area .page-meta,
+.tp.tl .main-area .empty {
+  color: rgba(55, 48, 111, 0.8);
+}
+.tp.tl .main-area.ins-form-page .page-title.ins-page-hero-title {
+  background: none;
+  -webkit-text-fill-color: #30275e;
+  color: #30275e;
+  text-shadow: none;
+}
+.tp.tl .main-area.ins-form-page .page-title.ins-page-hero-title::after {
+  background: linear-gradient(90deg, #7c83f8, #a78bfa, #c4b5fd);
+  opacity: 0.72;
+  box-shadow: 0 0 10px rgba(124, 131, 248, 0.2);
+}
+.tp.tl .main-area.ins-form-page .page-title.ins-page-hero-title .ins-hero-amp {
+  -webkit-text-fill-color: #5b4b9a;
+  color: #5b4b9a;
+  text-shadow: none;
+}
+.tp.tl .ins-step-panel {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(139, 92, 246, 0.16);
+}
+.tp.tl .ins-my-courses-section {
+  background: rgba(255, 255, 255, 0.58);
+  border-color: rgba(139, 92, 246, 0.14);
+}
+.tp.tl .main-area.ins-form-page .form-block input,
+.tp.tl .main-area.ins-form-page .form-block textarea,
+.tp.tl .main-area.ins-form-page .form-block select {
+  background: rgba(255, 255, 255, 0.86);
+  border-color: rgba(99, 102, 241, 0.22);
+  color: #1f2937;
+}
+.tp.tl .main-area.ins-form-page .form-block .hint {
+  color: rgba(55, 48, 111, 0.66);
+}
+/* Light theme accessibility fix: ensure readable contrast across instructor/student pages */
+.tp.tl .main-area,
+.tp.tl .main-area * {
+  text-shadow: none;
+}
+
+.tp.tl .main-area .page-meta,
+.tp.tl .main-area .form-block label,
+.tp.tl .main-area .form-block .hint,
+.tp.tl .main-area .msg,
+.tp.tl .main-area .empty,
+.tp.tl .main-area .lms-subhead,
+.tp.tl .main-area .ins-my-courses-hint,
+.tp.tl .main-area .ins-fb-count {
+  color: #4b5563 !important;
+}
+
+.tp.tl .main-area .section-title,
+.tp.tl .main-area .page-title,
+.tp.tl .main-area h1,
+.tp.tl .main-area h2,
+.tp.tl .main-area h3,
+.tp.tl .main-area strong {
+  color: #1f2937 !important;
+}
+
+.tp.tl .main-area input,
+.tp.tl .main-area textarea,
+.tp.tl .main-area select,
+.tp.tl .main-area .lms-search-wrap input[type="text"],
+.tp.tl .main-area .chat-input-wrap input,
+.tp.tl .main-area .row select {
+  background: #f5f3ff !important;
+  color: #1f2937 !important;
+  border-color: rgba(99, 102, 241, 0.28) !important;
+}
+
+.tp.tl .main-area input::placeholder,
+.tp.tl .main-area textarea::placeholder,
+.tp.tl .main-area .lms-search-wrap input[type="text"]::placeholder,
+.tp.tl .main-area .chat-input-wrap input::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+.tp.tl .main-area .flow-steps .flow-step {
+  background: #eef2ff !important;
+  color: #374151 !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+.tp.tl .main-area .flow-steps .flow-step.active {
+  background: #e0e7ff !important;
+  color: #1f2937 !important;
+  border-color: rgba(79, 70, 229, 0.55) !important;
+}
+
+.tp.tl .main-area .panel,
+.tp.tl .main-area .kpi,
+.tp.tl .main-area .chat-messages .user,
+.tp.tl .main-area .chat-messages .bot {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #1f2937 !important;
+  border-color: rgba(99, 102, 241, 0.18) !important;
+}
+
+.tp.tl .main-area .row label,
+.tp.tl .main-area .kpi .k,
+.tp.tl .main-area .cat-list li {
+  color: #4b5563 !important;
+}
+
+
+/* Final light theme tuning: lavender background across all light pages */
+.tp.tl {
+  background: linear-gradient(165deg, #e7e1f7 0%, #ede8fb 45%, #e6e1f5 100%) !important;
+}
+.tp.tl .main-area {
+  background: linear-gradient(165deg, #eee9ff 0%, #f3edff 52%, #ece7ff 100%) !important;
+}
+.tp.tl .main-area .panel,
+.tp.tl .main-area .kpi,
+.tp.tl .ins-step-panel,
+.tp.tl .ins-my-courses-section {
+  background: rgba(240, 234, 255, 0.9) !important;
+  border-color: rgba(139, 92, 246, 0.26) !important;
+}
+
+.tp.tl .main-area .chat-input-wrap button {
+  background: #4f46e5 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 9px !important;
+  min-width: 74px;
+}
+
+
+/* Student add-course visibility fix in light theme */
+.tp.tl .en-lbl {
+  color: #4b5563 !important;
+}
+.tp.tl .en-in input[type="text"] {
+  background: rgba(245, 243, 255, 0.95) !important;
+  border-color: rgba(99, 102, 241, 0.32) !important;
+  color: #1f2937 !important;
+}
+.tp.tl .en-in input[type="text"]::placeholder {
+  color: #6b7280 !important;
+}
+
