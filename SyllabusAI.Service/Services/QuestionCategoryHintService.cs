@@ -2,7 +2,12 @@ namespace SyllabusAI.Services;
 
 public class QuestionCategoryHintService
 {
-    public string Predict(string question)
+    public static bool IsGradingQuestion(string? question) =>
+        PredictCategory(question) == SyllabusCategories.GradingPolicy;
+
+    public string Predict(string? question) => PredictCategory(question);
+
+    private static string PredictCategory(string? question)
     {
         var q = (question ?? string.Empty).ToLowerInvariant();
 
@@ -22,6 +27,10 @@ public class QuestionCategoryHintService
             return SyllabusCategories.InstructorInfo;
         if (HasAny(q, "plagiarism", "cheating", "integrity", "ethic", "intihal", "kopya"))
             return SyllabusCategories.AcademicIntegrity;
+        if (HasAny(q, "syllabus", "müfredat", "mufredat", "ders içeriği", "ders icerigi", "learning outcome", "kazanım", "kazanim"))
+            return SyllabusCategories.WeeklySchedule;
+        if (HasAny(q, "ne zaman", "nasıl", "nasil", "zorunlu", "gerekli", "şart", "sart"))
+            return SyllabusCategories.AssignmentPolicy;
 
         return SyllabusCategories.Unknown;
     }

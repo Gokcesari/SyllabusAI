@@ -4,7 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Reduce MSB3026 when a previous host is still shutting down -->
+    <CopyRetryCount>15</CopyRetryCount>
+    <CopyRetryDelayMilliseconds>400</CopyRetryDelayMilliseconds>
   </PropertyGroup>
+
+  <!-- dotnet build / dotnet run: stop prior host so DLLs are not locked (MSB3026) -->
+  <Target Name="StopPreviousServiceHost" BeforeTargets="Build" Condition="'$(OS)' == 'Windows_NT'">
+    <Exec Command="taskkill /F /IM SyllabusAI.Service.exe /T 2&gt;nul" IgnoreExitCode="true" />
+    <Exec Command="powershell -NoProfile -Command &quot;Start-Sleep -Milliseconds 300&quot;" IgnoreExitCode="true" />
+  </Target>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />

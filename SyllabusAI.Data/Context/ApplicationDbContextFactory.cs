@@ -12,10 +12,28 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
         var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
         var connectionString =
             Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+            ?? TryReadConnectionStringFromSecrets()
             ?? TryReadConnectionStringFromServiceSettings(env)
             ?? "Server=(localdb)\\mssqllocaldb;Database=SyllabusAI_DesignTime;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
         optionsBuilder.UseSqlServer(connectionString);
         return new ApplicationDbContext(optionsBuilder.Options);
+    }
+
+    private static string? TryReadConnectionStringFromSecrets()
+    {
+        var cwd = Directory.GetCurrentDirectory();
+        var candidates = new[]
+        {
+            Path.Combine(cwd, "config", "secrets", "secrets.Local.json"),
+            Path.Combine(cwd, "..", "config", "secrets", "secrets.Local.json"),
+            Path.Combine(cwd, "..", "..", "config", "secrets", "secrets.Local.json"),
+        };
+        foreach (var path in candidates.Select(Path.GetFullPath).Distinct())
+        {
+            var cs = TryReadConnectionFromFile(path);
+            if (!string.IsNullOrWhiteSpace(cs)) return cs;
+        }
+        return null;
     }
 
     private static string? TryReadConnectionStringFromServiceSettings(string env)

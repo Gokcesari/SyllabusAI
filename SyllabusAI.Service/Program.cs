@@ -9,7 +9,11 @@ using SyllabusAI.Service.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ConnectionStrings:DefaultConnection -> SQL Server (appsettings / appsettings.Development).
+var secretsFile = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "config", "secrets", "secrets.Local.json"));
+if (File.Exists(secretsFile))
+    builder.Configuration.AddJsonFile(secretsFile, optional: true, reloadOnChange: true);
+
+// ConnectionStrings:DefaultConnection -> SQL Server (appsettings / appsettings.Development / config/secrets).
 var defaultCs = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection must be set.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -38,6 +42,7 @@ builder.Services.AddSingleton<IOpenAiSyllabusClient, OpenAiSyllabusClient>();
 builder.Services.AddScoped<ISyllabusRagIndexService, SyllabusRagIndexService>();
 builder.Services.AddSingleton<SyllabusCategoryMapper>();
 builder.Services.AddSingleton<QuestionCategoryHintService>();
+builder.Services.AddSingleton<SyllabusRagRetriever>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddControllers();
@@ -128,6 +133,27 @@ if (!useDemoAuth)
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Seed atlandÄ±.");
+        }
+
+        try
+        {
+            var rag = scope.ServiceProvider.GetRequiredService<ISyllabusRagIndexService>();
+            var courseIds = await db.Courses
+                .Where(c => c.SyllabusContent != null && c.SyllabusContent != "")
+                .Select(c => new { c.Id, c.SyllabusContent })
+                .ToListAsync();
+            foreach (var c in courseIds)
+            {
+                var stale = !await db.SyllabusChunks.AnyAsync(ch => ch.CourseId == c.Id)
+                    || await db.SyllabusChunks.AnyAsync(ch => ch.CourseId == c.Id && !ch.Text.StartsWith("[Section:"));
+                if (!stale) continue;
+                await rag.ReindexCourseAsync(c.Id, c.SyllabusContent!);
+                logger.LogInformation("Reindexed syllabus chunks for course {CourseId}", c.Id);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Dev syllabus reindex skipped.");
         }
     }
 

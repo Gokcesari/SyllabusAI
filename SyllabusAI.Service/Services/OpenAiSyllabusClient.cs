@@ -81,33 +81,47 @@ public class OpenAiSyllabusClient : IOpenAiSyllabusClient
         var model = _config["OpenAI:ChatModel"] ?? "gpt-4o-mini";
         var t = temperature ?? _config.GetValue("OpenAI:ChatTemperature", 0.7);
         var m = maxTokens ?? _config.GetValue("OpenAI:ChatMaxTokens", 2000);
-        var payload = new
+
+        var messages = new List<object>
         {
-            model,
-            temperature = t,
-            max_tokens = m,
-            messages = new object[]
-            {
-                new { role = "system", content = systemPrompt },
-                new { role = "user", content = userMessage }
-            }
+            new { role = "system", content = systemPrompt },
+            new { role = "user", content = userMessage }
         };
 
-        using var response = await client.PostAsJsonAsync("chat/completions", payload, ct);
-        if (!response.IsSuccessStatusCode)
+        var full = new System.Text.StringBuilder();
+        for (var pass = 0; pass < 3; pass++)
         {
-            _logger.LogWarning("OpenAI chat HTTP {Status}", response.StatusCode);
-            return null;
+            var payload = new { model, temperature = t, max_tokens = m, messages = messages.ToArray() };
+            using var response = await client.PostAsJsonAsync("chat/completions", payload, ct);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogWarning("OpenAI chat HTTP {Status}", response.StatusCode);
+                return full.Length > 0 ? full.ToString().Trim() : null;
+            }
+
+            await using var stream = await response.Content.ReadAsStreamAsync(ct);
+            using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
+            if (!doc.RootElement.TryGetProperty("choices", out var choices) || choices.GetArrayLength() == 0)
+                return full.Length > 0 ? full.ToString().Trim() : null;
+
+            var first = choices[0];
+            if (!first.TryGetProperty("message", out var msgEl)) break;
+            if (!msgEl.TryGetProperty("content", out var contentEl)) break;
+
+            var piece = contentEl.GetString()?.Trim();
+            if (!string.IsNullOrWhiteSpace(piece))
+                full.Append(piece);
+
+            var finish = first.TryGetProperty("finish_reason", out var fr) ? fr.GetString() : null;
+            if (!string.Equals(finish, "length", StringComparison.OrdinalIgnoreCase))
+                break;
+
+            _logger.LogInformation("OpenAI answer hit max_tokens; continuing ({Pass}/3)", pass + 1);
+            messages.Add(new { role = "assistant", content = piece ?? string.Empty });
+            messages.Add(new { role = "user", content = "Continue the answer exactly where you stopped. Do not repeat earlier text." });
         }
 
-        await using var stream = await response.Content.ReadAsStreamAsync(ct);
-        using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
-        if (!doc.RootElement.TryGetProperty("choices", out var choices) || choices.GetArrayLength() == 0)
-            return null;
-        var first = choices[0];
-        if (!first.TryGetProperty("message", out var msg)) return null;
-        if (!msg.TryGetProperty("content", out var content)) return null;
-        return content.GetString()?.Trim();
+        return full.Length > 0 ? full.ToString().Trim() : null;
     }
 
     private HttpClient CreateClient()

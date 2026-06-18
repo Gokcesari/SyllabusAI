@@ -182,7 +182,7 @@
         <input type="text" id="questionInput" placeholder="Type your question..." autocomplete="off">
         <button type="button" id="btnAsk">Send</button>
       </div>
-      <p class="lock-note" id="lockNote">AI is locked for this course. On the course page, scroll through the full syllabus and complete the reading unlock.</p>
+      <p class="lock-note" id="lockNote">AI locked. On the course page, scroll the syllabus PDF to the end; you can ask questions here once reading is complete.</p>
     </div>
   </main>
 
@@ -191,6 +191,7 @@
   </a>
   <script src="/js/out.js"></script>
   <script src="/js/user-fly.js"></script>
+  <script src="/js/syllabus-read-state.js"></script>
   <script>
     var token = localStorage.getItem('syllabus_token');
     var userStr = localStorage.getItem('syllabus_user');
@@ -207,11 +208,7 @@
     function authHeader(){ return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }; }
 
     function syllabusReadComplete(courseId) {
-      var p = parseFloat(localStorage.getItem('syllabus_read_progress_' + courseId) || '0');
-      if (p >= 0.99) return true;
-      var stage = parseInt(localStorage.getItem('syllabus_read_stage_' + courseId) || '1', 10);
-      var unlocked = localStorage.getItem('syllabus_read_unlock_' + courseId) === '1';
-      return stage >= 4 && unlocked;
+      return SyllabusReadState.isComplete(user, courseId);
     }
 
     fetch('/api/courses/my', { headers: authHeader() })
@@ -267,9 +264,9 @@
       if (locked) {
         note.classList.add('show');
         if (courseId) {
-          note.textContent = 'AI is locked for this course. On the course page, scroll through the entire syllabus PDF to the bottom. When reading is complete, AI unlocks for this course.';
+          note.textContent = 'AI locked. My courses → open the course → scroll the syllabus PDF to the end. The AI unlocks here when reading is complete.';
         } else {
-          note.textContent = 'AI is locked until you select a course and complete the syllabus reading on the course page.';
+          note.textContent = 'Select a course first. Complete syllabus reading on the course page before using the AI here.';
         }
       } else note.classList.remove('show');
     }
@@ -300,6 +297,10 @@
         .catch(function(){ addBubble('bot', 'Connection error.'); });
     };
     document.getElementById('courseSelect').onchange = updateAiLockForSelection;
+    window.addEventListener('storage', function (e) {
+      if (e && e.key && e.key.indexOf('syllabus_read_') === 0) updateAiLockForSelection();
+    });
+    window.addEventListener('focus', updateAiLockForSelection);
   </script>
 </body>
 </html>

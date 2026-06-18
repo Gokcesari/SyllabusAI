@@ -9,17 +9,19 @@ namespace SyllabusAI.Services;
 
 public class AiService : IAiService
 {
-    private const int TopK = 8;
-    private const double DefaultEmbeddingRelevanceThreshold = 0.18;
-    private const double DefaultLexicalRelevanceThreshold = 1.0;
+    private const int TopK = 14;
+    private const int MaxContextChars = 22000;
+    private const int MaxHistoryCharsPerMessage = 500;
+    private const double DefaultEmbeddingRelevanceThreshold = 0.12;
+    private const double DefaultLexicalRelevanceThreshold = 0.5;
     private const string DefaultOpenAiUnavailableMessage =
         "The AI service is not configured. Please try again later or contact your instructor.";
 
     private static readonly string[] OutOfScopeResponses =
     {
-        "This question does not seem directly related to the course syllabus. Please contact your instructor.",
-        "This topic is outside the syllabus scope. For the most accurate information, ask your instructor.",
-        "I cannot produce a syllabus-based answer to this question. Please contact your instructor."
+        "This question does not appear to be directly related to the course syllabus. Please contact your instructor for the most accurate information.",
+        "This topic is outside the syllabus scope. Please contact your instructor for details.",
+        "I cannot answer this from the syllabus text. Please ask your instructor."
     };
 
     private readonly ApplicationDbContext _db;
@@ -27,19 +29,22 @@ public class AiService : IAiService
     private readonly IOpenAiSyllabusClient _openAi;
     private readonly IConfiguration _config;
     private readonly QuestionCategoryHintService _questionHint;
+    private readonly SyllabusRagRetriever _retriever;
 
     public AiService(
         ApplicationDbContext db,
         ISyllabusRagIndexService ragIndex,
         IOpenAiSyllabusClient openAi,
         IConfiguration config,
-        QuestionCategoryHintService questionHint)
+        QuestionCategoryHintService questionHint,
+        SyllabusRagRetriever retriever)
     {
         _db = db;
         _ragIndex = ragIndex;
         _openAi = openAi;
         _config = config;
         _questionHint = questionHint;
+        _retriever = retriever;
     }
 
     public async Task<ChatResponse> AskAsync(int userId, ChatRequest request, CancellationToken ct = default)
@@ -53,8 +58,13 @@ public class AiService : IAiService
             return new ChatResponse { Answer = "You do not have access to this course.", IsOutOfScope = true, FallbackTriggered = true };
 
         var course = await _db.Courses.AsNoTracking().FirstOrDefaultAsync(c => c.Id == request.CourseId, ct);
-        if (course == null || string.IsNullOrWhiteSpace(course.SyllabusContent))
-            return new ChatResponse { Answer = "No syllabus has been added for this course yet.", IsOutOfScope = true, FallbackTriggered = true };
+        if (course == null)
+            return new ChatResponse { Answer = "Course not found.", IsOutOfScope = true, FallbackTriggered = true };
+
+        var syllabusText = await ResolveSyllabusTextAsync(course.Id, course.SyllabusContent, ct);
+        var hasChunksAlready = await _db.SyllabusChunks.AnyAsync(c => c.CourseId == request.CourseId, ct);
+        if (string.IsNullOrWhiteSpace(syllabusText) && !hasChunksAlready)
+            return new ChatResponse { Answer = "No syllabus has been uploaded for this course yet.", IsOutOfScope = true, FallbackTriggered = true };
 
         var session = await EnsureSessionAsync(userId, request.CourseId, request.SessionId, ct);
 
@@ -65,14 +75,38 @@ public class AiService : IAiService
             return courseIdentity;
         }
 
-        var hasChunks = await _db.SyllabusChunks.AnyAsync(c => c.CourseId == request.CourseId, ct);
-        if (!hasChunks)
-            await _ragIndex.ReindexCourseAsync(course.Id, course.SyllabusContent, ct);
+        var hasChunks = hasChunksAlready;
+        if (!hasChunks && !string.IsNullOrWhiteSpace(syllabusText))
+            await _ragIndex.ReindexCourseAsync(course.Id, syllabusText, ct);
+        else if (hasChunks && !string.IsNullOrWhiteSpace(syllabusText)
+                 && !await _db.SyllabusChunks.AnyAsync(c => c.CourseId == request.CourseId && c.EmbeddingJson != null, ct))
+            await _ragIndex.ReindexCourseAsync(course.Id, syllabusText, ct);
+        else if (hasChunks && !string.IsNullOrWhiteSpace(syllabusText))
+        {
+            var maxChunkLen = await _db.SyllabusChunks.AsNoTracking()
+                .Where(c => c.CourseId == request.CourseId)
+                .MaxAsync(c => (int?)c.Text.Length, ct) ?? 0;
+            var usesLegacyChunkFormat = await _db.SyllabusChunks.AsNoTracking()
+                .AnyAsync(c => c.CourseId == request.CourseId
+                               && !c.Text.StartsWith("[Section:"), ct);
+            if (maxChunkLen > SyllabusTextChunker.MaxChunkChars + 200 || usesLegacyChunkFormat)
+                await _ragIndex.ReindexCourseAsync(course.Id, syllabusText, ct);
+        }
 
         var chunks = await _db.SyllabusChunks.AsNoTracking()
             .Where(c => c.CourseId == request.CourseId)
             .OrderBy(c => c.ChunkIndex)
             .ToListAsync(ct);
+
+        if (!string.IsNullOrWhiteSpace(syllabusText)
+            && WeekScheduleAnswer.ChunksMissingCalendarWeeks(chunks, syllabusText))
+        {
+            await _ragIndex.ReindexCourseAsync(course.Id, syllabusText, ct);
+            chunks = await _db.SyllabusChunks.AsNoTracking()
+                .Where(c => c.CourseId == request.CourseId)
+                .OrderBy(c => c.ChunkIndex)
+                .ToListAsync(ct);
+        }
 
         if (chunks.Count == 0)
         {
@@ -89,11 +123,27 @@ public class AiService : IAiService
             return denyNoChunks;
         }
 
-        var syllabusDocAnswer = TryAnswerSyllabusDocumentMeta(course, session.Id, question, chunks);
+        var syllabusDocAnswer = TryAnswerSyllabusDocumentMeta(course, session.Id, question, syllabusText, chunks);
         if (syllabusDocAnswer != null)
         {
             await LogExchangeAsync(session.Id, question, syllabusDocAnswer, Array.Empty<SyllabusChunk>(), ct);
             return syllabusDocAnswer;
+        }
+
+        var gradingDirect = GradingTableAnswer.TryAnswer(question, syllabusText, chunks, session.Id, course);
+        if (gradingDirect != null)
+        {
+            await LogExchangeAsync(session.Id, question, gradingDirect, chunks.Where(c =>
+                SyllabusCategoryMapper.LooksLikeGradingTable(c.Text) || c.NormalizedCategory == SyllabusCategories.GradingPolicy).Take(3).ToList(), ct);
+            return gradingDirect;
+        }
+
+        var weekDirect = WeekScheduleAnswer.TryAnswer(question, chunks, session.Id, course, syllabusText);
+        if (weekDirect != null)
+        {
+            var weekNum = WeekScheduleAnswer.TryExtractWeekNumber(question);
+            await LogExchangeAsync(session.Id, question, weekDirect, SelectWeekSourceChunks(chunks, weekNum).Take(1).ToList(), ct);
+            return weekDirect;
         }
 
         if (!_openAi.IsConfigured)
@@ -128,37 +178,38 @@ public class AiService : IAiService
         }
 
         var hint = _questionHint.Predict(question);
-        var narrowed = hint == SyllabusCategories.Unknown
-            ? chunks
-            : chunks.Where(c => c.NormalizedCategory == hint).ToList();
-        if (narrowed.Count == 0) narrowed = chunks;
 
+        if (QuestionCategoryHintService.IsGradingQuestion(question)
+            && !chunks.Any(c => SyllabusCategoryMapper.LooksLikeGradingTable(c.Text))
+            && !string.IsNullOrWhiteSpace(syllabusText))
+        {
+            await _ragIndex.ReindexCourseAsync(course.Id, syllabusText, ct);
+            chunks = await _db.SyllabusChunks.AsNoTracking()
+                .Where(c => c.CourseId == request.CourseId)
+                .OrderBy(c => c.ChunkIndex)
+                .ToListAsync(ct);
+            var retryGrading = GradingTableAnswer.TryAnswer(question, syllabusText, chunks, session.Id, course);
+            if (retryGrading != null)
+            {
+                await LogExchangeAsync(session.Id, question, retryGrading, chunks.Take(3).ToList(), ct);
+                return retryGrading;
+            }
+        }
+
+        float[]? qVec = null;
+        if (_openAi.IsConfigured && hint != SyllabusCategories.GradingPolicy)
+            qVec = await _openAi.EmbedOneAsync(question, ct);
+
+        var retrieval = _retriever.Retrieve(
+            chunks,
+            question,
+            hint,
+            useEmbeddings: hint != SyllabusCategories.GradingPolicy,
+            queryEmbedding: qVec);
+
+        var ranked = retrieval.Ranked.ToList();
+        var method = retrieval.Method;
         var qTokens = Tokenize(question);
-        var allHaveEmb = narrowed.All(c => !string.IsNullOrWhiteSpace(c.EmbeddingJson));
-        var method = "lexical";
-
-        List<(SyllabusChunk Chunk, double Score)> ranked;
-        if (_openAi.IsConfigured && allHaveEmb)
-        {
-            var qVec = await _openAi.EmbedOneAsync(question, ct);
-            if (qVec is { Length: > 0 })
-            {
-                ranked = narrowed
-                    .Select(c => (c, CosineSimilarity(qVec, ParseEmbedding(c.EmbeddingJson!))))
-                    .OrderByDescending(x => x.Item2)
-                    .Take(TopK)
-                    .ToList();
-                method = "embedding";
-            }
-            else
-            {
-                ranked = RankLexical(narrowed, qTokens);
-            }
-        }
-        else
-        {
-            ranked = RankLexical(narrowed, qTokens);
-        }
 
         var bestScore = ranked.Count > 0 ? ranked[0].Score : 0;
         var embeddingThreshold = _config.GetValue<double?>("AiGuard:EmbeddingRelevanceThreshold") ?? DefaultEmbeddingRelevanceThreshold;
@@ -167,8 +218,8 @@ public class AiService : IAiService
             (method == "embedding" && bestScore < embeddingThreshold)
             || (method == "lexical" && bestScore < lexicalThreshold);
 
-        // Kategori ipucu varsa (notlandırma, sınav, vb.) soru müfredat kapsamındadır; çok dilli soruda zayıf skorla reddetme.
-        if (weakByMethod && hint == SyllabusCategories.Unknown)
+        // Zayıf skor: yine de en iyi parçalarla cevap dene; yalnızca hiç eşleşme yoksa reddet.
+        if (weakByMethod && hint == SyllabusCategories.Unknown && (ranked.Count == 0 || ranked.All(x => x.Score <= 0)))
         {
             var deny = new ChatResponse
             {
@@ -184,18 +235,24 @@ public class AiService : IAiService
         }
 
         var selected = ranked.Select(x => x.Chunk).ToList();
-        var context = string.Join("\n\n---\n\n", selected.Select(c => $"[Section: {c.OriginalSectionTitle ?? "Untitled"}]\n{c.Text}"));
-        var historyText = await BuildSessionHistoryAsync(session.Id, 8, ct);
+        if (selected.Count == 0)
+            selected = chunks.Take(TopK).ToList();
+
+        var context = BuildBoundedContext(selected);
+        var historyText = await BuildSessionHistoryAsync(session.Id, 6, ct);
+        var replyLanguage = QuestionLanguage.IsEnglish(question) ? "English" : "Turkish";
         var system =
-            "You are a helpful, articulate teaching assistant in the same general style as ChatGPT. " +
-            "Ground every claim in the provided syllabus context only. The excerpts may come from any part of the document (cover page, footer, tables, policies); use all relevant snippets. " +
-            "Give complete answers: use short paragraphs, bullets, or numbered steps when they improve clarity. " +
-            "If the syllabus does not support an answer, say you could not find that in the syllabus. " +
-            "Close with a brief note on which section(s) the answer is based on.";
+            "You are a helpful university teaching assistant. Answer only from the syllabus excerpts provided. " +
+            $"The current question is in {replyLanguage}. You MUST reply entirely in {replyLanguage}, even if earlier messages in this session used another language. " +
+            "Give a complete, thorough answer: include all relevant numbers, dates, percentages, weights, and rules from the excerpts. " +
+            "For grade or exam weight questions, list every assessment component and its percentage if present in the excerpts. " +
+            "Use short paragraphs or bullet lists when they improve clarity. Do not stop mid-thought or mid-sentence. " +
+            "Only say information is missing if no excerpt mentions grades, exams, or percentages. " +
+            "End with one short line listing which syllabus section(s) you used.";
         var userMsg = string.IsNullOrWhiteSpace(historyText)
             ? $"Course: {course.CourseCode} - {course.Title}\n\nSyllabus context:\n{context}\n\nQuestion:\n{question}"
             : $"Course: {course.CourseCode} - {course.Title}\n\nEarlier in this session (for continuity; policies must still match the syllabus context below):\n{historyText}\n\nSyllabus context:\n{context}\n\nCurrent question:\n{question}";
-        var answer = await _openAi.ChatAsync(system, userMsg, ct);
+        var answer = await _openAi.ChatAsync(system, userMsg, ct, temperature: 0.35, maxTokens: 4096);
 
         if (string.IsNullOrWhiteSpace(answer))
             answer = "I could not find clear information on this in the syllabus.";
@@ -402,28 +459,39 @@ public class AiService : IAiService
     /// <summary>
     /// Answers cover/footer style questions (who prepared, dates) from raw syllabus text so typos and short queries still work.
     /// </summary>
-    private static ChatResponse? TryAnswerSyllabusDocumentMeta(Course course, int sessionId, string question, IReadOnlyList<SyllabusChunk> chunks)
+    private async Task<string> ResolveSyllabusTextAsync(int courseId, string? courseSyllabusContent, CancellationToken ct)
+    {
+        if (!string.IsNullOrWhiteSpace(courseSyllabusContent))
+            return courseSyllabusContent.Trim();
+
+        var fromUpload = await _db.SyllabusPdfUploads.AsNoTracking()
+            .Where(u => u.CourseId == courseId && u.IsActive && u.ExtractedText != null && u.ExtractedText != "")
+            .OrderByDescending(u => u.UploadedAtUtc)
+            .Select(u => u.ExtractedText)
+            .FirstOrDefaultAsync(ct);
+
+        return fromUpload?.Trim() ?? string.Empty;
+    }
+
+    private static ChatResponse? TryAnswerSyllabusDocumentMeta(Course course, int sessionId, string question, string syllabusText, IReadOnlyList<SyllabusChunk> chunks)
     {
         var q = question.Trim().ToLowerInvariant();
         if (!AsksSyllabusDocumentMeta(q)) return null;
-        var text = course.SyllabusContent;
-        if (string.IsNullOrWhiteSpace(text)) return null;
 
-        var extracted = TryExtractPreparedByBlock(text);
-        if (string.IsNullOrWhiteSpace(extracted) && chunks.Count > 0)
-        {
-            var joined = string.Join("\n\n", chunks.OrderBy(c => c.ChunkIndex).Select(c => c.Text));
-            extracted = TryExtractPreparedByBlock(joined);
-        }
+        var extracted = TryExtractPreparedByBlock(syllabusText);
+        if (string.IsNullOrWhiteSpace(extracted))
+            extracted = TryExtractPreparedByFromChunks(chunks);
         if (string.IsNullOrWhiteSpace(extracted)) return null;
 
         extracted = extracted.Trim();
         if (extracted.Length > 900) extracted = extracted[..900] + "...";
 
+        var answerText = FormatPreparedByAnswer(question, extracted);
+
         return new ChatResponse
         {
             SessionId = sessionId,
-            Answer = "From the syllabus document:\n\n" + extracted,
+            Answer = answerText,
             FromSyllabus = true,
             IsOutOfScope = false,
             RetrievalMethod = "syllabus-document-extract",
@@ -437,8 +505,13 @@ public class AiService : IAiService
     {
         if (ContainsAny(q,
                 "prepared by", "who prepared", "who wrote", "who made", "who authored", "who created",
-                "kim hazırladı", "kim hazirladi", "hazırlayan", "hazirlayan",
+                "date of preparation", "name surname",
+                "kim hazırladı", "kim hazirladi", "kim hazırlamış", "kim hazirlamis", "kim hazırladi",
+                "hazırlayan", "hazirlayan", "hazırlamış", "hazirlamis", "hazırlayan kim",
+                "belgeyi kim", "belge kim", "kim yazdı", "kim yazdi", "kim yaptı", "kim yapti",
                 "revision date", "version of the syllabus", "version of syllabus", "document date"))
+            return true;
+        if (ContainsAny(q, "kim", "who") && ContainsAny(q, "hazır", "hazir", "belge", "döküman", "dokuman", "syllabus", "müfredat", "mufredat"))
             return true;
         if (q.Contains("syllabus") && ContainsAny(q, "who", "whom", "whose", "kim"))
             return true;
@@ -447,10 +520,70 @@ public class AiService : IAiService
         return false;
     }
 
+    private static bool IsTurkishQuestion(string question)
+    {
+        var q = (question ?? string.Empty).ToLowerInvariant();
+        return ContainsAny(q, "kim", "ne ", "nasıl", "nasil", "kaç", "kac", "belge", "müfredat", "mufredat", "ders", "sınav", "sinav", "hazır", "hazir");
+    }
+
+    private static string FormatPreparedByAnswer(string question, string extracted)
+    {
+        if (!IsTurkishQuestion(question))
+            return "From the syllabus document:\n\n" + extracted;
+
+        var names = ExtractPersonNamesFromPreparedBlock(extracted);
+        if (names.Count > 0)
+            return "Müfredat belgesine göre hazırlayan: " + string.Join(", ", names) + ".\n\n" + extracted;
+
+        return "Müfredat belgesine göre:\n\n" + extracted;
+    }
+
+    private static List<string> ExtractPersonNamesFromPreparedBlock(string text)
+    {
+        var names = new List<string>();
+        foreach (var line in text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            var t = line.Trim();
+            if (t.Length < 4 || t.Length > 80) continue;
+            if (ContainsAny(t.ToLowerInvariant(), "prepared", "date", "preparation", "syllabus", "name", "surname", "hazır", "hazir"))
+                continue;
+            if (Regex.IsMatch(t, @"^\d{1,2}[./]\d{1,2}[./]\d{2,4}$")) continue;
+            if (Regex.IsMatch(t, @"^[A-ZÇĞİÖŞÜ][A-Za-zÇĞİÖŞÜçğıöşü]+(\s+[A-ZÇĞİÖŞÜ][A-Za-zÇĞİÖŞÜçğıöşü]+)+$"))
+                names.Add(t);
+        }
+        return names.Distinct(StringComparer.OrdinalIgnoreCase).Take(6).ToList();
+    }
+
+    private static string? TryExtractPreparedByFromChunks(IReadOnlyList<SyllabusChunk> chunks)
+    {
+        if (chunks.Count == 0) return null;
+
+        foreach (var c in chunks.OrderBy(x => x.ChunkIndex))
+        {
+            var hit = TryExtractPreparedByBlock(c.Text);
+            if (!string.IsNullOrWhiteSpace(hit)) return hit;
+        }
+
+        var preparedChunk = chunks.FirstOrDefault(c =>
+            c.Text.Contains("Prepared by", StringComparison.OrdinalIgnoreCase)
+            || c.Text.Contains("Date of Preparation", StringComparison.OrdinalIgnoreCase));
+        if (preparedChunk == null) return null;
+
+        var text = preparedChunk.Text;
+        var idx = text.IndexOf("Prepared by", StringComparison.OrdinalIgnoreCase);
+        if (idx < 0)
+            idx = text.IndexOf("Date of Preparation", StringComparison.OrdinalIgnoreCase);
+        if (idx < 0) return null;
+
+        var slice = text[idx..Math.Min(text.Length, idx + 600)].Trim();
+        return slice.Length > 8 ? slice : null;
+    }
+
     private static string? TryExtractPreparedByBlock(string text)
     {
         var patterns = new[]
         {
+            @"(?is)Prepared\s+by\s+Name\s+Surname\s+and\s+Date\s+of\s+Preparation\s*:[\s\S]{0,500}",
             @"(?is)Prepared\s+by\s*[^\n\r]*[\r\n]+(?:[^\n\r]+[\r\n]+){0,12}",
             @"(?is)Prepared\s+by\s*:?\s*[\s\S]{0,900}",
             @"(?is)Date\s+of\s+Preparation\s*:[^\n\r]*[\r\n]+(?:[^\n\r]+[\r\n]+){0,10}",
@@ -477,15 +610,22 @@ public class AiService : IAiService
         return null;
     }
 
+    private static List<SyllabusChunk> SelectWeekSourceChunks(IReadOnlyList<SyllabusChunk> chunks, int? weekNum)
+    {
+        if (weekNum is not > 0) return chunks.Take(1).ToList();
+        var n = weekNum.Value;
+        var wLabel = $"W{n}";
+        var weekLabel = $"Week {n}";
+        var hits = chunks.Where(c =>
+            c.OriginalSectionTitle?.Contains(wLabel, StringComparison.OrdinalIgnoreCase) == true
+            || c.OriginalSectionTitle?.Contains(weekLabel, StringComparison.OrdinalIgnoreCase) == true
+            || Regex.IsMatch(c.Text, $@"(?im)(?:^|\n)\s*{n}\s+[A-ZÇĞİÖŞÜ]")).ToList();
+        return hits.Count > 0 ? hits : chunks.Take(1).ToList();
+    }
+
     private static List<SyllabusChunk> SelectUiSources(List<SyllabusChunk> selected, HashSet<string> qTokens)
     {
-        return selected
-            .Select(c => new { Chunk = c, Score = LexicalScore(qTokens, c.Text.ToLowerInvariant()) })
-            .OrderByDescending(x => x.Score)
-            .ThenBy(x => x.Chunk.ChunkIndex)
-            .Take(2)
-            .Select(x => x.Chunk)
-            .ToList();
+        return selected.Take(2).ToList();
     }
 
     private static string GetUiSectionName(SyllabusChunk chunk)
@@ -545,7 +685,31 @@ public class AiService : IAiService
             "\n",
             recent
                 .Where(x => !string.IsNullOrWhiteSpace(x.Content))
-                .Select(x => $"{(x.Role.Equals("assistant", StringComparison.OrdinalIgnoreCase) ? "Assistant" : "User")}: {x.Content.Trim()}"));
+                .Select(x =>
+                {
+                    var body = x.Content.Trim();
+                    if (body.Length > MaxHistoryCharsPerMessage)
+                        body = body[..MaxHistoryCharsPerMessage] + "…";
+                    var role = x.Role.Equals("assistant", StringComparison.OrdinalIgnoreCase) ? "Assistant" : "User";
+                    return $"{role}: {body}";
+                }));
+    }
+
+    private static string BuildBoundedContext(IReadOnlyList<SyllabusChunk> selected)
+    {
+        var parts = new List<string>();
+        var total = 0;
+        foreach (var c in selected)
+        {
+            var block = $"[Section: {c.OriginalSectionTitle ?? "Untitled"}]\n{c.Text}";
+            if (total + block.Length > MaxContextChars && parts.Count > 0)
+                break;
+            if (block.Length > MaxContextChars)
+                block = block[..MaxContextChars] + "\n…";
+            parts.Add(block);
+            total += block.Length;
+        }
+        return string.Join("\n\n---\n\n", parts);
     }
 
     private static string FormatExternalHistory(IReadOnlyList<ChatTurnDto>? history, int maxItems)
@@ -565,6 +729,11 @@ public class AiService : IAiService
 
     private async Task<bool> EvaluateQuestionScopeAsync(Course course, string question, CancellationToken ct)
     {
+        question = (question ?? string.Empty).Trim();
+        var q = question.ToLowerInvariant();
+        if (AsksSyllabusDocumentMeta(q))
+            return true;
+
         // Kategori ipucu (devamsızlık, not, takvim, vb.) zaten ders + müfredat sorusudur; LLM kapısını atla.
         if (_questionHint.Predict(question) != SyllabusCategories.Unknown)
             return true;
@@ -626,7 +795,12 @@ public class AiService : IAiService
             "ne kadar",
             "hocam",
             "öğrenci",
-            "ogrenci");
+            "ogrenci",
+            "belge",
+            "belgeyi",
+            "hazırl",
+            "hazir",
+            "kim ");
     }
 
     private static bool ParseGateAllows(string? response)
@@ -646,12 +820,62 @@ public class AiService : IAiService
         return OutOfScopeResponses[index];
     }
 
-    private static List<(SyllabusChunk Chunk, double Score)> RankLexical(List<SyllabusChunk> chunks, HashSet<string> qTokens)
+    private static List<SyllabusChunk> BuildRetrievalPool(List<SyllabusChunk> chunks, string hint, string question)
+    {
+        if (hint == SyllabusCategories.Unknown)
+            return chunks;
+
+        var category = chunks.Where(c => c.NormalizedCategory == hint).ToList();
+        var signal = chunks.Where(c => ChunkMatchesHintSignals(c, hint)).ToList();
+        var merged = category.Concat(signal).GroupBy(c => c.Id).Select(g => g.First()).ToList();
+        return merged.Count > 0 ? merged : chunks;
+    }
+
+    private static bool ChunkMatchesHintSignals(SyllabusChunk chunk, string hint)
+    {
+        var t = chunk.Text.ToLowerInvariant();
+        return hint switch
+        {
+            var h when h == SyllabusCategories.GradingPolicy => ContainsGradingSignals(t),
+            var h when h == SyllabusCategories.AttendancePolicy => ContainsAny(t, "attendance", "devam", "yoklama", "absence"),
+            var h when h == SyllabusCategories.AssignmentPolicy => ContainsAny(t, "assignment", "homework", "deadline", "ödev", "odev", "teslim"),
+            _ => false
+        };
+    }
+
+    private static bool ContainsGradingSignals(string textLower) =>
+        ContainsAny(textLower, "%", "midterm", "final", "quiz", "weight", "grading", "assessment", "evaluation",
+            "ara sınav", "ara sinav", "vize", "bütünleme", "butunleme", "değerlendirme", "degerlendirme",
+            "yüzde", "yuzde", "not", "puan", "ağırlık", "agirlik");
+
+    private static List<(SyllabusChunk Chunk, double Score)> MergeGradingBoost(
+        List<(SyllabusChunk Chunk, double Score)> ranked,
+        List<SyllabusChunk> pool,
+        HashSet<string> qTokens,
+        int takeK)
+    {
+        var gradingHits = pool
+            .Where(c => ContainsGradingSignals(c.Text.ToLowerInvariant()))
+            .Select(c => (Chunk: c, Score: LexicalScore(qTokens, c.Text.ToLowerInvariant()) + 2.0))
+            .OrderByDescending(x => x.Score);
+
+        var merged = ranked
+            .Concat(gradingHits)
+            .GroupBy(x => x.Chunk.Id)
+            .Select(g => g.OrderByDescending(x => x.Score).First())
+            .OrderByDescending(x => x.Score)
+            .Take(takeK)
+            .ToList();
+
+        return merged.Count > 0 ? merged : ranked;
+    }
+
+    private static List<(SyllabusChunk Chunk, double Score)> RankLexical(List<SyllabusChunk> chunks, HashSet<string> qTokens, int takeK = TopK)
     {
         return chunks
             .Select(c => (c, LexicalScore(qTokens, c.Text.ToLowerInvariant())))
             .OrderByDescending(x => x.Item2)
-            .Take(TopK)
+            .Take(takeK)
             .ToList();
     }
 

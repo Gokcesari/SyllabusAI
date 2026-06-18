@@ -29,6 +29,7 @@ public class ApplicationDbContext : DbContext
         {
             e.HasIndex(u => u.Email).IsUnique();
             e.HasOne(u => u.Role).WithMany(r => r.Users).HasForeignKey(u => u.RoleId);
+            
         });
 
         modelBuilder.Entity<Course>(e =>

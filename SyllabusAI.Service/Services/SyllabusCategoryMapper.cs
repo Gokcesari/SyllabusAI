@@ -1,4 +1,6 @@
-﻿namespace SyllabusAI.Services;
+﻿using System.Text.RegularExpressions;
+
+namespace SyllabusAI.Services;
 
 public class SyllabusCategoryMapper
 {
@@ -32,11 +34,16 @@ public class SyllabusCategoryMapper
         if (ContainsAny(title, "make-up", "make up", "retake"))
             return SyllabusCategories.MakeUpPolicy;
 
-        if (ContainsAny(text, "%", "midterm", "final exam", "quiz", "grading", "weight"))
+        if (LooksLikeGradingTable(text))
+            return SyllabusCategories.GradingPolicy;
+        if (ContainsAny(text, "%", "midterm", "final exam", "final ", "quiz", "grading", "weight (%)", "weight(%)", "assessment",
+                "evaluation", "ara sınav", "ara sinav", "vize", "bütünleme", "butunleme", "değerlendirme", "degerlendirme",
+                "yüzde", "yuzde", "not dağılım", "not dagilim", "scoring"))
             return SyllabusCategories.GradingPolicy;
         if (ContainsAny(text, "week 1", "week 2", "week 3", "course topic", "course calendar", "weekly"))
             return SyllabusCategories.WeeklySchedule;
-        if (ContainsAny(text, "late submission", "reduced by", "not accepted after", "must submit", "deadline", "homework"))
+        if (ContainsAny(text, "late submission", "reduced by", "not accepted after", "must submit", "deadline", "homework")
+            && !LooksLikeGradingTable(text))
             return SyllabusCategories.AssignmentPolicy;
         if (ContainsAny(text, "attendance", "expected to attend", "70% attendance"))
             return SyllabusCategories.AttendancePolicy;
@@ -46,6 +53,15 @@ public class SyllabusCategoryMapper
             return SyllabusCategories.InstructorInfo;
 
         return SyllabusCategories.Unknown;
+    }
+
+    public static bool LooksLikeGradingTable(string text)
+    {
+        var t = (text ?? string.Empty).ToLowerInvariant();
+        var hasWeightCol = ContainsAny(t, "weight (%)", "weight(%)", "weight %");
+        var hasAssessment = ContainsAny(t, "midterm", "final exam", "final", "quiz", "process", "presentation", "scoring");
+        var hasPercent = t.Contains('%') && Regex.IsMatch(t, @"\b\d{1,3}\s*%");
+        return (hasWeightCol && hasAssessment) || (hasPercent && hasAssessment && ContainsAny(t, "assignment", "midterm", "final"));
     }
 
     private static bool ContainsAny(string source, params string[] keys) => keys.Any(source.Contains);

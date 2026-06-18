@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SyllabusAI - Course file</title>
-  <link rel="stylesheet" href="/css/app.css?v=20260431">
+  <link rel="stylesheet" href="/css/app.css?v=20260517">
   <style>
     .back { display: inline-block; margin-bottom: 0.75rem; color: #a5b4fc; text-decoration: none; font-size: 0.875rem; }
     .back:hover { color: #c4b5fd; }
@@ -120,10 +120,17 @@
     .docx-actions a:hover { background: #4338ca; }
     .chat-box {
       background: linear-gradient(160deg, #1e3a5f 0%, #312e81 100%);
-      border-radius: 14px; padding: 1.15rem 1.25rem; color: #fff;
+      border-radius: 14px; padding: 1.15rem 1.25rem; color: #f8fafc;
+      border: 1px solid rgba(196, 181, 253, 0.25);
+      margin-top: 0.5rem;
     }
-    .chat-box h3 { font-size: 0.9rem; margin-bottom: 0.65rem; opacity: 0.95; }
-    .chat-messages { max-height: 200px; overflow-y: auto; margin-bottom: 0.65rem; font-size: 0.82rem; }
+    .chat-box h3 { font-size: 0.95rem; margin-bottom: 0.65rem; color: #eef2ff; font-weight: 700; }
+    .chat-placeholder {
+      margin-bottom: 0.65rem; padding: 0.75rem 0.85rem; border-radius: 10px;
+      background: rgba(255,255,255,0.12); color: #e0e7ff; font-size: 0.86rem; line-height: 1.5;
+    }
+    .chat-messages { min-height: 0; max-height: 420px; overflow-y: auto; margin-bottom: 0.65rem; font-size: 0.88rem; line-height: 1.45; }
+    .chat-messages:not(:empty) { min-height: 72px; }
     .chat-messages .bubble { margin-bottom: 0.45rem; padding: 0.45rem 0.65rem; border-radius: 8px; white-space: pre-wrap; }
     .chat-messages .user { background: rgba(255,255,255,0.2); margin-right: auto; max-width: 92%; }
     .chat-messages .bot { background: rgba(255,255,255,0.14); margin-left: auto; max-width: 92%; }
@@ -138,6 +145,20 @@
     .chat-row { display: flex; gap: 0.45rem; flex-wrap: wrap; }
     .chat-row input { flex: 1; min-width: 160px; padding: 0.55rem 0.75rem; border: none; border-radius: 8px; font-size: 0.88rem; }
     .chat-row button { padding: 0.55rem 0.95rem; border: none; border-radius: 8px; background: #4f46e5; color: #fff; font-weight: 600; cursor: pointer; }
+    .chat-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .tp.tl .chat-box {
+      background: linear-gradient(160deg, #e8e4ff 0%, #ddd6fe 100%);
+      color: #1e293b; border-color: rgba(99, 102, 241, 0.35);
+    }
+    .tp.tl .main-area .chat-box h3 { color: #312e81 !important; }
+    .tp.tl .main-area .chat-box,
+    .tp.tl .main-area .chat-box .chat-placeholder,
+    .tp.tl .main-area .chat-box .chat-lock-msg { color: #1e293b; }
+    .tp.tl .chat-placeholder { background: rgba(255,255,255,0.75); color: #4338ca; }
+    .tp.tl .chat-messages .user { background: #dbeafe; color: #1e293b; }
+    .tp.tl .chat-messages .bot { background: #f5f3ff; color: #1e293b; }
+    .tp.tl .chat-lock-msg { color: #92400e; }
+    .tp.tl .chat-row input { background: #fff; color: #1e293b; }
   </style>
 </head>
 <body class="tp">
@@ -189,12 +210,14 @@
     </div>
 
     <div class="chat-box" id="chat">
-      <h3>Question-Answer (AI)</h3>
+      <h3>Question-Answer (AI) — based on this course syllabus only</h3>
+      <p class="chat-placeholder" id="chatPlaceholder">Loading syllabus...</p>
       <div class="chat-messages" id="chatMessages"></div>
       <div class="chat-row">
-        <input type="text" id="questionInput" placeholder="Ask a question about this course..." autocomplete="off">
-        <button type="button" id="btnAsk">Send</button>
+        <input type="text" id="questionInput" placeholder="Ask a question about this course..." disabled autocomplete="off">
+        <button type="button" id="btnAsk" disabled>Send</button>
       </div>
+      <p class="chat-lock-msg show" id="chatLockMsg">AI locked: scroll the syllabus PDF to the end to unlock.</p>
     </div>
 
     <a href="/student-ai.html" class="ai-assistant-fab" aria-label="AI assistant" title="AI assistant">
@@ -203,6 +226,7 @@
   </main>
   <script src="/js/out.js"></script>
   <script src="/js/user-fly.js"></script>
+  <script src="/js/syllabus-read-state.js"></script>
   <script>
     // Title: GET /syllabus; file: GET /syllabus-file. Raw SyllabusContent is not shown on this page.
     var token = localStorage.getItem('syllabus_token');
@@ -210,8 +234,7 @@
     if (!token || !userStr) { window.location.href = '/'; }
     var user = JSON.parse(userStr);
     if (user.role !== 'Student') { window.location.href = '/student.html'; }
-    var userScopeKey = String(user.id || user.userId || user.email || 'student')
-      .replace(/[^a-zA-Z0-9_\-.@]/g, '_');
+    var userScopeKey = SyllabusReadState.scopeKey(user);
     function initials(n){ var p=(n||'').split(/\s+/); return p.length>=2 ? (p[0][0]+p[1][0]).toUpperCase() : ((n||'?')[0]).toUpperCase(); }
     document.getElementById('userAvatar').textContent = initials(user.fullName || user.email);
     document.getElementById('userName').textContent = user.fullName || user.email;
@@ -233,7 +256,7 @@
         var termPending = termStatus && termStatus.windowOpen && !termStatus.hasSubmitted;
         var weeklyPending = weeklyStatus && weeklyStatus.windowOpen && !weeklyStatus.hasSubmitted;
         if (termPending || weeklyPending) {
-          alert('Bu ders icin acik geri bildirim var. Devam etmeden once My courses ekranindaki feedback formunu doldurman gerekiyor.');
+          alert('You have pending feedback for this course. Complete the feedback form on My courses before continuing.');
           window.location.href = '/student.html';
         }
       });
@@ -258,8 +281,32 @@
     var unlockStorageKey = '';
     var progressStorageKey = '';
     var scrollTicking = false;
+    var chatSessionId = null;
     ensureFeedbackCompletedForCourse();
 
+    function refreshChatPlaceholder() {
+      var el = document.getElementById('chatPlaceholder');
+      var msgs = document.getElementById('chatMessages');
+      if (!el) return;
+      var hasMsgs = msgs && msgs.children.length > 0;
+      el.style.display = hasMsgs ? 'none' : '';
+      if (hasMsgs) return;
+      if (!hasSyllabusFile) {
+        el.textContent = 'No syllabus file has been uploaded for this course yet. You can ask questions here after your instructor uploads a PDF or Word file.';
+      } else if (!(readState.unlocked || isSyllabusReadingComplete())) {
+        el.textContent = 'Scroll through the full syllabus to unlock the AI. Example topics: grading breakdown, attendance, assignment deadlines.';
+      } else {
+        el.textContent = 'Questions are answered only from this course syllabus. Type below and press Send.';
+      }
+    }
+    function showWelcomeIfNeeded() {
+      var msgs = document.getElementById('chatMessages');
+      if (!msgs || msgs.dataset.welcome === '1') return;
+      if (!hasSyllabusFile || !(readState.unlocked || isSyllabusReadingComplete())) return;
+      msgs.dataset.welcome = '1';
+      addMsg('bot', 'Hi! This course syllabus is indexed by section. Ask about grading, the calendar, attendance, policies, and other syllabus details.');
+      refreshChatPlaceholder();
+    }
     function setChatLocked(locked) {
       var box = document.getElementById('chat');
       var input = document.getElementById('questionInput');
@@ -275,14 +322,17 @@
         input.disabled = false;
         btn.disabled = false;
         if (msgEl) msgEl.classList.remove('show');
+        showWelcomeIfNeeded();
       }
+      refreshChatPlaceholder();
     }
 
     function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
     function loadReadState() {
-      stageStorageKey = 'syllabus_read_stage_' + userScopeKey + '_' + courseId;
-      unlockStorageKey = 'syllabus_read_unlock_' + userScopeKey + '_' + courseId;
-      progressStorageKey = 'syllabus_read_progress_' + userScopeKey + '_' + courseId;
+      var rk = SyllabusReadState.keys(user, courseId);
+      stageStorageKey = rk.stage;
+      unlockStorageKey = rk.unlock;
+      progressStorageKey = rk.progress;
       var rawStage = parseInt(localStorage.getItem(stageStorageKey) || '1', 10);
       readState.stage = clamp(isNaN(rawStage) ? 1 : rawStage, 1, totalStages);
       readState.unlocked = localStorage.getItem(unlockStorageKey) === '1';
@@ -536,6 +586,7 @@
           msg.textContent = 'No PDF or Word file has been uploaded for this course yet. It will appear here when the instructor uploads one.';
           hasSyllabusFile = false;
           setChatLocked(true);
+          refreshChatPlaceholder();
           return null;
         }
         if (!r.ok) { msg.textContent = 'Could not load file.'; return null; }
@@ -605,6 +656,7 @@
       div.textContent = text;
       document.getElementById('chatMessages').appendChild(div);
       div.scrollIntoView({ block: 'nearest' });
+      refreshChatPlaceholder();
     }
     document.getElementById('btnAsk').onclick = function () {
       var q = document.getElementById('questionInput').value.trim();
@@ -615,9 +667,10 @@
       if (!q) return;
       addMsg('user', q);
       document.getElementById('questionInput').value = '';
-      fetch('/api/chat/ask', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseId: courseId, question: q }) })
+      fetch('/api/chat/ask', { method: 'POST', headers: authHeader(), body: JSON.stringify({ courseId: courseId, sessionId: chatSessionId, question: q }) })
         .then(function (r) { return r.json(); })
         .then(function (d) {
+          if (d && d.sessionId) chatSessionId = d.sessionId;
           var answer = d.answer || 'No answer received.';
           var state = '';
           if (d && d.isOutOfScope) state = 'scope-deny';

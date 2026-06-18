@@ -14,8 +14,9 @@
 ## Uploads (local syllabus PDFs)
 **/Data/Uploads/
 
-## Secrets (use User Secrets locally)
+## Local overrides (machine-specific SQL, API keys, JWT)
 **/appsettings.Development.json
+config/secrets/secrets.Local.json
 **/secrets.json
 
 ## OS / IDE
